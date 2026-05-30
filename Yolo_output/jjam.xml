@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='utf-8'?>
+<annotation>
+  <folder>..\Yolo_output</folder>
+  <filename>..\Fooddata\Images\jjam.png</filename>
+  <path>..\Yolo_output\jjam.png</path>
+  <object>
+    <name>02011029</name>
+    <food_name>짬뽕</food_name>
+    <bndbox>
+      <xmin>243</xmin>
+      <ymin>94</ymin>
+      <xmax>928</xmax>
+      <ymax>509</ymax>
+    </bndbox>
+  </object>
+</annotation>

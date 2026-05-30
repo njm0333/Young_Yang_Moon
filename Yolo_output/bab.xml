@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='utf-8'?>
+<annotation>
+  <folder>..\Yolo_output</folder>
+  <filename>..\Fooddata\Images\bab.png</filename>
+  <path>..\Yolo_output\bab.png</path>
+  <object>
+    <name>01012001</name>
+    <food_name>잡곡밥</food_name>
+    <bndbox>
+      <xmin>216</xmin>
+      <ymin>93</ymin>
+      <xmax>704</xmax>
+      <ymax>543</ymax>
+    </bndbox>
+  </object>
+</annotation>

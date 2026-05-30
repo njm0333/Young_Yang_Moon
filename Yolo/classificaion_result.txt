@@ -1,0 +1,4 @@
+..\Fooddata\Images\KakaoTalk_20260531_001945628.jpg,01014003,T
+..\Fooddata\Images\bab.png,01012001,T
+..\Fooddata\Images\jjam.png,02011029,T
+..\Fooddata\Images\kong.jpg,04012006,T
