@@ -219,7 +219,6 @@ def api_upload_yolo():
         print(f"✅ [탐지 성공] 코드: {detected_code} ➔ 찐 이름 매칭 완료: '{real_food_name}'")
 
         # 4. ⚖️ ResNet 중량 비율 예측 바통 터치 구역
-        # TODO: 추후 ResNet 연동 완료 시 아래의 mock_q 등급 자리에 실제 추론 코드 바인딩 가능!
         mock_q_level = "Q3" # ResNet 예측 등급 예시 (Q1~Q5)
 
         # 🎰 [정민's 내부 회로 중량 배율 맵 정의]
