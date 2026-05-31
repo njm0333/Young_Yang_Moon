@@ -12,7 +12,8 @@
             color: #000000; overflow: hidden;
             -webkit-user-select: none; user-select: none;
         }
-        .wrapper { display: flex; flex-direction: column; height: 100%; }
+        .wrapper { display: flex; flex-direction: column; height: 100%; padding-bottom: 55px; box-sizing: border-box; }
+
         header { background-color: #55B2B5; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; color: #FFFFFF; }
         .header-left { display: flex; align-items: center; gap: 18px; }
         .back-arrow { font-size: 1.4rem; font-weight: 300; cursor: pointer; }
@@ -54,7 +55,6 @@
 
         .trade-container { flex: 1; display: flex; overflow: hidden; background-color: #FFFFFF; }
 
-        /* 📊 호가창 스타일 고도화 */
         .hoga-window { width: 42%; border-right: 1px solid #E5E5E5; overflow-y: auto; }
         .hoga-row { display: flex; justify-content: space-between; align-items: center; padding: 11px 8px; font-size: 0.95rem; border-bottom: 1px solid #EEF1F6; height: 42px; box-sizing: border-box; }
         .hoga-row.ask { background-color: #EDF4FC; color: #1E50A2; }
@@ -82,25 +82,59 @@
         .bottom-banner-text { background-color: #F6F6F6; padding: 6px 12px; font-size: 0.8rem; color: #444444; border-top: 1px solid #E5E5E5; display: flex; align-items: center; gap: 6px; }
         .badge-purple { background-color: #E2D1F9; color: #7B3EBF; font-size: 0.7rem; padding: 1px 4px; border-radius: 8px; font-weight: bold; }
 
-        /* 🛠️ MTS 국룰 하단 4단 탭 바 스타일 (형의 원본 규격 완벽 고수) */
         .nav-tab-bar {
             position: fixed; bottom: 0; left: 0; width: 100%; height: 55px;
             background-color: #FFFFFF; border-top: 1px solid #E5E5E5;
             display: flex; align-items: center; justify-content: space-around;
-            box-sizing: border-box; z-index: 9999;
+            box-sizing: border-box; z-index: 9000;
         }
         .nav-item {
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             color: #777777; font-size: 0.8rem; width: 25%; font-weight: 500; text-decoration: none; height: 100%;
         }
-        .nav-item.active {
-            color: #222222; font-weight: bold;
-        }
-        .nav-item span {
-            display: block;
-        }
+        .nav-item.active { color: #222222; font-weight: bold; }
+        .nav-item span { display: block; }
 
-        .wrapper { padding-bottom: 55px; box-sizing: border-box; }
+        /* 💸 [신규] 영웅문 실물 핏 현금 매수 주문 확인 모달 테마 */
+        .trade-popup-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.6); z-index: 99999;
+            display: none; align-items: center; justify-content: center;
+        }
+        .trade-popup-box {
+            width: 90%; max-width: 360px; background-color: #FFFFFF;
+            border-radius: 8px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        .trade-popup-title {
+            text-align: center; padding: 22px 10px 14px 10px;
+            font-size: 1.35rem; font-weight: 900; color: #BD4D77;
+            letter-spacing: -0.5px; margin: 0;
+        }
+        .trade-popup-table {
+            width: 90%; margin: 0 auto 20px auto;
+            border-collapse: collapse; font-size: 0.92rem;
+        }
+        .trade-popup-table th, .trade-popup-table td {
+            border: 1px solid #E2E2E2; padding: 10px 12px; vertical-align: middle;
+        }
+        .trade-popup-table th {
+            background-color: #F0F2F4; color: #333333; font-weight: bold;
+            text-align: left; width: 35%;
+        }
+        .trade-popup-table td { background-color: #FFFFFF; color: #000000; text-align: right; font-weight: 500; }
+        .trade-popup-table .highlight-cell { background-color: #FFF2CC; font-weight: bold; color: #002060; }
+        .trade-popup-table .nutrition-header-row {
+            background-color: #E7EBF3; color: #2F528F; font-weight: bold; text-align: center; font-size: 0.85rem;
+        }
+        .trade-popup-btn-group { display: flex; width: 100%; height: 50px; border-top: 1px solid #E2E2E2; }
+        .trade-btn-cancel {
+            flex: 1; background-color: #EAEAEA; color: #333333; border: none;
+            font-size: 1.05rem; font-weight: bold; cursor: pointer;
+        }
+        .trade-btn-confirm {
+            flex: 1.3; background-color: #BD4D77; color: #FFFFFF; border: none;
+            font-size: 1.05rem; font-weight: bold; cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -206,7 +240,7 @@
                 <span style="color:#000; font-weight:bold;">0원</span>
             </div>
 
-            <button class="btn-huge-buy" onclick="executeBuyOrder()">매수 주문</button>
+            <button class="btn-huge-buy" onclick="openTradeConfirmModal()">현금 매수</button>
         </div>
     </div>
 
@@ -216,29 +250,62 @@
     </div>
 
     <nav class="nav-tab-bar">
-        <a href="/main?stock_name={{ stock_name }}&account_name={{ account_name }}&page=search" class="nav-item">
-            <span>검색</span>
-        </a>
-        <a href="/main?stock_name={{ stock_name }}&account_name={{ account_name }}&page=main" class="nav-item active">
-            <span>주문</span>
-        </a>
-        <a href="/main?stock_name={{ stock_name }}&account_name={{ account_name }}&page=news" class="nav-item">
-            <span>뉴스</span>
-        </a>
-        <a href="/main?stock_name={{ stock_name }}&account_name={{ account_name }}&page=account" class="nav-item">
-            <span>자산</span>
-        </a>
+        <a href="/main?stock_name={{ stock_name }}&account_name={{ account_name }}&page=search" class="nav-item"><span>검색</span></a>
+        <a href="/main?stock_name={{ stock_name }}&account_name={{ account_name }}&page=main" class="nav-item active"><span>주문</span></a>
+        <a href="/main?stock_name={{ stock_name }}&account_name={{ account_name }}&page=news" class="nav-item"><span>뉴스</span></a>
+        <a href="/main?stock_name={{ stock_name }}&account_name={{ account_name }}&page=account" class="nav-item"><span>자산</span></a>
     </nav>
+
+    <div class="trade-popup-overlay" id="trade-confirm-modal">
+        <div class="trade-popup-box">
+            <h3 class="trade-popup-title">현금 매수 주문 확인</h3>
+
+            <table class="trade-popup-table">
+                <tr><th>종목명</th><td id="pop-stock-name">STU {{ stock_name }}</td></tr>
+                <tr><th>매매종류</th><td>보통(지정가)</td></tr>
+                <tr><th>주문수량</th><td id="pop-trade-qty" style="font-weight: bold; color: #BD4D77;">1주</td></tr>
+                <tr><th>주문가격</th><td id="pop-trade-price" class="highlight-cell">0원</td></tr>
+
+                <tr><td colspan="2" class="nutrition-header-row">📊 총 매수 영양성분 명세</td></tr>
+                <tr><th>열량</th><td><span id="pop-nut-kcal">0</span> kcal</td></tr>
+                <tr><th>나트륨</th><td><span id="pop-nut-sodium">0</span> mg</td></tr>
+                <tr><th>탄수화물</th><td><span id="pop-nut-carbo">0</span> g</td></tr>
+                <tr><th>당류</th><td><span id="pop-nut-sugar">0</span> g</td></tr>
+                <tr><th>단백질</th><td><span id="pop-nut-protein">0</span> g</td></tr>
+                <tr><th>지방</th><td><span id="pop-nut-fat">0</span> g</td></tr>
+                <tr><th>포화 지방</th><td><span id="pop-nut-sfat">0</span> g</td></tr>
+                <tr><th>트랜스 지방</th><td><span id="pop-nut-tfat">0</span> g</td></tr>
+                <tr><th>콜레스테롤</th><td><span id="pop-nut-chol">0</span> mg</td></tr>
+            </table>
+
+            <div class="trade-popup-btn-group">
+                <button class="trade-btn-cancel" onclick="closeTradeModal()">취 소</button>
+                <button class="trade-btn-confirm" onclick="executeFinalTrade()">확 인</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
     const serverBasePrice = parseInt("{{ base_price if base_price else 30000 }}");
-
     let currentPrice = serverBasePrice;
     let qty = 1;
-
     const tickSize = serverBasePrice >= 50000 ? 100 : 50;
     let volumes = [12, 542, 8, 4, 1, 28, 2, 84].map(() => Math.floor(Math.random() * 200) + 5);
+
+    // ⚡ [핵심 연동] 서버(app.py)에서 넘어온 1회분 기준 9대 영양소 바인딩
+    // 백엔드에서 값을 못 받았을 경우 0으로 안전하게 방어 (NaN 에러 방지)
+    const baseNutrition = {
+        kcal: parseFloat("{{ nutrients.kcal | default(0) }}") || 0,
+        sodium: parseFloat("{{ nutrients.sodium | default(0) }}") || 0,
+        carbo: parseFloat("{{ nutrients.carbo | default(0) }}") || 0,
+        sugar: parseFloat("{{ nutrients.sugar | default(0) }}") || 0,
+        protein: parseFloat("{{ nutrients.protein | default(0) }}") || 0,
+        fat: parseFloat("{{ nutrients.fat | default(0) }}") || 0,
+        sfat: parseFloat("{{ nutrients.sfat | default(0) }}") || 0,
+        tfat: parseFloat("{{ nutrients.tfat | default(0) }}") || 0,
+        chol: parseFloat("{{ nutrients.chol | default(0) }}") || 0
+    };
 
     function updateUI() {
         document.getElementById('top-current-price').innerText = currentPrice.toLocaleString();
@@ -263,16 +330,11 @@
             const price = serverBasePrice + (i * tickSize);
             const r = (((price - serverBasePrice) / serverBasePrice) * 100).toFixed(2);
             const isCurrent = (price === currentPrice);
-
             const row = document.createElement('div');
             row.className = `hoga-row ask ${isCurrent ? 'highlight-bg' : ''}`;
             row.style.border = isCurrent ? '2px solid #4386F7' : '';
             row.onclick = () => { currentPrice = price; updateUI(); };
-
-            row.innerHTML = `
-                <div class="hoga-price"><span>${price.toLocaleString()}</span><span class="hoga-won">${price.toLocaleString()}원</span></div>
-                <span class="hoga-rate">${r}%</span><span class="hoga-volume">${volumes[5-i]}</span>
-            `;
+            row.innerHTML = `<div class="hoga-price"><span>${price.toLocaleString()}</span><span class="hoga-won">${price.toLocaleString()}원</span></div><span class="hoga-rate">${r}%</span><span class="hoga-volume">${volumes[5-i]}</span>`;
             hogaWindow.appendChild(row);
         }
 
@@ -280,16 +342,11 @@
             const price = serverBasePrice - (i * tickSize);
             const r = (((price - serverBasePrice) / serverBasePrice) * 100).toFixed(2);
             const isCurrent = (price === currentPrice);
-
             const row = document.createElement('div');
             row.className = `hoga-row bid ${isCurrent ? 'highlight-bg' : ''}`;
             row.style.border = isCurrent ? '2px solid #D9383A' : '';
             row.onclick = () => { currentPrice = price; updateUI(); };
-
-            row.innerHTML = `
-                <div class="hoga-price"><span>${price.toLocaleString()}</span><span class="hoga-won">${price.toLocaleString()}원</span></div>
-                <span class="hoga-rate">${r}%</span><span class="hoga-volume">${volumes[4+i]}</span>
-            `;
+            row.innerHTML = `<div class="hoga-price"><span>${price.toLocaleString()}</span><span class="hoga-won">${price.toLocaleString()}원</span></div><span class="hoga-rate">${r}%</span><span class="hoga-volume">${volumes[4+i]}</span>`;
             hogaWindow.appendChild(row);
         }
     }
@@ -299,28 +356,52 @@
         if (rand < 0.4) {
             const direction = Math.random() > 0.5 ? 1 : -1;
             currentPrice += (direction * tickSize);
-
             if (currentPrice > serverBasePrice + (4 * tickSize)) currentPrice = serverBasePrice + (4 * tickSize);
             if (currentPrice < serverBasePrice - (2 * tickSize)) currentPrice = serverBasePrice - (2 * tickSize);
         }
-
         volumes = volumes.map(v => {
             const delta = Math.floor(Math.random() * 11) - 5;
             const newV = v + delta;
             return newV < 1 ? 1 : newV;
         });
-
         updateUI();
     }, 2000);
 
     document.querySelector('.qty-btn.left-minus').addEventListener('click', () => { if(qty > 1) { qty--; document.getElementById('order-qty').value = qty + "주"; updateUI(); } });
     document.querySelector('.qty-btn.right-plus').addEventListener('click', () => { qty++; document.getElementById('order-qty').value = qty + "주"; updateUI(); });
-
     document.getElementById('price-minus').addEventListener('click', () => { currentPrice -= tickSize; updateUI(); });
     document.getElementById('price-plus').addEventListener('click', () => { currentPrice += tickSize; updateUI(); });
 
-    function executeBuyOrder() {
-        alert(`🔔 [매수 주문 접수 완료]\n\n• 종목명: STU {{ stock_name }}\n• 체결가: ${currentPrice.toLocaleString()}원\n• 수량: ${qty}주\n• 총액: ${(currentPrice * qty).toLocaleString()}원\n\n성공적으로 거래가 체결되어 자산 포트폴리오에 반영되었습니다.`);
+    // ⚡ [신규] 현금 매수 버튼 클릭 시 모달창 오픈 및 실시간 곱연산 바인딩 함수
+    function openTradeConfirmModal() {
+        // 기본 거래 스펙 세팅
+        document.getElementById('pop-trade-qty').innerText = qty + " 주";
+        document.getElementById('pop-trade-price').innerText = currentPrice.toLocaleString() + "원";
+
+        // 🎯 9대 영양소 * 수량(qty) 곱연산 로직 (소수점 1자리 컷팅)
+        document.getElementById('pop-nut-kcal').innerText = Math.round(baseNutrition.kcal * qty);
+        document.getElementById('pop-nut-sodium').innerText = (baseNutrition.sodium * qty).toFixed(1);
+        document.getElementById('pop-nut-carbo').innerText = (baseNutrition.carbo * qty).toFixed(1);
+        document.getElementById('pop-nut-sugar').innerText = (baseNutrition.sugar * qty).toFixed(1);
+        document.getElementById('pop-nut-protein').innerText = (baseNutrition.protein * qty).toFixed(1);
+        document.getElementById('pop-nut-fat').innerText = (baseNutrition.fat * qty).toFixed(1);
+        document.getElementById('pop-nut-sfat').innerText = (baseNutrition.sfat * qty).toFixed(1);
+        document.getElementById('pop-nut-tfat').innerText = (baseNutrition.tfat * qty).toFixed(1);
+        document.getElementById('pop-nut-chol').innerText = (baseNutrition.chol * qty).toFixed(1);
+
+        // 팝업 레이어 스위치 ON
+        document.getElementById('trade-confirm-modal').style.display = 'flex';
+    }
+
+    // 모달창 닫기 (취소)
+    function closeTradeModal() {
+        document.getElementById('trade-confirm-modal').style.display = 'none';
+    }
+
+    // 최종 확인 (체결)
+    function executeFinalTrade() {
+        alert(`🔔 [매수 체결 완료]\nSTU {{ stock_name }} ${qty}주가 성공적으로 매수되었습니다.\n\n해당 영양분은 자산 포트폴리오에 즉시 반영됩니다.`);
+        closeTradeModal();
     }
 
     window.onload = () => { updateUI(); };

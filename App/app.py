@@ -137,7 +137,7 @@ def universal_router():
 # ⚡ [신규 추가] AI 연동 비동기 통신 비즈니스 라우터 파트
 # ====================================================================
 
-# 🔤 [트랙 B] 가공식품 전용 EasyOCR 비동기 파싱 엔진 가동 관문
+# 🔤 [트랙 B] 가공식품 전용 EasyOCR 비동기 파싱 엔진 가동 관문 (모바일 뷰어 보강)
 @app.route('/api/upload_ocr', methods=['POST'])
 def api_upload_ocr():
     if 'file' not in request.files:
@@ -154,7 +154,6 @@ def api_upload_ocr():
             os.makedirs(save_dir)
 
         filename = secure_filename(file.filename)
-        # 만약 파일명이 깨지거나 공백일 경우 대비 방어선
         if not filename or len(filename.split('.')) < 2:
             filename = f"ocr_input_{random.randint(1000, 9999)}.jpg"
 
@@ -164,15 +163,27 @@ def api_upload_ocr():
         # 형의 오독 보정 상태 머신 엔진 긴급 구동!!
         final_nutrition_dto = process_nutrition_image(saved_image_path)
 
-        # 프론트엔드 교정 모달창 인풋 필드로 데이터 바스 릴레이 수송
+        # 📱 [모바일 픽스] 핸드폰 사파리/크롬에서도 접근 가능한 보안 해제형 이미지 웹 URL 생성
+        # filename을 던져서 프론트엔드가 실시간으로 다운로드할 수 있게 엮어줌
+        web_image_url = f"/api/ocr_image/{filename}"
+
         return jsonify({
             'status': 'success',
-            'result': final_nutrition_dto
+            'result': final_nutrition_dto,
+            'image_url': web_image_url  # 진짜 이미지 주소 탑승 완료
         })
 
     except Exception as e:
         print(f"❌ [OCR 연동 내부 에러 발생]: {str(e)}")
         return jsonify({'status': 'error', 'message': f'AI 연산 중 장애 발생: {str(e)}'}), 500
+
+
+# 📱 [신규 추가] 모바일 Sandbox 보안 우회용 실시간 이미지 서빙 라우터
+@app.route('/api/ocr_image/<filename>')
+def serve_ocr_image(filename):
+    from flask import send_from_directory
+    save_dir = os.path.join(root_dir, 'OCR', 'Images')
+    return send_from_directory(save_dir, filename)
 
 
 # 📸 [트랙 A] 일반 식단 전용 YOLOv3 + ResNet 비동기 관문 (뼈대 가이드 내장)
