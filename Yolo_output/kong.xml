@@ -7,10 +7,10 @@
     <name>04012006</name>
     <food_name>콩나물국</food_name>
     <bndbox>
-      <xmin>99</xmin>
-      <ymin>14</ymin>
-      <xmax>651</xmax>
-      <ymax>500</ymax>
+      <xmin>103</xmin>
+      <ymin>19</ymin>
+      <xmax>646</xmax>
+      <ymax>497</ymax>
     </bndbox>
   </object>
 </annotation>

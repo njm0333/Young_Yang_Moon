@@ -171,7 +171,7 @@ if __name__ == '__main__':
     parser.add_argument('--save-xml', action='store_true', default=True, help='save results to *.xml')
 
     parser.add_argument('--img-size', type=int, default=320, help='inference size (pixels)')
-    parser.add_argument('--conf-thres', type=float, default=0.3, help='object confidence threshold')
+    parser.add_argument('--conf-thres', type=float, default=0.15, help='object confidence threshold')
     parser.add_argument('--iou-thres', type=float, default=0.5, help='IOU threshold for NMS')
     parser.add_argument('--fourcc', type=str, default='mp4v', help='output video codec')
     parser.add_argument('--half', action='store_true', help='half precision FP16 inference')
