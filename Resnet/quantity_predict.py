@@ -34,7 +34,7 @@ if __name__ == '__main__':
     model.eval()
 
     # 다중 이미지 탐색을 위한 폴더 경로 설정
-    target_dir = os.path.join("..", "Fooddata", "Images")
+    target_dir = os.path.join("..", "Fooddata", "test")
 
     if not os.path.exists(target_dir):
         print(f"❌ [에러] 탐색할 폴더가 없습니다! 경로 확인: {target_dir}")

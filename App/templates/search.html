@@ -14,9 +14,8 @@
             -webkit-user-select: none; user-select: none;
         }
 
-        .wrapper { display: flex; flex-direction: column; height: 100%; }
+        .wrapper { display: flex; flex-direction: column; height: 100%; position: relative; }
 
-        /* 1. 최상단 헤더 바 */
         header {
             background-color: #FFFFFF; padding: 14px 16px;
             display: flex; align-items: center; justify-content: space-between;
@@ -27,63 +26,91 @@
         .header-title { font-size: 1.2rem; font-weight: bold; color: #000000; letter-spacing: -0.5px; margin: 0 auto 0 24%; }
         .close-btn { font-size: 1.4rem; font-weight: 300; color: #888888; cursor: pointer; padding: 0 4px; }
 
-        /* 2. 메인 탭 (사진인식 vs 직접검색) */
         .search-type-tabs { display: flex; border-bottom: 1px solid #D5D5D5; background-color: #FFFFFF; }
-        .type-tab { flex: 1; text-align: center; padding: 12px 0; font-size: 1.1rem; font-weight: bold; color: #666666; cursor: pointer; }
+        .type-tab { flex: 1; text-align: center; padding: 12px 0; font-size: 1rem; font-weight: bold; color: #666666; cursor: pointer; white-space: nowrap; }
         .type-tab.active { color: #2F528F; border-bottom: 3px solid #2F528F; font-weight: 900; }
 
-        /* 3. 종목 검색창 */
-        .search-bar-container { padding: 12px 14px; background-color: #FFFFFF; border-bottom: 1px solid #E5E5E5; }
+        .search-bar-container { padding: 12px 14px; background-color: #FFFFFF; border-bottom: 1px solid #E5E5E5; display: none; }
         .search-input-wrapper { display: flex; align-items: center; border: 1px solid #999999; border-radius: 3px; padding: 0 10px; background-color: #FFFFFF; height: 40px; }
         .search-input { flex: 1; border: none; outline: none; font-size: 0.95rem; color: #000000; font-weight: 500; }
         .search-input::placeholder { color: #A9A9A9; }
         .search-submit-btn { background: none; border: none; font-size: 1.2rem; color: #666666; cursor: pointer; display: flex; align-items: center; }
 
-        /* 4. 서브 필터 탭 바 (최근, 음식, 가공식품 딱 3개 고정) */
-        .sub-filter-bar { display: flex; background-color: #FFFFFF; border-bottom: 1px solid #E5E5E5; padding: 0 8px; gap: 8px; }
+        .sub-filter-bar { display: none; background-color: #FFFFFF; border-bottom: 1px solid #E5E5E5; padding: 0 8px; gap: 8px; }
         .filter-item { padding: 12px 14px; font-size: 0.9rem; color: #666666; font-weight: 500; cursor: pointer; text-align: center; }
         .filter-item.active { color: #000000; font-weight: bold; border-bottom: 2px solid #2F528F; }
 
-        /* 5. 리스트 컨테이너 */
         .content-container { flex: 1; overflow-y: auto; background-color: #FFFFFF; }
         .view-pane { display: none; width: 100%; height: 100%; }
         .view-pane.active { display: block; }
 
-        /* 사진 인식 구역 */
+        /* 📸 [개편] 투트랙 업로드 구역 (카메라 vs 앨범) */
         .photo-upload-zone { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 80%; padding: 40px 20px; text-align: center; box-sizing: border-box; }
-        .camera-circle { width: 90px; height: 90px; background-color: #F0F4FA; border: 2px dashed #2F528F; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; color: #2F528F; cursor: pointer; margin-bottom: 18px; }
-        #hidden-camera-input { display: none; }
+        .action-buttons-wrap { display: flex; gap: 30px; margin-bottom: 24px; }
+        .circle-btn-wrap { display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; }
+        .camera-circle { width: 75px; height: 75px; background-color: #F0F4FA; border: 2px solid #2F528F; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: #2F528F; transition: 0.2s; }
+        .camera-circle:active { background-color: #DDE5F4; transform: scale(0.95); }
+        .camera-circle.ocr-variant { background-color: #FBF0FA; border: 2px solid #8F2F8A; color: #8F2F8A; }
+        .camera-circle.ocr-variant:active { background-color: #F4E2F2; }
+        .btn-label { font-size: 0.9rem; font-weight: bold; color: #555555; }
+        .hidden-camera-input { display: none; }
 
-        /* 6. 오리지널 HTS 리스트 레이아웃 */
-        .food-list-row {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 13px 16px; border-bottom: 1px solid #F2F2F2; cursor: pointer;
-        }
+        .food-list-row { display: flex; align-items: center; justify-content: space-between; padding: 13px 16px; border-bottom: 1px solid #F2F2F2; cursor: pointer; }
         .food-list-row:active { background-color: #F9F9F9; }
         .food-left-info { display: flex; align-items: center; gap: 14px; }
         .food-code { font-size: 0.85rem; color: #888888; font-family: monospace; width: 52px; }
         .food-name { font-size: 0.95rem; font-weight: bold; color: #222222; }
-
-        /* 우측 메타 배너 정렬 파트 */
         .food-right-meta { display: flex; align-items: center; gap: 6px; }
+        .badge-kcal { background-color: #FFF2CC; border: 1px solid #FCD366; color: #B25E00; padding: 3px 6px; border-radius: 2px; font-size: 0.78rem; font-weight: bold; min-width: 50px; text-align: center; }
+        .tag-category { border: 1px solid #CCCCCC; background-color: #FFFFFF; color: #666666; padding: 3px 6px; border-radius: 2px; font-size: 0.75rem; min-width: 50px; text-align: center; }
 
-        /* 이미지 속 185 kcal 노란색 박스 구현 */
-        .badge-kcal {
-            background-color: #FFF2CC; border: 1px solid #FCD366; color: #B25E00;
-            padding: 3px 6px; border-radius: 2px; font-size: 0.78rem; font-weight: bold;
-            min-width: 50px; text-align: center;
+        /* MTS 블루 톤 모달 */
+        .ocr-overlay-panel {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #F8F9FA; z-index: 10000; display: none;
+            flex-direction: column; overflow-y: auto; box-sizing: border-box;
         }
-        /* 이미지 속 우측 대분류명 투명 박스 구현 */
-        .tag-category {
-            border: 1px solid #CCCCCC; background-color: #FFFFFF; color: #666666;
-            padding: 3px 6px; border-radius: 2px; font-size: 0.75rem;
-            min-width: 50px; text-align: center;
+        .ocr-header {
+            padding: 16px; display: flex; justify-content: space-between; align-items: center;
+            background-color: #2F528F; box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
+        .ocr-header h2 { margin: 0; font-size: 1.15rem; font-weight: bold; color: #FFFFFF; letter-spacing: 1px; }
+        .ocr-save-btn { background-color: #FFFFFF; color: #2F528F; border: none; padding: 8px 20px; font-size: 0.9rem; font-weight: 900; border-radius: 4px; cursor: pointer; }
+
+        .ocr-preview-zone { width: 100%; height: 180px; background-color: #EAEAEA; display: flex; justify-content: center; align-items: center; border-bottom: 2px solid #D5D5D5; overflow: hidden; }
+        .ocr-preview-img { max-width: 100%; max-height: 100%; object-fit: contain; }
+
+        .ocr-body-content { padding: 20px 16px; display: flex; flex-direction: column; gap: 14px; background-color: #FFFFFF; }
+        .ocr-input-group { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; }
+        .ocr-label { font-size: 0.95rem; font-weight: bold; color: #333333; }
+        .ocr-field-wrap { display: flex; align-items: center; gap: 6px; }
+        .ocr-field-wrap input { border: 1px solid #CCCCCC; border-radius: 4px; padding: 8px 12px; font-size: 1rem; font-weight: bold; text-align: center; width: 90px; outline: none; color: #2F528F; }
+        .ocr-field-wrap input:focus { border: 2px solid #2F528F; }
+        .ocr-unit { font-size: 0.9rem; font-weight: 500; color: #888888; width: 30px; text-align: left; }
+
+        /* ⏳ [신규] 영양문 AI 전용 풀스크린 로딩 오버레이 */
+        .loading-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(255, 255, 255, 0.9); z-index: 99999;
+            display: none; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .spinner {
+            width: 50px; height: 50px; border: 5px solid #EAEAEA;
+            border-top: 5px solid #2F528F; border-radius: 50%;
+            animation: spin 1s linear infinite; margin-bottom: 20px;
+        }
+        .loading-text { font-size: 1.1rem; font-weight: bold; color: #2F528F; text-align: center; line-height: 1.5; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
 <div class="wrapper">
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="spinner"></div>
+        <div class="loading-text" id="loading-msg">AI 엔진이 이미지를<br>정밀 분석 중입니다...</div>
+    </div>
+
     <header>
         <div class="header-left" onclick="location.reload();">
             <span class="refresh-icon">↻</span>
@@ -94,46 +121,104 @@
     </header>
 
     <div class="search-type-tabs">
-        <div class="type-tab" id="tab-photo" onclick="switchMainTab('photo')">사진 인식</div>
-        <div class="type-tab active" id="tab-direct" onclick="switchMainTab('direct')">직접 검색</div>
+        <div class="type-tab active" id="tab-photo" onclick="switchMainTab('photo')">사진 인식</div>
+        <div class="type-tab" id="tab-ocr" onclick="switchMainTab('ocr')">영양정보 인식</div>
+        <div class="type-tab" id="tab-direct" onclick="switchMainTab('direct')">직접 검색</div>
     </div>
 
-    <div class="search-bar-container">
+    <div class="search-bar-container" id="search-bar-comp">
         <div class="search-input-wrapper">
             <input type="text" id="food-search-box" class="search-input" placeholder="음식명, 편의점 상품명, 초성 검색">
             <button class="search-submit-btn">🔍</button>
         </div>
     </div>
 
-    <div class="sub-filter-bar">
+    <div class="sub-filter-bar" id="sub-filter-comp">
         <div class="filter-item active" onclick="switchSubFilter('recent', this)">최근</div>
         <div class="filter-item" onclick="switchSubFilter('food', this)">일반 음식</div>
         <div class="filter-item" onclick="switchSubFilter('processed', this)">가공식품</div>
     </div>
 
     <div class="content-container">
-        <div class="view-pane" id="pane-photo">
+        <div class="view-pane active" id="pane-photo">
             <div class="photo-upload-zone">
-                <div class="camera-circle" onclick="document.getElementById('hidden-camera-input').click();">📸</div>
-                <h3>식단 및 상품 바코드 촬영</h3>
-                <p>영양문 AI가 자동으로 종목을 분석합니다.</p>
+                <div class="action-buttons-wrap">
+                    <div class="circle-btn-wrap" onclick="document.getElementById('input-yolo-cam').click();">
+                        <div class="camera-circle">📸</div>
+                        <span class="btn-label">카메라 촬영</span>
+                    </div>
+                    <div class="circle-btn-wrap" onclick="document.getElementById('input-yolo-gal').click();">
+                        <div class="camera-circle">🖼️</div>
+                        <span class="btn-label">앨범에서 선택</span>
+                    </div>
+                </div>
+                <h3>일반 식단 인식</h3>
+                <p style="font-size: 0.9rem; color: #777;">YOLOv3와 ResNet AI가 종목 및<br>중량 비율을 자동으로 분석합니다.</p>
             </div>
-            <input type="file" id="hidden-camera-input" accept="image/*" capture="environment">
+            <input type="file" id="input-yolo-cam" class="hidden-camera-input" accept="image/*" capture="environment">
+            <input type="file" id="input-yolo-gal" class="hidden-camera-input" accept="image/*">
         </div>
 
-        <div class="view-pane active" id="pane-direct">
-            <div id="dynamic-list-target">
+        <div class="view-pane" id="pane-ocr">
+            <div class="photo-upload-zone">
+                <div class="action-buttons-wrap">
+                    <div class="circle-btn-wrap" onclick="document.getElementById('input-ocr-cam').click();">
+                        <div class="camera-circle ocr-variant">📸</div>
+                        <span class="btn-label">카메라 촬영</span>
+                    </div>
+                    <div class="circle-btn-wrap" onclick="document.getElementById('input-ocr-gal').click();">
+                        <div class="camera-circle ocr-variant">🖼️</div>
+                        <span class="btn-label">앨범에서 선택</span>
+                    </div>
+                </div>
+                <h3>상품 성분표 인식</h3>
+                <p style="font-size: 0.9rem; color: #777;">영양문 OCR 엔진이 라벨지의<br>영양성분 텍스트를 정밀하게 스캔합니다.</p>
             </div>
+            <input type="file" id="input-ocr-cam" class="hidden-camera-input" accept="image/*" capture="environment">
+            <input type="file" id="input-ocr-gal" class="hidden-camera-input" accept="image/*">
+        </div>
+
+        <div class="view-pane" id="pane-direct">
+            <div id="dynamic-list-target"></div>
+        </div>
+    </div>
+
+    <div class="ocr-overlay-panel" id="ocr-overlay-comp">
+        <div class="ocr-header">
+            <h2>영양 정보 교정</h2>
+            <button class="ocr-save-btn" onclick="saveOcrAndGoToTrade()">저장</button>
+        </div>
+
+        <div class="ocr-preview-zone">
+            <img id="ocr-preview-img" class="ocr-preview-img" src="" alt="성분표 미리보기">
+        </div>
+
+        <div class="ocr-body-content">
+            <div class="ocr-input-group" style="border-bottom:2px solid #2F528F; padding-bottom:12px; margin-bottom:8px;">
+                <span class="ocr-label" style="color:#2F528F;">상장 제품명 (필수)</span>
+                <div class="ocr-field-wrap" style="flex:1; margin-left:16px;">
+                    <input type="text" id="ocr-food-name" placeholder="제품명 입력" style="width:100%; text-align:left;">
+                </div>
+            </div>
+
+            <div class="ocr-input-group"><span class="ocr-label">칼로리</span><div class="ocr-field-wrap"><input type="number" id="ocr-kcal" value="0"><span class="ocr-unit">kcal</span></div></div>
+            <div class="ocr-input-group"><span class="ocr-label">탄수화물</span><div class="ocr-field-wrap"><input type="number" id="ocr-carbo" value="0"><span class="ocr-unit">g</span></div></div>
+            <div class="ocr-input-group"><span class="ocr-label">당류</span><div class="ocr-field-wrap"><input type="number" id="ocr-sugar" value="0"><span class="ocr-unit">g</span></div></div>
+            <div class="ocr-input-group"><span class="ocr-label">단백질</span><div class="ocr-field-wrap"><input type="number" id="ocr-protein" value="0"><span class="ocr-unit">g</span></div></div>
+            <div class="ocr-input-group"><span class="ocr-label">지방</span><div class="ocr-field-wrap"><input type="number" id="ocr-fat" value="0"><span class="ocr-unit">g</span></div></div>
+            <div class="ocr-input-group"><span class="ocr-label">포화 지방</span><div class="ocr-field-wrap"><input type="number" id="ocr-sfat" value="0"><span class="ocr-unit">g</span></div></div>
+            <div class="ocr-input-group"><span class="ocr-label">트랜스 지방</span><div class="ocr-field-wrap"><input type="number" id="ocr-tfat" value="0"><span class="ocr-unit">g</span></div></div>
+            <div class="ocr-input-group"><span class="ocr-label">콜레스테롤</span><div class="ocr-field-wrap"><input type="number" id="ocr-chol" value="0"><span class="ocr-unit">mg</span></div></div>
+            <div class="ocr-input-group"><span class="ocr-label">나트륨</span><div class="ocr-field-wrap"><input type="number" id="ocr-sodium" value="0"><span class="ocr-unit">mg</span></div></div>
         </div>
     </div>
 </div>
 
 <script>
-    let currentSubMode = 'recent'; // 기본 탭: 최근
+    let currentSubMode = 'recent';
     const listTarget = document.getElementById('dynamic-list-target');
     const searchBox = document.getElementById('food-search-box');
 
-    // 고유 종목코드 생성기 (음식명을 기반으로 중복 없는 고유 6자리 코드 부여)
     function generateStockCode(str) {
         let hash = 0;
         for (let i = 0; i < str.length; i++) {
@@ -142,29 +227,21 @@
         return (Math.abs(hash % 900000) + 100000).toString();
     }
 
-    // 🔄 30MB CSV 풀을 쥐고 있는 파이썬 백엔드 API로부터 데이터를 실시간으로 가져와 리스트를 그리는 핵심 함수
     function fetchAndRender() {
         const query = searchBox.value.trim();
-
-        // Flask 백엔드 검색 라우터로 실시간 비동기(fetch) 요청 발송
         fetch(`/api/search_food?q=${encodeURIComponent(query)}&mode=${currentSubMode}`)
             .then(res => res.json())
             .then(items => {
                 listTarget.innerHTML = '';
-
                 if(items.length === 0) {
                     listTarget.innerHTML = `<div style="text-align:center; color:#999; padding:40px; font-size:0.9rem;">일치하는 상장 종목이 없습니다.</div>`;
                     return;
                 }
-
                 items.forEach(item => {
                     const code = generateStockCode(item.name);
                     const row = document.createElement('div');
                     row.className = 'food-list-row';
-
-                    // 클릭 시 이름과 칼로리를 파라미터로 매칭하여 거래소 홈으로 복귀
                     row.onclick = () => selectAndTrade(item.name, item.kcal);
-
                     row.innerHTML = `
                         <div class="food-left-info">
                             <span class="food-code">${code}</span>
@@ -184,45 +261,156 @@
             });
     }
 
-    // 메인 대형 탭 전환 (사진인식 / 직접검색)
     function switchMainTab(type) {
         document.querySelectorAll('.type-tab').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.view-pane').forEach(p => p.classList.remove('active'));
+
+        const barComp = document.getElementById('search-bar-comp');
+        const filterComp = document.getElementById('sub-filter-comp');
+
         if(type === 'photo') {
             document.getElementById('tab-photo').classList.add('active');
             document.getElementById('pane-photo').classList.add('active');
+            barComp.style.display = 'none'; filterComp.style.display = 'none';
+        } else if(type === 'ocr') {
+            document.getElementById('tab-ocr').classList.add('active');
+            document.getElementById('pane-ocr').classList.add('active');
+            barComp.style.display = 'none'; filterComp.style.display = 'none';
         } else {
             document.getElementById('tab-direct').classList.add('active');
             document.getElementById('pane-direct').classList.add('active');
+            barComp.style.display = 'block'; filterComp.style.display = 'flex';
+            fetchAndRender();
         }
     }
 
-    // 서브 카테고리 필터 탭 전환 (최근 / 일반음식 / 가공식품)
     function switchSubFilter(mode, element) {
         document.querySelectorAll('.filter-item').forEach(i => i.classList.remove('active'));
         element.classList.add('active');
         currentSubMode = mode;
-        searchBox.value = ''; // 탭 스위칭 시 검색창 텍스트 비우기
+        searchBox.value = '';
         fetchAndRender();
     }
 
-    // 🔍 실시간 타이핑 디렉션 엔진 (글자 입력 즉시 파이썬 서버가 CSV를 조회)
-    searchBox.addEventListener('input', fetchAndRender);
+    let debounceTimeout;
+    searchBox.addEventListener('input', function() {
+        clearTimeout(debounceTimeout);
+        debounceTimeout = setTimeout(() => {
+            fetchAndRender();
+        }, 250);
+    });
 
-    // 💸 종목 선택 완료 시 메인 매수 주문창(main.html)으로 데이터 들고 원격 텔레포트
     function selectAndTrade(name, kcal) {
         const encodedName = encodeURIComponent(name);
         const urlParams = new URLSearchParams(window.location.search);
-
-        // 유저 고유 생성 계좌 번호가 유실되지 않도록 주소창에서 추적 바인딩
         const account = urlParams.get('account_name') || '6084-2227 [위탁종합]';
-
-        // 메인 거래창(main.html)으로 다이내믹 파라미터 밀어 넣기
         location.href = `/main?stock_name=${encodedName}&account_name=${encodeURIComponent(account)}&page=main`;
     }
 
-    // 브라우저 렌더링이 완료되는 즉시 '최근 상장 추천 종목' 모드로 화면 송출
-    window.onload = () => { fetchAndRender(); };
+    // --- AI 모듈 공통 업로드 핸들러 ---
+
+    // 📸 식단 인식 (YOLO) 업로드 이벤트 바인딩
+    document.getElementById('input-yolo-cam').addEventListener('change', handleYoloUpload);
+    document.getElementById('input-yolo-gal').addEventListener('change', handleYoloUpload);
+
+    function handleYoloUpload(event) {
+        if(event.target.files && event.target.files[0]) {
+            // 로딩 스피너 작동
+            document.getElementById('loading-msg').innerHTML = 'YOLOv3 AI가 음식 객체를<br>탐색 중입니다...';
+            document.getElementById('loading-overlay').style.display = 'flex';
+
+            // 향후 YOLO 백엔드 연동 영역
+            setTimeout(() => {
+                document.getElementById('loading-overlay').style.display = 'none';
+                alert("기능 준비 중입니다.");
+            }, 1000);
+        }
+    }
+
+    // 🔤 영양정보(OCR) 업로드 이벤트 바인딩
+    document.getElementById('input-ocr-cam').addEventListener('change', handleOcrUpload);
+    document.getElementById('input-ocr-gal').addEventListener('change', handleOcrUpload);
+
+    function handleOcrUpload(event) {
+        if(event.target.files && event.target.files[0]) {
+            const file = event.target.files[0];
+            const formData = new FormData();
+            formData.append('file', file);
+
+            // 1. 브라우저 메모리에 가상 URL 생성해서 액자에 미리 꽂기
+            const objectUrl = URL.createObjectURL(file);
+            document.getElementById('ocr-preview-img').src = objectUrl;
+
+            // 2. ⏳ 로딩 스피너 전면 표출! 유저 조작 차단
+            document.getElementById('loading-msg').innerHTML = '영양문 OCR 엔진이 텍스트를<br>정밀 파싱 중입니다...';
+            document.getElementById('loading-overlay').style.display = 'flex';
+
+            // 3. 서버로 비동기 전송
+            fetch('/api/upload_ocr', {
+                method: 'POST',
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                // 연산 완료: 스피너 제거
+                document.getElementById('loading-overlay').style.display = 'none';
+
+                if (data.status === 'success') {
+                    document.getElementById('ocr-food-name').value = data.result.food_name || "";
+                    document.getElementById('ocr-kcal').value = data.result.열량 || 0;
+                    document.getElementById('ocr-carbo').value = data.result.탄수화물 || 0;
+                    document.getElementById('ocr-sugar').value = data.result.당류 || 0;
+                    document.getElementById('ocr-protein').value = data.result.단백질 || 0;
+                    document.getElementById('ocr-fat').value = data.result.지방 || 0;
+                    document.getElementById('ocr-sfat').value = data.result.포화지방 || 0;
+                    document.getElementById('ocr-tfat').value = data.result.트랜스지방 || 0;
+                    document.getElementById('ocr-chol').value = data.result.콜레스테롤 || 0;
+                    document.getElementById('ocr-sodium').value = data.result.나트륨 || 0;
+
+                    // 데이터 세팅 후 교정 모달창 오픈
+                    document.getElementById('ocr-overlay-comp').style.display = 'flex';
+                } else {
+                    alert("⚠️ 영양성분표 파싱 실패. 수동으로 입력해 주세요.");
+                    document.getElementById('ocr-overlay-comp').style.display = 'flex'; // 실패해도 수동창은 열어줌
+                }
+            })
+            .catch(err => {
+                console.error("OCR 연동 에러:", err);
+                document.getElementById('loading-overlay').style.display = 'none';
+                alert("서버 통신 오류 발생. 수동으로 입력해 주세요.");
+                document.getElementById('ocr-overlay-comp').style.display = 'flex'; // 에러나도 수동창 오픈
+            });
+        }
+    }
+
+    // 💸 9대 영양소 호가창 전송
+    function saveOcrAndGoToTrade() {
+        const nameInput = document.getElementById('ocr-food-name').value.trim();
+
+        if(!nameInput || nameInput === "AI 분석 중...") {
+            alert("⚠️ [상장 주식명 필수 명시]\n제품 이름을 반드시 입력해야 거래소에 상장할 수 있습니다.");
+            document.getElementById('ocr-food-name').focus();
+            return;
+        }
+
+        const name = encodeURIComponent(nameInput);
+        const kcal = document.getElementById('ocr-kcal').value;
+        const carbo = document.getElementById('ocr-carbo').value;
+        const sugar = document.getElementById('ocr-sugar').value;
+        const protein = document.getElementById('ocr-protein').value;
+        const fat = document.getElementById('ocr-fat').value;
+        const sfat = document.getElementById('ocr-sfat').value;
+        const tfat = document.getElementById('ocr-tfat').value;
+        const chol = document.getElementById('ocr-chol').value;
+        const sodium = document.getElementById('ocr-sodium').value;
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const account = urlParams.get('account_name') || '6084-2227 [위탁종합]';
+
+        location.href = `/main?stock_name=${name}&account_name=${encodeURIComponent(account)}&page=main&is_ocr=true&kcal=${kcal}&carbo=${carbo}&sugar=${sugar}&protein=${protein}&fat=${fat}&sfat=${sfat}&tfat=${tfat}&chol=${chol}&sodium=${sodium}`;
+    }
+
+    window.onload = () => { switchMainTab('photo'); };
 </script>
 </body>
 </html>

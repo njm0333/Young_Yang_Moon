@@ -81,10 +81,26 @@
         .btn-huge-buy { background-color: #B5527F; border: none; color: #FFFFFF; padding: 14px; font-size: 1.2rem; font-weight: bold; width: 100%; text-align: center; box-sizing: border-box; letter-spacing: 1px; margin-top: auto; border-radius: 3px; cursor: pointer; }
         .bottom-banner-text { background-color: #F6F6F6; padding: 6px 12px; font-size: 0.8rem; color: #444444; border-top: 1px solid #E5E5E5; display: flex; align-items: center; gap: 6px; }
         .badge-purple { background-color: #E2D1F9; color: #7B3EBF; font-size: 0.7rem; padding: 1px 4px; border-radius: 8px; font-weight: bold; }
-        .nav-tab-bar { height: 55px; background-color: #FFFFFF; border-top: 1px solid #E5E5E5; display: flex; justify-content: space-around; align-items: center; }
-        .btn-menu-total { background-color: #388499; color: #FFFFFF; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; width: 18%; gap: 1px; cursor: pointer; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; color: #777777; font-size: 0.8rem; width: 16.4%; font-weight: 500; text-decoration: none; }
-        .nav-item.active { color: #222222; font-weight: bold; }
+
+        /* 🛠️ MTS 국룰 하단 4단 탭 바 스타일 (형의 원본 규격 완벽 고수) */
+        .nav-tab-bar {
+            position: fixed; bottom: 0; left: 0; width: 100%; height: 55px;
+            background-color: #FFFFFF; border-top: 1px solid #E5E5E5;
+            display: flex; align-items: center; justify-content: space-around;
+            box-sizing: border-box; z-index: 9999;
+        }
+        .nav-item {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            color: #777777; font-size: 0.8rem; width: 25%; font-weight: 500; text-decoration: none; height: 100%;
+        }
+        .nav-item.active {
+            color: #222222; font-weight: bold;
+        }
+        .nav-item span {
+            display: block;
+        }
+
+        .wrapper { padding-bottom: 55px; box-sizing: border-box; }
     </style>
 </head>
 <body>
@@ -145,8 +161,7 @@
     </div>
 
     <div class="trade-container">
-        <div class="hoga-window" id="hoga-window-target">
-        </div>
+        <div class="hoga-window" id="hoga-window-target"></div>
 
         <div class="order-form">
             <div class="form-row">
@@ -201,35 +216,33 @@
     </div>
 
     <nav class="nav-tab-bar">
-        <div class="btn-menu-total" onclick="alert('전체 메뉴 리스트 준비 중')">
-            <span style="font-size:1.2rem; font-weight:bold;">≡</span>
-            <span style="font-size:0.75rem; margin-top:1px;">메뉴</span>
-        </div>
-        <a href="/main?stock_name={{ stock_name }}&account_name={{ account_name }}&page=main" class="nav-item active"><span>주문</span></a>
-        <a href="/main?stock_name={{ stock_name }}&account_name={{ account_name }}&page=news" class="nav-item"><span>뉴스</span></a>
-        <a href="#" class="nav-item" onclick="alert('준비 중인 창입니다.')"><span>차트</span></a>
-        <a href="#" class="nav-item" onclick="alert('준비 중인 창입니다.')"><span>계좌</span></a>
+        <a href="/main?stock_name={{ stock_name }}&account_name={{ account_name }}&page=search" class="nav-item">
+            <span>검색</span>
+        </a>
+        <a href="/main?stock_name={{ stock_name }}&account_name={{ account_name }}&page=main" class="nav-item active">
+            <span>주문</span>
+        </a>
+        <a href="/main?stock_name={{ stock_name }}&account_name={{ account_name }}&page=news" class="nav-item">
+            <span>뉴스</span>
+        </a>
+        <a href="/main?stock_name={{ stock_name }}&account_name={{ account_name }}&page=account" class="nav-item">
+            <span>자산</span>
+        </a>
     </nav>
 </div>
 
 <script>
-    // 백엔드 파이썬이 칼로리 기반으로 정밀 계산해 준 기준가 탑재 (없으면 3만 원 표준가 방어)
     const serverBasePrice = parseInt("{{ base_price if base_price else 30000 }}");
 
     let currentPrice = serverBasePrice;
     let qty = 1;
 
-    // 호가 간격(호가단위) 설정 (주가 범위에 따른 매칭)
     const tickSize = serverBasePrice >= 50000 ? 100 : 50;
-
-    // 가짜 잔량 데이터셋 초깃값 생성
     let volumes = [12, 542, 8, 4, 1, 28, 2, 84].map(() => Math.floor(Math.random() * 200) + 5);
 
     function updateUI() {
-        // 1. 상단 타이틀 영역 가격 주입
         document.getElementById('top-current-price').innerText = currentPrice.toLocaleString();
 
-        // 기준가 대비 등락 폭 계산
         const diff = currentPrice - serverBasePrice;
         const rate = ((diff / serverBasePrice) * 100).toFixed(2);
         const sign = diff > 0 ? "▲" : (diff < 0 ? "▼" : "");
@@ -240,15 +253,12 @@
         priceChangeEl.style.color = color;
         document.getElementById('top-current-price').style.color = color;
 
-        // 2. 우측 주문창 옐로우 박스 가격 & 총 결제 금액 동기화
         document.getElementById('order-price-input').value = currentPrice.toLocaleString() + "원";
         document.getElementById('total-calc-banner').querySelector('span:last-child').innerText = (currentPrice * qty).toLocaleString() + "원";
 
-        // 3. 📊 호가창 실시간 마크업 재생성 (매도 5줄 + 매수 3줄 구조)
         const hogaWindow = document.getElementById('hoga-window-target');
         hogaWindow.innerHTML = '';
 
-        // 매도 호가 5줄 (위에서부터 높은 가격 순으로 정렬되어 내려옴)
         for (let i = 5; i >= 1; i--) {
             const price = serverBasePrice + (i * tickSize);
             const r = (((price - serverBasePrice) / serverBasePrice) * 100).toFixed(2);
@@ -266,7 +276,6 @@
             hogaWindow.appendChild(row);
         }
 
-        // 매수 호가 3줄 (현재가 밑으로 떨어지는 라인)
         for (let i = 1; i <= 3; i++) {
             const price = serverBasePrice - (i * tickSize);
             const r = (((price - serverBasePrice) / serverBasePrice) * 100).toFixed(2);
@@ -285,23 +294,18 @@
         }
     }
 
-    // 🔄 2초마다 호가창 실시간 연동 타이머 가동 (0.1% ~ 0.5% 내 미세 변동)
     setInterval(() => {
         const rand = Math.random();
-        // 40% 확률로 주가 변동 발생
         if (rand < 0.4) {
             const direction = Math.random() > 0.5 ? 1 : -1;
-            // 한 틱 위아래로 무빙치기
             currentPrice += (direction * tickSize);
 
-            // 기준가 대비 과도한 폭등폭락 방지 캡 장착 (최대 5틱 이내 제어)
             if (currentPrice > serverBasePrice + (4 * tickSize)) currentPrice = serverBasePrice + (4 * tickSize);
             if (currentPrice < serverBasePrice - (2 * tickSize)) currentPrice = serverBasePrice - (2 * tickSize);
         }
 
-        // 호가 잔량 변동은 100% 실시간 업데이트 처리
         volumes = volumes.map(v => {
-            const delta = Math.floor(Math.random() * 11) - 5; // -5 ~ +5 주식 변동
+            const delta = Math.floor(Math.random() * 11) - 5;
             const newV = v + delta;
             return newV < 1 ? 1 : newV;
         });
@@ -309,20 +313,16 @@
         updateUI();
     }, 2000);
 
-    // 수량 플러스 마이너스 핸들러
     document.querySelector('.qty-btn.left-minus').addEventListener('click', () => { if(qty > 1) { qty--; document.getElementById('order-qty').value = qty + "주"; updateUI(); } });
     document.querySelector('.qty-btn.right-plus').addEventListener('click', () => { qty++; document.getElementById('order-qty').value = qty + "주"; updateUI(); });
 
-    // 가격 플러스 마이너스 핸들러 (수동 호가 변경 기능 지원)
     document.getElementById('price-minus').addEventListener('click', () => { currentPrice -= tickSize; updateUI(); });
     document.getElementById('price-plus').addEventListener('click', () => { currentPrice += tickSize; updateUI(); });
 
-    // 영양 매수 주문 가동 체결 함수
     function executeBuyOrder() {
         alert(`🔔 [매수 주문 접수 완료]\n\n• 종목명: STU {{ stock_name }}\n• 체결가: ${currentPrice.toLocaleString()}원\n• 수량: ${qty}주\n• 총액: ${(currentPrice * qty).toLocaleString()}원\n\n성공적으로 거래가 체결되어 자산 포트폴리오에 반영되었습니다.`);
     }
 
-    // 화면 켜지는 순간 마스터 엔진 렌더링 가동
     window.onload = () => { updateUI(); };
 </script>
 </body>

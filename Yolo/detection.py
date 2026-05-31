@@ -165,7 +165,7 @@ if __name__ == '__main__':
     parser.add_argument('--cfg', type=str, default='yolov3-spp-403cls.cfg', help='*.cfg path')
     parser.add_argument('--names', type=str, default='403food.names', help='*.names path')
     parser.add_argument('--weights', type=str, default='best_403food_e200b150v2.pt', help='weights path')
-    parser.add_argument('--source', type=str, default='../Fooddata/Images', help='source')
+    parser.add_argument('--source', type=str, default='../Fooddata/test', help='source')
     parser.add_argument('--output', type=str, default='../Yolo_output', help='output folder')
     parser.add_argument('--device', default='cpu', help='device id (i.e. 0 or 0,1) or cpu')
     parser.add_argument('--save-xml', action='store_true', default=True, help='save results to *.xml')
