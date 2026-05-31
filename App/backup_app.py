@@ -9,20 +9,7 @@ import numpy as np
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 from werkzeug.utils import secure_filename
 
-# 📰 [모듈화 링킹] 외부 격리 매니저 부품들 일제히 소환
-from news_manager import get_all_news, trigger_purchase_news
-from diet_manager import calculate_diet_nutrition
-
 app = Flask(__name__)
-
-# ====================================================================
-# 💰 [정민's 가상 계좌 장부 시스템 개설]
-# 유저가 매수(체결)할 때마다 9대 영양소를 누적 합산하여 보관하는 든든한 금고
-# ====================================================================
-MY_ACCOUNT_BALANCE = {
-    'kcal': 0, 'carbo': 0, 'sugar': 0, 'protein': 0, 'fat': 0,
-    'sfat': 0, 'tfat': 0, 'chol': 0, 'sodium': 0
-}
 
 # ====================================================================
 # 🛠️ [경로 주입 및 인라인 모듈 결합 파트]
@@ -94,7 +81,6 @@ def login_process():
 
 @app.route('/main')
 def universal_router():
-    global MY_ACCOUNT_BALANCE  # 가상 장부 소환
     stock_name = request.args.get('stock_name', '무명주주(000000)')
     account_name = request.args.get('account_name', '0000-0000 [위탁종합]')
     target_page = request.args.get('page', 'main')
@@ -109,30 +95,6 @@ def universal_router():
         else:
             raw_random_price = random.randint(10000, 100000)
             base_price = (raw_random_price // 50) * 50
-
-        # 📡 [MTS 주문 체결 실시간 감시 센서 장착]
-        # main.html에서 현금 매수 확정을 치고 주소창에 수치를 실어 보냈을 때 작동
-        req_kcal = request.args.get('kcal', '0')
-        if req_kcal and req_kcal != '0':
-            try:
-                current_kcal = int(float(req_kcal))
-            except Exception as e:
-                print(f"⚠️ [센서 예외 보정] {e}")
-                current_kcal = 1
-
-            food_title = request.args.get('food_name', stock_name)
-            print(f"📡 [MTS 체결 센서] 감지 성공 -> 종목: {food_title} / {current_kcal}kcal 뉴스룸 전송")
-
-            # 1) 📰 뉴스룸 기사 즉시 동적 증식 발행
-            trigger_purchase_news(food_title, current_kcal)
-
-            # 2) 💰 전역 계좌 장부에 영양소 실시간 누적 합산 (자산 탭 빌드업)
-            for key in MY_ACCOUNT_BALANCE.keys():
-                try:
-                    val_str = request.args.get(key, '0')
-                    MY_ACCOUNT_BALANCE[key] += float(val_str) if val_str else 0.0
-                except:
-                    pass
 
         is_ocr = request.args.get('is_ocr', 'false')
         nutrients = {
@@ -158,12 +120,6 @@ def universal_router():
     elif target_page == 'search':
         return render_template('search.html', stock_name=stock_name, account_name=account_name)
 
-    elif target_page == 'news':
-        return render_template('news.html',
-                               stock_name=stock_name,
-                               account_name=account_name,
-                               news_list=get_all_news())
-
     return render_template(f'{target_page}.html', stock_name=stock_name, account_name=account_name)
 
 
@@ -171,6 +127,7 @@ def universal_router():
 # ⚡ [AI 연동 비동기 통신 비즈니스 라우터 파트]
 # ====================================================================
 
+# 🔤 [트랙 B] 가공식품 전용 EasyOCR
 @app.route('/api/upload_ocr', methods=['POST'])
 def api_upload_ocr():
     if 'file' not in request.files:
@@ -211,6 +168,7 @@ def serve_ocr_image(filename):
     return send_from_directory(save_dir, filename)
 
 
+# 📸 [트랙 A] 일반 식단 전용 YOLOv3 + ResNet 인라인 결합 라우터 (찐연동 패치)
 @app.route('/api/upload_yolo', methods=['POST'])
 def api_upload_yolo():
     if 'file' not in request.files:
@@ -221,6 +179,7 @@ def api_upload_yolo():
         return jsonify({'status': 'error', 'message': '파일명이 비어있습니다.'}), 400
 
     try:
+        # 1. 사진 수신 및 세이브
         save_dir = os.path.join(root_dir, 'Yolo', 'Images')
         if not os.path.exists(save_dir):
             os.makedirs(save_dir)
@@ -232,6 +191,7 @@ def api_upload_yolo():
         saved_image_path = os.path.join(save_dir, filename)
         file.save(saved_image_path)
 
+        # 2. YOLOv3 인라인 구동
         print(f"\n🚀 [AI 파이프라인] YOLOv3 내부 엔진 가동 시작: {filename}")
         xml_output_dir = os.path.join(root_dir, 'Yolo_output')
 
@@ -241,11 +201,72 @@ def api_upload_yolo():
             print(f"⚠️ [탐지 실패] XML 미생성 혹은 인식물체 없음 ➔ 직접 검색 이동!")
             return jsonify({'status': 'fail', 'code': 'YOLO_FAIL'})
 
-        final_result = calculate_diet_nutrition(filename, xml_output_dir, nutrient_df)
-        print(f"✅ [탐지 성공] 코드: {detected_code} ➔ 찐 이름 매칭 완료: '{final_result['food_name']}'")
+        # 3. 🛡️ [XML 강제 파싱 디버깅] 숫자가 아닌 <food_name> 한글 명칭 진짜 가로채기
+        file_basename = os.path.splitext(filename)[0]
+        xml_path = os.path.join(xml_output_dir, f"{file_basename}.xml")
 
-        # 📰 YOLO 촬영 성공 시 즉각 뉴스룸 기본 발행 트리거 발동
-        trigger_purchase_news(final_result['food_name'], final_result['열량'])
+        real_food_name = "알 수 없는 음식"
+        if os.path.exists(xml_path):
+            import xml.etree.ElementTree as ET
+            tree = ET.parse(xml_path)
+            root_xml = tree.getroot()
+            obj_tag = root_xml.find('object')
+            if obj_tag is not None:
+                fn_tag = obj_tag.find('food_name')
+                if fn_tag is not None and fn_tag.text:
+                    real_food_name = fn_tag.text.strip() # 숫자가 아닌 '콩나물국' 추출 성공!
+
+        print(f"✅ [탐지 성공] 코드: {detected_code} ➔ 찐 이름 매칭 완료: '{real_food_name}'")
+
+        # 4. ⚖️ ResNet 중량 비율 예측 바통 터치 구역
+        # TODO: 추후 ResNet 연동 완료 시 아래의 mock_q 등급 자리에 실제 추론 코드 바인딩 가능!
+        mock_q_level = "Q3" # ResNet 예측 등급 예시 (Q1~Q5)
+
+        # 🎰 [정민's 내부 회로 중량 배율 맵 정의]
+        q_ratio_map = {"Q1": 0.25, "Q2": 0.50, "Q3": 0.75, "Q4": 1.00, "Q5": 1.25}
+        current_ratio = q_ratio_map.get(mock_q_level, 1.00)
+
+        # 5. 📊 food_nutrition.csv 영양소 추적 및 결측치 치환 연산
+        final_result = {
+            'food_name': real_food_name,
+            'quantity_level': mock_q_level,
+            '열량': 0, '탄수화물': 0, '당류': 0, '단백질': 0, '지방': 0,
+            '포화지방': 0, '트랜스지방': 0, '콜레스테롤': 0, '나트륨': 0
+        }
+
+        if not nutrient_df.empty:
+            # CSV 내부에서 한글 명칭과 정확히 매치되는 행 탐색
+            matched_rows = nutrient_df[nutrient_df['음 식 명'] == real_food_name]
+
+            if not matched_rows.empty:
+                row = matched_rows.iloc[0]
+
+                # 안전한 실수/정수 파싱용 인라인 헬퍼 함수
+                def parse_nut(val, multiplier=1.0):
+                    if pd.isna(val) or str(val).strip() == '-' or str(val).strip() == '':
+                        return 0
+                    try:
+                        return round(float(str(val).replace(',', '')) * multiplier, 2)
+                    except:
+                        return 0
+
+                # 기본 중량 가져와서 Q비율 반영한 섭취 중량 계산
+                base_weight = parse_nut(row.get('중량(g)', 200))
+                calculated_g = round(base_weight * current_ratio, 1)
+
+                # 형 회로 반영: 이제 UI에 Q3 문자가 아니라 계산된 실물 g수가 출력됨!
+                final_result['quantity_level'] = f"{calculated_g}g"
+
+                # 9대 영양성분 스펙 곱연산 정밀 추출
+                final_result['열량'] = int(parse_nut(row.get('에너지(kcal)'), current_ratio))
+                final_result['탄수화물'] = parse_nut(row.get('탄수화물(g)'), current_ratio)
+                final_result['당류'] = parse_nut(row.get('당류(g)'), current_ratio)
+                final_result['단백질'] = parse_nut(row.get('단백질(g)'), current_ratio)
+                final_result['지방'] = parse_nut(row.get('지방(g)'), current_ratio)
+                final_result['포화지방'] = parse_nut(row.get('포화지방(g)'), current_ratio) # 만약 없으면 아래 0 방어선 작동
+                final_result['트랜스지방'] = parse_nut(row.get('트랜스지방(g)'), current_ratio)
+                final_result['콜레스테롤'] = int(parse_nut(row.get('콜레스테롤(mg)'), current_ratio))
+                final_result['나트륨'] = int(parse_nut(row.get('나트륨(mg)'), current_ratio))
 
         web_image_url = f"/api/yolo_image/{filename}"
 
@@ -267,7 +288,7 @@ def serve_yolo_image(filename):
 
 
 # ====================================================================
-# ⚡ 초고속 실시간 종목 검색 백엔드 API (직접 검색용 9대 영양소 동기화 패치)
+# ⚡ 초고속 실시간 종목 검색 백엔드 API
 # ====================================================================
 @app.route('/api/search_food')
 def api_search_food():
@@ -293,35 +314,29 @@ def api_search_food():
         name_series = df.get('식품명', df.get('대표식품명', pd.Series(dtype=str)))
         cat_series = df.get('식품대분류명', df.get('대표식품명', pd.Series(dtype=str)))
 
-        # 🚀 [오타 수술 완료] 에러를 유발하던 'cat_section =' 찌꺼기를 삭제했습니다!
         mask = name_series.fillna('').astype(str).str.lower().str.contains(query) | \
                cat_series.fillna('').astype(str).str.lower().str.contains(query)
         result_df = df[mask]
     else:
-        result_df = df.sample(n=min(6, len(df))) if mode == 'recent' else df.head(50)
+        if mode == 'recent':
+            result_df = df.sample(n=min(6, len(df)))
+        else:
+            result_df = df.head(50)
 
     output = []
     for _, row in result_df.iterrows():
-        name = row.get('식품명', row.get('대표식품명', '이름 없음'))
-        cat = row.get('식품대분류명', row.get('상위클래스명', '분류 없음'))
-
-        def clean_val(val):
-            if pd.isna(val) or str(val).strip() == '-' or str(val).strip() == '': return 0
-            try: return round(float(str(val).replace(',', '')), 1)
-            except: return 0
+        name = row.get('식품명')
+        if pd.isna(name):
+            name = row.get('대표식품명', '이름 없음')
+        cat = row.get('식품대분류명')
+        if pd.isna(cat):
+            cat = row.get('대표식품명', '분류 없음')
+        kcal = row.get('열량', 0)
 
         output.append({
             'name': str(name),
             'cat': str(cat),
-            'kcal': int(clean_val(row.get('열량', row.get('에너지(kcal)', 0)))),
-            'carbo': clean_val(row.get('탄수화물', row.get('탄수화물(g)', 0))),
-            'sugar': clean_val(row.get('당류', row.get('당류(g)', 0))),
-            'protein': clean_val(row.get('단백질', row.get('단백질(g)', 0))),
-            'fat': clean_val(row.get('지방', row.get('지방(g)', 0))),
-            'sfat': clean_val(row.get('포화지방', row.get('포화지방(g)', 0))),
-            'tfat': clean_val(row.get('트랜스지방', row.get('트랜스지방(g)', 0))),
-            'chol': clean_val(row.get('콜레스테롤', row.get('콜레스테롤(mg)', 0))),
-            'sodium': clean_val(row.get('나트륨', row.get('나트륨(mg)', 0)))
+            'kcal': int(kcal) if pd.notna(kcal) else 0
         })
 
     return jsonify(output[:30])

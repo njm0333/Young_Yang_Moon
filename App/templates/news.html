@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>영양문 모바일 - 종합뉴스</title>
+    <style>
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background-color: #FFFFFF;
+            font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+            color: #000000; overflow: hidden;
+            -webkit-user-select: none; user-select: none;
+        }
+        .wrapper { display: flex; flex-direction: column; height: 100%; padding-bottom: 55px; box-sizing: border-box; }
+
+        /* 🟢 [메인 동기화] 민트색 헤더 */
+        header { background-color: #55B2B5; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; color: #FFFFFF; }
+        .header-left { display: flex; align-items: center; gap: 18px; }
+        .back-arrow { font-size: 1.4rem; font-weight: 300; cursor: pointer; }
+        .header-tabs { display: flex; gap: 16px; font-size: 1.1rem; font-weight: bold; }
+        .header-tabs span { opacity: 0.8; cursor: pointer; }
+        .header-tabs span.active { opacity: 1; border-bottom: 2px solid #FFFFFF; padding-bottom: 2px; }
+        .header-right { font-size: 1.3rem; cursor: pointer; opacity: 0.9; }
+
+        /* 🔍 [스크린샷 반영] 필터 및 검색 구역 */
+        .filter-section {
+            background-color: #FFFFFF; padding: 10px 14px;
+            border-bottom: 1px solid #E5E5E5; display: flex; flex-direction: column; gap: 8px;
+        }
+        .filter-row { display: flex; gap: 6px; }
+        .select-box {
+            flex: 1; background-color: #FFFFFF; border: 1px solid #CCCCCC;
+            color: #333; padding: 6px 8px; font-size: 0.85rem; border-radius: 3px; height: 34px; box-sizing: border-box;
+        }
+        .date-input {
+            flex: 1; background-color: #FFFFFF; border: 1px solid #CCCCCC;
+            color: #333; padding: 6px 8px; font-size: 0.85rem; border-radius: 3px; height: 34px; box-sizing: border-box; text-align: center;
+        }
+
+        .search-row { display: flex; align-items: center; gap: 6px; height: 34px; }
+        /* 토글 스위치 UI */
+        .toggle-wrap { display: flex; align-items: center; gap: 4px; font-size: 0.75rem; font-weight: bold; color: #555; }
+        .toggle-btn {
+            width: 36px; height: 20px; background-color: #1E3A8A; border-radius: 10px;
+            position: relative; display: flex; align-items: center; padding: 0 2px; box-sizing: border-box; cursor: pointer;
+        }
+        .toggle-btn::before {
+            content: 'ON'; color: white; font-size: 0.6rem; margin-left: 2px;
+        }
+        .toggle-circle {
+            width: 16px; height: 16px; background-color: #FFFFFF; border-radius: 50%;
+            position: absolute; right: 2px;
+        }
+
+        .search-input-wrap {
+            flex: 1; display: flex; align-items: center; border: 1px solid #CCCCCC;
+            border-radius: 3px; background-color: #FFFFFF; height: 100%; box-sizing: border-box;
+        }
+        .search-input { flex: 1; border: none; outline: none; padding: 0 8px; font-size: 0.85rem; }
+        .search-icon-btn { background: none; border: none; font-size: 1rem; color: #888; cursor: pointer; padding: 0 8px; }
+        .refresh-btn {
+            border: 1px solid #CCCCCC; background-color: #FFFFFF; border-radius: 3px;
+            height: 100%; aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem; color: #888; cursor: pointer; padding: 0; box-sizing: border-box;
+        }
+
+        /* 📜 [스크롤 컨테이너] 뉴스 리스트 */
+        .news-feed-pane {
+            flex: 1; overflow-y: auto; background-color: #FFFFFF;
+            -webkit-overflow-scrolling: touch;
+        }
+        .news-row {
+            padding: 14px 16px; border-bottom: 1px solid #EEF1F6;
+            cursor: pointer; display: flex; flex-direction: column; gap: 6px;
+        }
+        .news-row:active { background-color: #F9F9F9; }
+
+        .news-title {
+            font-size: 1rem; font-weight: 500; color: #222222;
+            line-height: 1.4; word-break: break-all;
+        }
+        /* 동적 렌더링 시 매수 종목 강조 컬러 (main.html 테마 기반) */
+        .stock-link { color: #2B66CC; font-weight: bold; }
+
+        .news-meta {
+            display: flex; gap: 8px; font-size: 0.8rem; color: #888888; align-items: center;
+        }
+
+        /* 💬 [메인 동기화] 하단 배너 및 내비게이션 바 */
+        .bottom-banner-text {
+            background-color: #F6F6F6; padding: 6px 12px; font-size: 0.8rem; color: #444444;
+            border-top: 1px solid #E5E5E5; display: flex; align-items: center; gap: 6px;
+        }
+        .badge-purple { background-color: #E2D1F9; color: #7B3EBF; font-size: 0.7rem; padding: 1px 4px; border-radius: 8px; font-weight: bold; }
+
+        .nav-tab-bar {
+            position: fixed; bottom: 0; left: 0; width: 100%; height: 55px;
+            background-color: #FFFFFF; border-top: 1px solid #E5E5E5;
+            display: flex; align-items: center; justify-content: space-around;
+            box-sizing: border-box; z-index: 9000;
+        }
+        .nav-item {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            color: #777777; font-size: 0.8rem; width: 25%; font-weight: 500; text-decoration: none; height: 100%;
+        }
+        .nav-item.active { color: #222222; font-weight: bold; }
+        .nav-item span { display: block; }
+    </style>
+</head>
+<body>
+
+<div class="wrapper">
+    <header>
+        <div class="header-left">
+            <span class="back-arrow" onclick="history.back();">←</span>
+            <div class="header-tabs">
+                <span class="active">종합뉴스</span>
+                <span>전자공시</span>
+            </div>
+        </div>
+        <div class="header-right">⋮</div>
+    </header>
+
+    <div class="filter-section">
+        <div class="filter-row">
+            <select class="select-box"><option>언론사 전체</option></select>
+            <select class="select-box"><option>뉴스전체</option></select>
+            <input type="text" class="date-input" value="2026.06.01" readonly>
+        </div>
+        <div class="search-row">
+            <div class="toggle-wrap">
+                실시간뉴스
+                <div class="toggle-btn"><div class="toggle-circle"></div></div>
+            </div>
+            <div class="search-input-wrap">
+                <input type="text" class="search-input" placeholder="검색어를 입력해주세요">
+                <button class="search-icon-btn">🔍</button>
+            </div>
+            <button class="refresh-btn" onclick="location.reload();">↻</button>
+        </div>
+    </div>
+
+    <div class="news-feed-pane">
+        {% for news in news_list %}
+        <div class="news-row">
+            <div class="news-title">{{ news.title | safe }}</div>
+            <div class="news-meta">
+                <span>2026.06.01</span>
+                <span>{{ news.time }}</span>
+                <span>|</span>
+                <span>{{ news.author }}</span>
+            </div>
+        </div>
+        {% else %}
+        <div style="text-align:center; padding:40px; color:#999; font-size:0.9rem;">
+            등록된 시황 뉴스가 없습니다.
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="bottom-banner-text">
+        <span class="badge-purple">지수 채팅</span>
+        <span>혼자 머리 싸매지 말고, 주주들이랑 뇌피셜 공유ㄱㄱ</span>
+    </div>
+
+    <nav class="nav-tab-bar">
+        <a href="/main?stock_name={{ stock_name }}&account_name={{ account_name }}&page=search" class="nav-item"><span>검색</span></a>
+        <a href="/main?stock_name={{ stock_name }}&account_name={{ account_name }}&page=main" class="nav-item"><span>주문</span></a>
+        <a href="/main?stock_name={{ stock_name }}&account_name={{ account_name }}&page=news" class="nav-item active"><span>뉴스</span></a>
+        <a href="/main?stock_name={{ stock_name }}&account_name={{ account_name }}&page=account" class="nav-item"><span>자산</span></a>
+    </nav>
+</div>
+
+</body>
+</html>
