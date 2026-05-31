@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>영양문 모바일 - 로그인</title>
+    <style>
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background-color: #0A0A0A;
+            font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+            overflow: hidden;
+        }
+
+        /* 0. 로그인 스크린 */
+        #login-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #0A0A0A;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 10000; padding: 20px; box-sizing: border-box;
+        }
+        .login-box { width: 100%; max-width: 360px; text-align: center; }
+        .login-title { color: #FFFFFF; font-size: 2rem; font-weight: 800; margin-bottom: 10px; letter-spacing: -1px; }
+        .login-title .highlight { color: #FF52D9; }
+        .login-sub { color: #8E8E93; font-size: 0.9rem; margin-bottom: 40px; }
+        .input-group { margin-bottom: 20px; text-align: left; }
+        .input-group label { color: #BBBBBB; font-size: 0.85rem; display: block; margin-bottom: 8px; padding-left: 4px; }
+        .input-user-name {
+            width: 100%; background-color: #1C1C1E; border: 1px solid #2C2C2E; border-radius: 6px;
+            padding: 14px; box-sizing: border-box; color: #FFFFFF; font-size: 1.1rem; outline: none;
+        }
+        .input-user-name:focus { border-color: #007AFF; }
+        .btn-login {
+            width: 100%; background: linear-gradient(90deg, #007AFF, #FF52D9); border: none; border-radius: 6px;
+            color: #FFFFFF; padding: 14px; font-size: 1.1rem; font-weight: 700; cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 82, 217, 0.2);
+        }
+
+        /* 1. 로딩(스플래시) 스크린 */
+        #splash-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at center, #1c1026 0%, #0a0a0a 100%);
+            display: none; flex-direction: column; justify-content: space-between; align-items: center;
+            z-index: 9999; padding: 80px 20px 40px 20px; box-sizing: border-box;
+        }
+        .splash-top { text-align: center; }
+        .splash-sub { color: #BBBBBB; font-size: 1.1rem; margin-bottom: 8px; font-weight: 300; }
+        .splash-main { color: #FFFFFF; font-size: 2.3rem; font-weight: 800; margin: 0; }
+        .splash-center { flex: 1; display: flex; align-items: center; justify-content: center; width: 100%; max-width: 85%; }
+        .brand-logo-main { width: 45%; max-width: 350px; min-width: 180px; height: auto; object-fit: contain; border-radius: 4px; }
+        .splash-bottom { width: 100%; display: flex; flex-direction: column; align-items: center; }
+        .loading-container { width: 90%; max-width: 400px; }
+        .loading-text-container { display: flex; justify-content: space-between; color: #8E8E93; font-size: 0.85rem; margin-bottom: 6px; }
+        .progress-bar-bg { width: 100%; height: 4px; background-color: #2C2C2E; border-radius: 2px; overflow: hidden; }
+        .progress-bar-fill { width: 0%; height: 100%; background: linear-gradient(90deg, #007AFF, #FF52D9); transition: width 2s linear; }
+    </style>
+</head>
+<body>
+
+<div id="login-screen">
+    <form action="/login_process" method="POST" id="login-form" class="login-box">
+        <h1 class="login-title"><span class="highlight">營養門</span> 모바일</h1>
+        <p class="login-sub">ME Corp. 실시간 자산 관리 시스템</p>
+
+        <div class="input-group">
+            <label for="username">상장 주식명 (사용자 이름)</label>
+            <input type="text" id="username" name="username" class="input-user-name" placeholder="이름을 입력하세요" autocomplete="off" required>
+        </div>
+
+        <button type="button" id="btn-submit" class="btn-login">영양문 정규장 접속</button>
+    </form>
+</div>
+
+<div id="splash-screen">
+    <div class="splash-top">
+        <div class="splash-sub">주식, 알아서 자동으로 편하게.</div>
+        <h2 class="splash-main"><span class="highlight">건강주식도</span> 영웅문</h2>
+    </div>
+    <div class="splash-center">
+        <img src="{{ url_for('static', filename='logo.png') }}" class="brand-logo-main" alt="영양문 로고">
+    </div>
+    <div class="splash-bottom">
+        <div class="loading-container">
+            <div class="loading-text-container">
+                <span>Ver.1.5.8</span>
+                <span id="status-text">종목 데이터 동기화중... 0%</span>
+            </div>
+            <div class="progress-bar-bg">
+                <div id="progress-fill" class="progress-bar-fill"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const loginForm = document.getElementById('login-form');
+    const loginScreen = document.getElementById('login-screen');
+    const splashScreen = document.getElementById('splash-screen');
+    const usernameInput = document.getElementById('username');
+    const btnSubmit = document.getElementById('btn-submit');
+    const progressFill = document.getElementById('progress-fill');
+    const statusText = document.getElementById('status-text');
+
+    btnSubmit.addEventListener('click', () => {
+        const name = usernameInput.value.trim();
+        if (name === "") {
+            alert("상장할 주식명(이름)을 입력해주세요!");
+            return;
+        }
+
+        // 1. 로그인 숨기고 가짜 로딩바 작동
+        loginScreen.style.display = 'none';
+        splashScreen.style.display = 'flex';
+
+        setTimeout(() => {
+            progressFill.style.width = '100%';
+            statusText.innerText = `[${name}] 종목 동기화 완료... 100%`;
+        }, 50);
+
+        // 2. 2초 로딩바 완료 후 Flask 서버로 폼 전송(Submit)하여 다음 페이지로 이동
+        setTimeout(() => {
+            loginForm.submit();
+        }, 2050);
+    });
+
+    usernameInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') { e.preventDefault(); btnSubmit.click(); }
+    });
+</script>
+</body>
+</html>
