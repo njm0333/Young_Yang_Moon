@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>영양문 모바일 - 주식주문</title>
     <style>
-        /* 레퍼런스 이미지 화이트 테마 초기화 */
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
             background-color: #FFFFFF;
@@ -13,17 +12,8 @@
             color: #000000; overflow: hidden;
             -webkit-user-select: none; user-select: none;
         }
-
-        .wrapper {
-            display: flex; flex-direction: column; height: 100%;
-        }
-
-        /* 1. 최상단 키움 민트블루 타이틀 바 */
-        header {
-            background-color: #55B2B5;
-            padding: 14px 16px; display: flex; align-items: center; justify-content: space-between;
-            color: #FFFFFF;
-        }
+        .wrapper { display: flex; flex-direction: column; height: 100%; }
+        header { background-color: #55B2B5; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; color: #FFFFFF; }
         .header-left { display: flex; align-items: center; gap: 18px; }
         .back-arrow { font-size: 1.4rem; font-weight: 300; cursor: pointer; }
         .header-tabs { display: flex; gap: 16px; font-size: 1.1rem; font-weight: bold; }
@@ -31,163 +21,78 @@
         .header-tabs span.active { opacity: 1; border-bottom: 2px solid #FFFFFF; padding-bottom: 2px; }
         .header-right { font-size: 1.3rem; cursor: pointer; opacity: 0.9; }
 
-        /* 2. 주식 종목 정보 영역 */
-        .stock-info-bar {
-            background-color: #FFFFFF; padding: 12px 14px;
-            display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 1px solid #E5E5E5;
-        }
+        .stock-info-link { text-decoration: none; color: inherit; display: block; }
+        .stock-info-bar { background-color: #FFFFFF; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #E5E5E5; }
+        .stock-info-bar:active { background-color: #F5F5F5; }
         .stock-title-box { display: flex; flex-direction: column; gap: 4px; }
         .stock-title-row { display: flex; align-items: center; gap: 6px; }
         .star-icon { color: #CCCCCC; font-size: 1.2rem; }
         .stock-title-box h3 { margin: 0; font-size: 1.05rem; font-weight: bold; color: #222222; }
         .search-icon { color: #888888; font-size: 1rem; margin-left: 2px; }
-
         .stock-tags { display: flex; gap: 4px; font-size: 0.75rem; align-items: center; }
         .tag-free { background-color: #F0F0F0; border: 1px solid #DDD; padding: 1px 3px; color: #666; border-radius: 2px; }
         .tag-percent { background-color: #FCE4F4; border: 1px solid #F9C2E3; padding: 1px 3px; color: #B93382; font-weight: bold; border-radius: 2px; }
         .tag-code { color: #888888; }
-
         .stock-price-box { text-align: right; }
         .current-price { font-size: 1.6rem; font-weight: bold; color: #2B66CC; margin: 0; letter-spacing: -0.5px; }
         .price-change { font-size: 0.8rem; color: #2B66CC; margin: 2px 0 0 0; font-weight: 500; }
 
-        /* 계좌 및 위탁 구역 */
-        .account-bar {
-            background-color: #FFFFFF; padding: 6px 12px;
-            display: flex; gap: 6px; border-bottom: 1px solid #E5E5E5; align-items: center;
-        }
+        .account-bar { background-color: #FFFFFF; padding: 6px 12px; display: flex; gap: 6px; border-bottom: 1px solid #E5E5E5; align-items: center; }
         .tag-yui { border: 1px solid #CCC; color: #555; padding: 5px 8px; font-size: 0.8rem; border-radius: 3px; }
-        .select-box {
-            background-color: #FFFFFF; border: 1px solid #CCCCCC; color: #333;
-            padding: 6px 8px; font-size: 0.9rem; border-radius: 3px; flex: 1; height: 34px; box-sizing: border-box;
-        }
-        .input-box {
-            background-color: #FFFFFF; border: 1px solid #CCCCCC; color: #333;
-            padding: 6px 8px; font-size: 0.9rem; border-radius: 3px; max-width: 95px; height: 34px; box-sizing: border-box;
-        }
-        .btn-square-sm {
-            background-color: #FFFFFF; border: 1px solid #CCCCCC; color: #333;
-            padding: 0 10px; font-size: 0.85rem; border-radius: 3px; height: 34px; cursor: pointer;
-        }
+        .select-box { background-color: #FFFFFF; border: 1px solid #CCCCCC; color: #333; padding: 6px 8px; font-size: 0.9rem; border-radius: 3px; flex: 1; height: 34px; box-sizing: border-box; }
+        .input-box { background-color: #FFFFFF; border: 1px solid #CCCCCC; color: #333; padding: 6px 8px; font-size: 0.9rem; border-radius: 3px; max-width: 95px; height: 34px; box-sizing: border-box; }
+        .btn-square-sm { background-color: #FFFFFF; border: 1px solid #CCCCCC; color: #333; padding: 0 10px; font-size: 0.85rem; border-radius: 3px; height: 34px; cursor: pointer; }
 
-        /* 3. 매수 / 매도 / 정정 대형 탭 */
-        .order-action-tabs {
-            display: flex; border-bottom: 1px solid #D5D5D5; background-color: #FFFFFF;
-        }
-        .action-tab {
-            flex: 1; text-align: center; padding: 12px 0; font-size: 1.1rem; font-weight: bold; color: #666666; cursor: pointer;
-        }
-        .action-tab.buy {
-            color: #C13966; border-bottom: 3px solid #C13966; font-weight: 900;
-        }
+        .order-action-tabs { display: flex; border-bottom: 1px solid #D5D5D5; background-color: #FFFFFF; }
+        .action-tab { flex: 1; text-align: center; padding: 12px 0; font-size: 1.1rem; font-weight: bold; color: #666666; cursor: pointer; }
+        .action-tab.buy { color: #C13966; border-bottom: 3px solid #C13966; font-weight: 900; }
         .action-tab.more { max-width: 45px; color: #999; font-weight: normal; }
 
-        /* 서브 호가/차트/체결가 탭 */
-        .sub-menu-bar {
-            display: flex; background-color: #FFFFFF; border-bottom: 1px solid #E5E5E5;
-        }
+        .sub-menu-bar { display: flex; background-color: #FFFFFF; border-bottom: 1px solid #E5E5E5; }
         .sub-menu-item { flex: 1; text-align: center; padding: 9px 0; font-size: 0.85rem; color: #555555; font-weight: 500; }
         .sub-menu-item.active { color: #000000; font-weight: bold; border-bottom: 2px solid #333333; }
 
-        /* 4. 메인 거래 영역 (좌측 호가창 vs 우측 주문창) */
-        .trade-container {
-            flex: 1; display: flex; overflow: hidden; background-color: #FFFFFF;
-        }
+        .trade-container { flex: 1; display: flex; overflow: hidden; background-color: #FFFFFF; }
 
-        /* [좌측] 호가창 - 이제 아래까지 끊김 없이 쭉 내려갑니다 */
-        .hoga-window {
-            width: 42%; border-right: 1px solid #E5E5E5; overflow-y: auto;
-        }
-        .hoga-row {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 11px 8px; font-size: 0.95rem; border-bottom: 1px solid #EEF1F6;
-        }
+        /* 📊 호가창 스타일 고도화 */
+        .hoga-window { width: 42%; border-right: 1px solid #E5E5E5; overflow-y: auto; }
+        .hoga-row { display: flex; justify-content: space-between; align-items: center; padding: 11px 8px; font-size: 0.95rem; border-bottom: 1px solid #EEF1F6; height: 42px; box-sizing: border-box; }
         .hoga-row.ask { background-color: #EDF4FC; color: #1E50A2; }
         .hoga-row.ask.highlight-bg { background-color: #E2ECFA; }
         .hoga-row.bid { background-color: #FDF0F6; color: #D9383A; }
-
         .hoga-price { font-weight: bold; display: flex; flex-direction: column; line-height: 1.2; }
         .hoga-won { font-size: 0.72rem; color: #888888; font-weight: normal; margin-top: 1px; }
-        .hoga-rate { font-size: 0.75rem; text-align: right; padding-right: 4px; }
-        .hoga-volume { font-size: 0.8rem; color: #333333; text-align: right; width: 35px; padding-right: 2px; }
+        .hoga-rate { font-size: 0.75rem; text-align: right; padding-right: 4px; flex: 1; }
+        .hoga-volume { font-size: 0.8rem; color: #333333; text-align: right; width: 42px; padding-right: 2px; font-weight: bold; }
 
-        /* [우측] 주문 입력창 - 내부에 매수 버튼을 포함하도록 수정 */
-        .order-form {
-            width: 58%; padding: 8px; box-sizing: border-box; overflow-y: auto;
-            display: flex; flex-direction: column; gap: 8px; background-color: #FFFFFF;
-            justify-content: flex-start;
-        }
+        .order-form { width: 58%; padding: 8px; box-sizing: border-box; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; background-color: #FFFFFF; justify-content: flex-start; }
         .form-row { display: flex; gap: 4px; align-items: center; width: 100%; }
-
-        .qty-counter {
-            display: flex; border: 1px solid #CCCCCC; border-radius: 3px; flex: 1; overflow: hidden; height: 38px;
-        }
-        .qty-btn {
-            background-color: #FFFFFF; border: none; color: #888888; width: 34px; font-size: 1.1rem; cursor: pointer;
-        }
+        .qty-counter { display: flex; border: 1px solid #CCCCCC; border-radius: 3px; flex: 1; overflow: hidden; height: 38px; }
+        .qty-btn { background-color: #FFFFFF; border: none; color: #888888; width: 34px; font-size: 1.1rem; cursor: pointer; }
         .qty-btn.left-minus { border-right: 1px solid #E5E5E5; }
         .qty-btn.right-plus { border-left: 1px solid #E5E5E5; }
-        .qty-input {
-            flex: 1; background-color: #FFFFFF; border: none; color: #000000; text-align: center; font-size: 0.9rem; width: 100%; outline: none;
-        }
-
-        .btn-square-lg {
-            background-color: #FFFFFF; border: 1px solid #CCCCCC; color: #333333;
-            padding: 0 4px; border-radius: 3px; font-size: 0.85rem; height: 38px;
-            min-width: 62px; text-align: center; box-sizing: border-box; line-height: 1.2;
-        }
-
+        .qty-input { flex: 1; background-color: #FFFFFF; border: none; color: #000000; text-align: center; font-size: 0.9rem; width: 100%; outline: none; font-weight: bold; }
+        .btn-square-lg { background-color: #FFFFFF; border: 1px solid #CCCCCC; color: #333333; padding: 0 4px; border-radius: 3px; font-size: 0.85rem; height: 38px; min-width: 62px; text-align: center; box-sizing: border-box; line-height: 1.2; }
         .checkbox-group { display: flex; align-items: center; gap: 4px; font-size: 0.85rem; color: #333333; }
         .checkbox-group input { width: 15px; height: 15px; accent-color: #55B2B5; border: 1px solid #CCC; }
+        .yellow-highlight-box { display: flex; border: 1px solid #CCCCCC; border-radius: 3px; flex: 1; overflow: hidden; height: 38px; background-color: #FFF2CC; }
+        .yellow-input { flex: 1; background-color: #FFF2CC; border: none; color: #333333; font-weight: bold; text-align: center; font-size: 0.95rem; outline: none; }
 
-        .yellow-highlight-box {
-            display: flex; border: 1px solid #CCCCCC; border-radius: 3px; flex: 1; overflow: hidden; height: 38px; background-color: #FFF2CC;
-        }
-        .yellow-input {
-            flex: 1; background-color: #FFF2CC; border: none; color: #333333; font-weight: bold; text-align: center; font-size: 0.95rem; outline: none;
-        }
-
-        /* 5. 🎯 [위치 수정] 우측 주문창 안으로 쏙 들어온 매수 주문 버튼 */
-        .btn-huge-buy {
-            background-color: #B5527F; border: none; color: #FFFFFF;
-            padding: 14px; font-size: 1.2rem; font-weight: bold; width: 100%;
-            text-align: center; box-sizing: border-box; letter-spacing: 1px;
-            margin-top: auto; /* 남는 공간 맨 아래로 밀착 */
-            border-radius: 3px;
-        }
-
-        /* 6. 최하단 배너 및 내비게이션 바 구역 */
-        .bottom-banner-text {
-            background-color: #F6F6F6; padding: 6px 12px; font-size: 0.8rem; color: #444444;
-            border-top: 1px solid #E5E5E5; display: flex; align-items: center; gap: 6px;
-        }
+        .btn-huge-buy { background-color: #B5527F; border: none; color: #FFFFFF; padding: 14px; font-size: 1.2rem; font-weight: bold; width: 100%; text-align: center; box-sizing: border-box; letter-spacing: 1px; margin-top: auto; border-radius: 3px; cursor: pointer; }
+        .bottom-banner-text { background-color: #F6F6F6; padding: 6px 12px; font-size: 0.8rem; color: #444444; border-top: 1px solid #E5E5E5; display: flex; align-items: center; gap: 6px; }
         .badge-purple { background-color: #E2D1F9; color: #7B3EBF; font-size: 0.7rem; padding: 1px 4px; border-radius: 8px; font-weight: bold; }
-
-        .nav-tab-bar {
-            height: 55px; background-color: #FFFFFF; border-top: 1px solid #E5E5E5;
-            display: flex; justify-content: space-around; align-items: center;
-        }
-        .btn-menu-total {
-            background-color: #388499; color: #FFFFFF; height: 100%;
-            display: flex; flex-direction: column; justify-content: center; align-items: center; width: 18%; gap: 1px;
-            cursor: pointer;
-        }
-        .nav-item {
-            display: flex; flex-direction: column; align-items: center;
-            color: #777777; font-size: 0.8rem; width: 16.4%; font-weight: 500;
-            text-decoration: none;
-        }
+        .nav-tab-bar { height: 55px; background-color: #FFFFFF; border-top: 1px solid #E5E5E5; display: flex; justify-content: space-around; align-items: center; }
+        .btn-menu-total { background-color: #388499; color: #FFFFFF; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; width: 18%; gap: 1px; cursor: pointer; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: #777777; font-size: 0.8rem; width: 16.4%; font-weight: 500; text-decoration: none; }
         .nav-item.active { color: #222222; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div class="wrapper">
-    <!-- 1. 상단 타이틀 민트 바 -->
     <header>
         <div class="header-left">
-            <span class="back-arrow">←</span>
+            <span class="back-arrow" onclick="location.href='/'">←</span>
             <div class="header-tabs">
                 <span class="active">주식주문</span>
                 <span>미체결</span>
@@ -198,36 +103,34 @@
         <div class="header-right">⋮</div>
     </header>
 
-    <!-- 2. 주식 종목 정보 구역 -->
-    <div class="stock-info-bar">
-        <div class="stock-title-box">
-            <div class="stock-title-row">
-                <span class="star-icon">☆</span>
-                <h3>STU 한국건강 2배 {{ stock_name }} ETF</h3>
+    <a href="/main?stock_name={{ stock_name }}&account_name={{ account_name }}&page=search" class="stock-info-link">
+        <div class="stock-info-bar">
+            <div class="stock-title-box">
+                <div class="stock-title-row">
+                    <span class="star-icon">☆</span>
+                    <h3>STU {{ stock_name if stock_name else '한국건강 2배' }}</h3>
+                    <span class="search-icon">🔍 종목검색</span>
+                </div>
+                <div class="stock-tags">
+                    <span class="tag-free">무료</span>
+                    <span class="tag-percent">증100</span>
+                    <span class="tag-code">{{ stock_code if stock_code else '700768' }} · ETF</span>
+                </div>
             </div>
-            <div class="stock-tags">
-                <span class="tag-free">무료</span>
-                <span class="tag-percent">증100</span>
-                <span class="tag-code">SOXL · ETF</span>
+            <div class="stock-price-box">
+                <p class="current-price" id="top-current-price">00,000</p>
+                <p class="price-change" id="top-price-change">▼ 0 &nbsp; 0.00%</p>
             </div>
         </div>
-        <div class="stock-price-box">
-            <p class="current-price">300,000</p>
-            <p class="price-change">▼ 420 &nbsp; -0.14%</p>
-        </div>
-    </div>
+    </a>
 
-    <!-- 계좌 설정 구역 -->
     <div class="account-bar">
         <span class="tag-yui">유의</span>
-        <select class="select-box">
-            <option>{{ account_name }}</option>
-        </select>
+        <select class="select-box"><option>{{ account_name }}</option></select>
         <input type="password" class="input-box" placeholder="비밀번호 입력">
         <button class="btn-square-sm">환전</button>
     </div>
 
-    <!-- 3. 대형 액션 탭 구역 -->
     <div class="order-action-tabs">
         <div class="action-tab buy">매수</div>
         <div class="action-tab">매도</div>
@@ -235,53 +138,16 @@
         <div class="action-tab more">⋮</div>
     </div>
 
-    <!-- 서브 호가/차트 메뉴 바 -->
     <div class="sub-menu-bar">
         <div class="sub-menu-item active">호가</div>
         <div class="sub-menu-item">차트</div>
         <div class="sub-menu-item">체결가</div>
     </div>
 
-    <!-- 4. 메인 거래 영역 (좌측 호가창과 우측 주문창 배치) -->
     <div class="trade-container">
-        <!-- 좌측 호가창 구역 (아래까지 막힘없이 쭉 연장) -->
-        <div class="hoga-window">
-            <div class="hoga-row ask">
-                <div class="hoga-price"><span>300,090</span><span class="hoga-won">300,090원</span></div>
-                <span class="hoga-rate">-0.11%</span><span class="hoga-volume">6</span>
-            </div>
-            <div class="hoga-row ask highlight-bg">
-                <div class="hoga-price"><span>300,060</span><span class="hoga-won">300,060원</span></div>
-                <span class="hoga-rate">-0.12%</span><span class="hoga-volume">500</span>
-            </div>
-            <div class="hoga-row ask">
-                <div class="hoga-price"><span>300,030</span><span class="hoga-won">300,030원</span></div>
-                <span class="hoga-rate">-0.13%</span><span class="hoga-volume">2</span>
-            </div>
-            <div class="hoga-row ask">
-                <div class="hoga-price"><span>300,000</span><span class="hoga-won">300,000원</span></div>
-                <span class="hoga-rate">-0.14%</span><span class="hoga-volume">2</span>
-            </div>
-            <div class="hoga-row ask">
-                <div class="hoga-price"><span>299,970</span><span class="hoga-won">299,970원</span></div>
-                <span class="hoga-rate">-0.15%</span><span class="hoga-volume">1</span>
-            </div>
-
-            <div class="hoga-row bid">
-                <div class="hoga-price"><span>299,940</span><span class="hoga-won">299,940원</span></div>
-                <span class="hoga-rate">-0.16%</span><span class="hoga-volume">23</span>
-            </div>
-            <div class="hoga-row bid">
-                <div class="hoga-price"><span>299,910</span><span class="hoga-won">299,910원</span></div>
-                <span class="hoga-rate">-0.17%</span><span class="hoga-volume">1</span>
-            </div>
-            <div class="hoga-row bid">
-                <div class="hoga-price"><span>299,880</span><span class="hoga-won">299,880원</span></div>
-                <span class="hoga-rate">-0.18%</span><span class="hoga-volume">97</span>
-            </div>
+        <div class="hoga-window" id="hoga-window-target">
         </div>
 
-        <!-- 우측 주문창 구역 (맨 밑에 매수 주문 버튼 배치) -->
         <div class="order-form">
             <div class="form-row">
                 <select class="select-box"><option>시장가</option></select>
@@ -291,7 +157,7 @@
             <div class="form-row">
                 <div class="qty-counter">
                     <button class="qty-btn left-minus">—</button>
-                    <input type="text" class="qty-input" placeholder="수량(1주)">
+                    <input type="text" class="qty-input" id="order-qty" value="1주" readonly>
                     <button class="qty-btn right-plus">+</button>
                 </div>
                 <button class="btn-square-lg">미리<br>계산</button>
@@ -305,8 +171,6 @@
                 <button class="btn-square-lg" style="height:32px;">가능</button>
             </div>
 
-
-
             <div class="form-row">
                 <div class="checkbox-group">
                     <input type="checkbox" id="auto-check"><label for="auto-check">가격자동</label>
@@ -316,27 +180,26 @@
 
             <div class="form-row">
                 <div class="yellow-highlight-box">
-                    <button class="qty-btn" style="color:#000;">—</button>
-                    <input type="text" class="yellow-input" value="300,000원">
-                    <button class="qty-btn" style="color:#000;">+</button>
+                    <button class="qty-btn" id="price-minus">—</button>
+                    <input type="text" class="yellow-input" id="order-price-input" value="0원">
+                    <button class="qty-btn" id="price-plus">+</button>
                 </div>
             </div>
 
-            <div style="font-size: 0.72rem; color: #666666; display: flex; justify-content: space-between; padding: 0 2px;">
+            <div style="font-size: 0.72rem; color: #666666; display: flex; justify-content: space-between; padding: 0 2px;" id="total-calc-banner">
+                <span>총 평가금액</span>
+                <span style="color:#000; font-weight:bold;">0원</span>
             </div>
 
-            <!-- 🎯여기로 이동: 오직 우측 폼 안의 맨 아래에만 위치하도록 정렬 -->
-            <button class="btn-huge-buy">매수 주문</button>
+            <button class="btn-huge-buy" onclick="executeBuyOrder()">매수 주문</button>
         </div>
     </div>
 
-    <!-- 하단 지수 채팅 배너 -->
     <div class="bottom-banner-text">
         <span class="badge-purple">지수 채팅</span>
         <span>이제 님 차례에요-들어와서 한 마디만 던져봐요</span>
     </div>
 
-    <!-- 하단 MTS 메뉴 바 -->
     <nav class="nav-tab-bar">
         <div class="btn-menu-total" onclick="alert('전체 메뉴 리스트 준비 중')">
             <span style="font-size:1.2rem; font-weight:bold;">≡</span>
@@ -349,5 +212,118 @@
     </nav>
 </div>
 
+<script>
+    // 백엔드 파이썬이 칼로리 기반으로 정밀 계산해 준 기준가 탑재 (없으면 3만 원 표준가 방어)
+    const serverBasePrice = parseInt("{{ base_price if base_price else 30000 }}");
+
+    let currentPrice = serverBasePrice;
+    let qty = 1;
+
+    // 호가 간격(호가단위) 설정 (주가 범위에 따른 매칭)
+    const tickSize = serverBasePrice >= 50000 ? 100 : 50;
+
+    // 가짜 잔량 데이터셋 초깃값 생성
+    let volumes = [12, 542, 8, 4, 1, 28, 2, 84].map(() => Math.floor(Math.random() * 200) + 5);
+
+    function updateUI() {
+        // 1. 상단 타이틀 영역 가격 주입
+        document.getElementById('top-current-price').innerText = currentPrice.toLocaleString();
+
+        // 기준가 대비 등락 폭 계산
+        const diff = currentPrice - serverBasePrice;
+        const rate = ((diff / serverBasePrice) * 100).toFixed(2);
+        const sign = diff > 0 ? "▲" : (diff < 0 ? "▼" : "");
+        const color = diff > 0 ? "#D9383A" : (diff < 0 ? "#2B66CC" : "#000000");
+
+        const priceChangeEl = document.getElementById('top-price-change');
+        priceChangeEl.innerHTML = `${sign} ${Math.abs(diff).toLocaleString()} &nbsp; ${rate}%`;
+        priceChangeEl.style.color = color;
+        document.getElementById('top-current-price').style.color = color;
+
+        // 2. 우측 주문창 옐로우 박스 가격 & 총 결제 금액 동기화
+        document.getElementById('order-price-input').value = currentPrice.toLocaleString() + "원";
+        document.getElementById('total-calc-banner').querySelector('span:last-child').innerText = (currentPrice * qty).toLocaleString() + "원";
+
+        // 3. 📊 호가창 실시간 마크업 재생성 (매도 5줄 + 매수 3줄 구조)
+        const hogaWindow = document.getElementById('hoga-window-target');
+        hogaWindow.innerHTML = '';
+
+        // 매도 호가 5줄 (위에서부터 높은 가격 순으로 정렬되어 내려옴)
+        for (let i = 5; i >= 1; i--) {
+            const price = serverBasePrice + (i * tickSize);
+            const r = (((price - serverBasePrice) / serverBasePrice) * 100).toFixed(2);
+            const isCurrent = (price === currentPrice);
+
+            const row = document.createElement('div');
+            row.className = `hoga-row ask ${isCurrent ? 'highlight-bg' : ''}`;
+            row.style.border = isCurrent ? '2px solid #4386F7' : '';
+            row.onclick = () => { currentPrice = price; updateUI(); };
+
+            row.innerHTML = `
+                <div class="hoga-price"><span>${price.toLocaleString()}</span><span class="hoga-won">${price.toLocaleString()}원</span></div>
+                <span class="hoga-rate">${r}%</span><span class="hoga-volume">${volumes[5-i]}</span>
+            `;
+            hogaWindow.appendChild(row);
+        }
+
+        // 매수 호가 3줄 (현재가 밑으로 떨어지는 라인)
+        for (let i = 1; i <= 3; i++) {
+            const price = serverBasePrice - (i * tickSize);
+            const r = (((price - serverBasePrice) / serverBasePrice) * 100).toFixed(2);
+            const isCurrent = (price === currentPrice);
+
+            const row = document.createElement('div');
+            row.className = `hoga-row bid ${isCurrent ? 'highlight-bg' : ''}`;
+            row.style.border = isCurrent ? '2px solid #D9383A' : '';
+            row.onclick = () => { currentPrice = price; updateUI(); };
+
+            row.innerHTML = `
+                <div class="hoga-price"><span>${price.toLocaleString()}</span><span class="hoga-won">${price.toLocaleString()}원</span></div>
+                <span class="hoga-rate">${r}%</span><span class="hoga-volume">${volumes[4+i]}</span>
+            `;
+            hogaWindow.appendChild(row);
+        }
+    }
+
+    // 🔄 2초마다 호가창 실시간 연동 타이머 가동 (0.1% ~ 0.5% 내 미세 변동)
+    setInterval(() => {
+        const rand = Math.random();
+        // 40% 확률로 주가 변동 발생
+        if (rand < 0.4) {
+            const direction = Math.random() > 0.5 ? 1 : -1;
+            // 한 틱 위아래로 무빙치기
+            currentPrice += (direction * tickSize);
+
+            // 기준가 대비 과도한 폭등폭락 방지 캡 장착 (최대 5틱 이내 제어)
+            if (currentPrice > serverBasePrice + (4 * tickSize)) currentPrice = serverBasePrice + (4 * tickSize);
+            if (currentPrice < serverBasePrice - (2 * tickSize)) currentPrice = serverBasePrice - (2 * tickSize);
+        }
+
+        // 호가 잔량 변동은 100% 실시간 업데이트 처리
+        volumes = volumes.map(v => {
+            const delta = Math.floor(Math.random() * 11) - 5; // -5 ~ +5 주식 변동
+            const newV = v + delta;
+            return newV < 1 ? 1 : newV;
+        });
+
+        updateUI();
+    }, 2000);
+
+    // 수량 플러스 마이너스 핸들러
+    document.querySelector('.qty-btn.left-minus').addEventListener('click', () => { if(qty > 1) { qty--; document.getElementById('order-qty').value = qty + "주"; updateUI(); } });
+    document.querySelector('.qty-btn.right-plus').addEventListener('click', () => { qty++; document.getElementById('order-qty').value = qty + "주"; updateUI(); });
+
+    // 가격 플러스 마이너스 핸들러 (수동 호가 변경 기능 지원)
+    document.getElementById('price-minus').addEventListener('click', () => { currentPrice -= tickSize; updateUI(); });
+    document.getElementById('price-plus').addEventListener('click', () => { currentPrice += tickSize; updateUI(); });
+
+    // 영양 매수 주문 가동 체결 함수
+    function executeBuyOrder() {
+        alert(`🔔 [매수 주문 접수 완료]\n\n• 종목명: STU {{ stock_name }}\n• 체결가: ${currentPrice.toLocaleString()}원\n• 수량: ${qty}주\n• 총액: ${(currentPrice * qty).toLocaleString()}원\n\n성공적으로 거래가 체결되어 자산 포트폴리오에 반영되었습니다.`);
+    }
+
+    // 화면 켜지는 순간 마스터 엔진 렌더링 가동
+    window.onload = () => { updateUI(); };
+</script>
 </body>
 </html>

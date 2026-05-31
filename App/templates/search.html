@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>영양문 모바일 - 종목검색</title>
     <style>
+        /* MTS 화이트 테마 완벽 동기화 초기화 */
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
             background-color: #FFFFFF;
@@ -13,90 +14,71 @@
             -webkit-user-select: none; user-select: none;
         }
 
-        .wrapper {
-            display: flex; flex-direction: column; height: 100%;
-        }
+        .wrapper { display: flex; flex-direction: column; height: 100%; }
 
-        /* 1. 최상단 종목검색 타이틀 바 */
+        /* 1. 최상단 헤더 바 */
         header {
-            background-color: #FFFFFF;
-            padding: 14px 16px; display: flex; align-items: center; justify-content: space-between;
+            background-color: #FFFFFF; padding: 14px 16px;
+            display: flex; align-items: center; justify-content: space-between;
             border-bottom: 1px solid #E5E5E5;
         }
-        .header-left { display: flex; align-items: center; gap: 8px; color: #666666; font-size: 0.85rem; cursor: pointer; }
+        .header-left { display: flex; align-items: center; gap: 6px; color: #666666; font-size: 0.85rem; cursor: pointer; }
         .refresh-icon { font-size: 1.1rem; rotate: -45deg; display: inline-block; }
         .header-title { font-size: 1.2rem; font-weight: bold; color: #000000; letter-spacing: -0.5px; margin: 0 auto 0 24%; }
         .close-btn { font-size: 1.4rem; font-weight: 300; color: #888888; cursor: pointer; padding: 0 4px; }
 
-        /* 2. 🎯 대형 혁신 탭 (국내/해외주식 -> 사진인식/직접검색 변경) */
-        .search-type-tabs {
-            display: flex; border-bottom: 1px solid #D5D5D5; background-color: #FFFFFF;
-        }
-        .type-tab {
-            flex: 1; text-align: center; padding: 12px 0; font-size: 1.1rem; font-weight: bold; color: #666666; cursor: pointer;
-        }
-        .type-tab.active {
-            color: #2F528F; border-bottom: 3px solid #2F528F; font-weight: 900;
-        }
+        /* 2. 메인 탭 (사진인식 vs 직접검색) */
+        .search-type-tabs { display: flex; border-bottom: 1px solid #D5D5D5; background-color: #FFFFFF; }
+        .type-tab { flex: 1; text-align: center; padding: 12px 0; font-size: 1.1rem; font-weight: bold; color: #666666; cursor: pointer; }
+        .type-tab.active { color: #2F528F; border-bottom: 3px solid #2F528F; font-weight: 900; }
 
-        /* 3. 음식명 / 편의점 상품명 검색 바 구역 */
-        .search-bar-container {
-            padding: 12px 14px; background-color: #FFFFFF; border-bottom: 1px solid #E5E5E5;
-        }
-        .search-input-wrapper {
-            display: flex; align-items: center; border: 1px solid #999999; border-radius: 3px; padding: 0 10px; background-color: #FFFFFF; height: 40px;
-        }
-        .search-input {
-            flex: 1; border: none; outline: none; font-size: 0.95rem; color: #000000; font-weight: 500;
-        }
-        .search-input::placeholder { color: #A9A9A9; font-weight: normal; }
-        .search-submit-btn {
-            background: none; border: none; font-size: 1.2rem; color: #666666; cursor: pointer; padding: 0; display: flex; align-items: center;
-        }
+        /* 3. 종목 검색창 */
+        .search-bar-container { padding: 12px 14px; background-color: #FFFFFF; border-bottom: 1px solid #E5E5E5; }
+        .search-input-wrapper { display: flex; align-items: center; border: 1px solid #999999; border-radius: 3px; padding: 0 10px; background-color: #FFFFFF; height: 40px; }
+        .search-input { flex: 1; border: none; outline: none; font-size: 0.95rem; color: #000000; font-weight: 500; }
+        .search-input::placeholder { color: #A9A9A9; }
+        .search-submit-btn { background: none; border: none; font-size: 1.2rem; color: #666666; cursor: pointer; display: flex; align-items: center; }
 
-        /* 4. 서브 카테고리 필터 바 (최근/음식/음료/디저트 등) */
-        .sub-filter-bar {
-            display: flex; background-color: #FFFFFF; border-bottom: 1px solid #E5E5E5; padding: 0 4px; gap: 4px;
-        }
-        .filter-item { padding: 11px 12px; font-size: 0.85rem; color: #666666; font-weight: 500; cursor: pointer; text-align: center; white-space: nowrap; }
+        /* 4. 서브 필터 탭 바 (최근, 음식, 가공식품 딱 3개 고정) */
+        .sub-filter-bar { display: flex; background-color: #FFFFFF; border-bottom: 1px solid #E5E5E5; padding: 0 8px; gap: 8px; }
+        .filter-item { padding: 12px 14px; font-size: 0.9rem; color: #666666; font-weight: 500; cursor: pointer; text-align: center; }
         .filter-item.active { color: #000000; font-weight: bold; border-bottom: 2px solid #2F528F; }
 
-        /* 5. 메인 콘텐츠 컨테이너 (멀티 트랙 뷰) */
-        .content-container {
-            flex: 1; overflow-y: auto; background-color: #FFFFFF; position: relative;
-        }
-
-        /* [트랙 A] 사진 인식 전용 뷰 디자인 */
-        .view-pane { display: none; width: 100%; height: 100%; box-sizing: border-box; }
+        /* 5. 리스트 컨테이너 */
+        .content-container { flex: 1; overflow-y: auto; background-color: #FFFFFF; }
+        .view-pane { display: none; width: 100%; height: 100%; }
         .view-pane.active { display: block; }
 
-        .photo-upload-zone {
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            height: 80%; padding: 40px 20px; box-sizing: border-box; text-align: center;
-        }
-        .camera-circle {
-            width: 90px; height: 90px; background-color: #F0F4FA; border: 2px dashed #2F528F; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center; font-size: 2.2rem; color: #2F528F; cursor: pointer; margin-bottom: 18px;
-            box-shadow: 0 4px 10px rgba(47, 82, 143, 0.1);
-        }
-        .upload-title { font-size: 1.1rem; font-weight: bold; color: #222222; margin: 0 0 8px 0; }
-        .upload-desc { font-size: 0.8rem; color: #777777; margin: 0; line-height: 1.4; }
+        /* 사진 인식 구역 */
+        .photo-upload-zone { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 80%; padding: 40px 20px; text-align: center; box-sizing: border-box; }
+        .camera-circle { width: 90px; height: 90px; background-color: #F0F4FA; border: 2px dashed #2F528F; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; color: #2F528F; cursor: pointer; margin-bottom: 18px; }
+        #hidden-camera-input { display: none; }
 
-        /* [트랙 B] 직접 검색 (CSV 결과 리스트) 뷰 디자인 */
+        /* 6. 오리지널 HTS 리스트 레이아웃 */
         .food-list-row {
             display: flex; align-items: center; justify-content: space-between;
-            padding: 14px 16px; border-bottom: 1px solid #F2F2F2; cursor: pointer;
+            padding: 13px 16px; border-bottom: 1px solid #F2F2F2; cursor: pointer;
         }
         .food-list-row:active { background-color: #F9F9F9; }
         .food-left-info { display: flex; align-items: center; gap: 14px; }
-        .food-code { font-size: 0.85rem; color: #888888; font-family: monospace; width: 55px; }
+        .food-code { font-size: 0.85rem; color: #888888; font-family: monospace; width: 52px; }
         .food-name { font-size: 0.95rem; font-weight: bold; color: #222222; }
-        .food-right-meta { display: flex; align-items: center; gap: 6px; font-size: 0.72rem; }
-        .badge-kcal { background-color: #FFF2CC; border: 1px solid #FCD366; color: #B25E00; padding: 2px 5px; border-radius: 2px; font-weight: bold; }
-        .tag-market { border: 1px solid #E5E5E5; background-color: #F9F9F9; color: #666666; padding: 2px 4px; border-radius: 2px; }
 
-        /* 숨겨진 실제 카메라 인풋 */
-        #hidden-camera-input { display: none; }
+        /* 우측 메타 배너 정렬 파트 */
+        .food-right-meta { display: flex; align-items: center; gap: 6px; }
+
+        /* 이미지 속 185 kcal 노란색 박스 구현 */
+        .badge-kcal {
+            background-color: #FFF2CC; border: 1px solid #FCD366; color: #B25E00;
+            padding: 3px 6px; border-radius: 2px; font-size: 0.78rem; font-weight: bold;
+            min-width: 50px; text-align: center;
+        }
+        /* 이미지 속 우측 대분류명 투명 박스 구현 */
+        .tag-category {
+            border: 1px solid #CCCCCC; background-color: #FFFFFF; color: #666666;
+            padding: 3px 6px; border-radius: 2px; font-size: 0.75rem;
+            min-width: 50px; text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -112,145 +94,135 @@
     </header>
 
     <div class="search-type-tabs">
-        <div class="type-tab active" id="tab-photo" onclick="switchTab('photo')">사진 인식</div>
-        <div class="type-tab" id="tab-direct" onclick="switchTab('direct')">직접 검색</div>
+        <div class="type-tab" id="tab-photo" onclick="switchMainTab('photo')">사진 인식</div>
+        <div class="type-tab active" id="tab-direct" onclick="switchMainTab('direct')">직접 검색</div>
     </div>
 
     <div class="search-bar-container">
         <div class="search-input-wrapper">
-            <input type="text" class="search-input" id="food-search-box" placeholder="음식명, 편의점 상품명, 초성 검색">
+            <input type="text" id="food-search-box" class="search-input" placeholder="음식명, 편의점 상품명, 초성 검색">
             <button class="search-submit-btn">🔍</button>
         </div>
     </div>
 
     <div class="sub-filter-bar">
-        <div class="filter-item active">최근</div>
-        <div class="filter-item">전체음식</div>
-        <div class="filter-item">간편식품</div>
-        <div class="filter-item">음료/카페</div>
-        <div class="filter-item">식단/샐러드</div>
+        <div class="filter-item active" onclick="switchSubFilter('recent', this)">최근</div>
+        <div class="filter-item" onclick="switchSubFilter('food', this)">일반 음식</div>
+        <div class="filter-item" onclick="switchSubFilter('processed', this)">가공식품</div>
     </div>
 
     <div class="content-container">
-
-        <div class="view-pane active" id="pane-photo">
+        <div class="view-pane" id="pane-photo">
             <div class="photo-upload-zone">
-                <div class="camera-circle" onclick="triggerCamera();">📸</div>
-                <p class="upload-title">식단 또는 상품 바코드 촬영</p>
-                <p class="upload-desc">카메라로 음식을 찍거나 영수증을 인식하면<br>영양문 AI가 자동으로 종목을 파싱해 주문창으로 연결합니다.</p>
+                <div class="camera-circle" onclick="document.getElementById('hidden-camera-input').click();">📸</div>
+                <h3>식단 및 상품 바코드 촬영</h3>
+                <p>영양문 AI가 자동으로 종목을 분석합니다.</p>
             </div>
             <input type="file" id="hidden-camera-input" accept="image/*" capture="environment">
         </div>
 
-        <div class="view-pane" id="pane-direct">
-            <div class="food-list-row" onclick="selectFood('STU 닭가슴살 샐러드', 120000)">
-                <div class="food-left-info">
-                    <span class="food-code">001840</span>
-                    <span class="food-name">STU 닭가슴살 샐러드</span>
-                </div>
-                <div class="food-right-meta">
-                    <span class="badge-kcal">185 kcal</span>
-                    <span class="tag-market">클린식</span>
-                </div>
-            </div>
-
-            <div class="food-list-row" onclick="selectFood('농심 신라면 블랙', 420000)">
-                <div class="food-left-info">
-                    <span class="food-code">095570</span>
-                    <span class="food-name">농심 신라면 블랙</span>
-                </div>
-                <div class="food-right-meta">
-                    <span class="badge-kcal">420 kcal</span>
-                    <span class="tag-market">치팅식</span>
-                </div>
-            </div>
-
-            <div class="food-list-row" onclick="selectFood('GS25 혜자로운 제육볶음', 760000)">
-                <div class="food-left-info">
-                    <span class="food-code">027410</span>
-                    <span class="food-name">GS25 혜자로운 제육볶음</span>
-                </div>
-                <div class="food-right-meta">
-                    <span class="badge-kcal">765 kcal</span>
-                    <span class="tag-market">고칼로리</span>
-                </div>
-            </div>
-
-            <div class="food-list-row" onclick="selectFood('컴포즈 아이스 아메리카노', 10000)">
-                <div class="food-left-info">
-                    <span class="food-code">138930</span>
-                    <span class="food-name">컴포즈 아이스 아메리카노</span>
-                </div>
-                <div class="food-right-meta">
-                    <span class="badge-kcal">10 kcal</span>
-                    <span class="tag-market">NXT거래가능</span>
-                </div>
+        <div class="view-pane active" id="pane-direct">
+            <div id="dynamic-list-target">
             </div>
         </div>
-
     </div>
 </div>
 
 <script>
-    // 1. [사진인식] vs [직접검색] 상단 대형 탭 전환 스크립트
-    function switchTab(type) {
-        document.querySelectorAll('.type-tab').forEach(tab => tab.classList.remove('active'));
-        document.querySelectorAll('.view-pane').forEach(pane => pane.classList.remove('active'));
+    let currentSubMode = 'recent'; // 기본 탭: 최근
+    const listTarget = document.getElementById('dynamic-list-target');
+    const searchBox = document.getElementById('food-search-box');
 
-        if (type === 'photo') {
+    // 고유 종목코드 생성기 (음식명을 기반으로 중복 없는 고유 6자리 코드 부여)
+    function generateStockCode(str) {
+        let hash = 0;
+        for (let i = 0; i < str.length; i++) {
+            hash = str.charCodeAt(i) + ((hash << 5) - hash);
+        }
+        return (Math.abs(hash % 900000) + 100000).toString();
+    }
+
+    // 🔄 30MB CSV 풀을 쥐고 있는 파이썬 백엔드 API로부터 데이터를 실시간으로 가져와 리스트를 그리는 핵심 함수
+    function fetchAndRender() {
+        const query = searchBox.value.trim();
+
+        // Flask 백엔드 검색 라우터로 실시간 비동기(fetch) 요청 발송
+        fetch(`/api/search_food?q=${encodeURIComponent(query)}&mode=${currentSubMode}`)
+            .then(res => res.json())
+            .then(items => {
+                listTarget.innerHTML = '';
+
+                if(items.length === 0) {
+                    listTarget.innerHTML = `<div style="text-align:center; color:#999; padding:40px; font-size:0.9rem;">일치하는 상장 종목이 없습니다.</div>`;
+                    return;
+                }
+
+                items.forEach(item => {
+                    const code = generateStockCode(item.name);
+                    const row = document.createElement('div');
+                    row.className = 'food-list-row';
+
+                    // 클릭 시 이름과 칼로리를 파라미터로 매칭하여 거래소 홈으로 복귀
+                    row.onclick = () => selectAndTrade(item.name, item.kcal);
+
+                    row.innerHTML = `
+                        <div class="food-left-info">
+                            <span class="food-code">${code}</span>
+                            <span class="food-name">${item.name}</span>
+                        </div>
+                        <div class="food-right-meta">
+                            <span class="badge-kcal">${item.kcal} kcal</span>
+                            <span class="tag-category">${item.cat}</span>
+                        </div>
+                    `;
+                    listTarget.appendChild(row);
+                });
+            })
+            .catch(err => {
+                console.error("데이터 로드 실패:", err);
+                listTarget.innerHTML = `<div style="text-align:center; color:red; padding:40px; font-size:0.9rem;">서버 통신 오류 발생</div>`;
+            });
+    }
+
+    // 메인 대형 탭 전환 (사진인식 / 직접검색)
+    function switchMainTab(type) {
+        document.querySelectorAll('.type-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.view-pane').forEach(p => p.classList.remove('active'));
+        if(type === 'photo') {
             document.getElementById('tab-photo').classList.add('active');
             document.getElementById('pane-photo').classList.add('active');
         } else {
             document.getElementById('tab-direct').classList.add('active');
             document.getElementById('pane-direct').classList.add('active');
-            document.getElementById('food-search-box').focus(); // 직접 검색 시 인풋 자동 포커스
         }
     }
 
-    // 2. 카메라 촬영 트리거 구동
-    function triggerCamera() {
-        document.getElementById('hidden-camera-input').click();
+    // 서브 카테고리 필터 탭 전환 (최근 / 일반음식 / 가공식품)
+    function switchSubFilter(mode, element) {
+        document.querySelectorAll('.filter-item').forEach(i => i.classList.remove('active'));
+        element.classList.add('active');
+        currentSubMode = mode;
+        searchBox.value = ''; // 탭 스위칭 시 검색창 텍스트 비우기
+        fetchAndRender();
     }
 
-    // 3. 카메라로 사진을 찍었을 때 실행될 비동기 로직 파트 (추후 백엔드 결합)
-    document.getElementById('hidden-camera-input').addEventListener('change', function() {
-        if(this.files && this.files[0]) {
-            alert("📸 사진 파일 수신 완료! 백엔드 ResNet + OCR 모듈로 전송하여 매수 종목을 분석합니다.");
-            // 여기에 비동기 fetch 업로드 코드를 결합할 예정입니다.
-        }
-    });
+    // 🔍 실시간 타이핑 디렉션 엔진 (글자 입력 즉시 파이썬 서버가 CSV를 조회)
+    searchBox.addEventListener('input', fetchAndRender);
 
-    // 4. 리스트에서 음식을 클릭했을 때 메인 주문창(main.html)으로 데이터와 함께 강제 리다이렉션
-    function selectFood(name, price) {
-        // 실제 운영 시 Flask 라우터 주소형식에 맞춰 매핑하여 이동시킵니다.
+    // 💸 종목 선택 완료 시 메인 매수 주문창(main.html)으로 데이터 들고 원격 텔레포트
+    function selectAndTrade(name, kcal) {
         const encodedName = encodeURIComponent(name);
-        alert(`🎯 [종목 선택 완료]\n• 종목명: ${name}\n• 기준가: ${price.toLocaleString()}원\n\n매수 거래창으로 이동합니다.`);
-
-        // 현재 계좌명을 주소창에서 유치하여 함께 인계해주는 센스
         const urlParams = new URLSearchParams(window.location.search);
+
+        // 유저 고유 생성 계좌 번호가 유실되지 않도록 주소창에서 추적 바인딩
         const account = urlParams.get('account_name') || '6084-2227 [위탁종합]';
 
+        // 메인 거래창(main.html)으로 다이내믹 파라미터 밀어 넣기
         location.href = `/main?stock_name=${encodedName}&account_name=${encodeURIComponent(account)}&page=main`;
     }
 
-    // 5. 실시간 초성/검색어 필터링 (맛보기 구현)
-    document.getElementById('food-search-box').addEventListener('input', function() {
-        const keyword = this.value.toLowerCase();
-        // 직접 검색 탭으로 자동 전환 처리
-        if(keyword.length > 0 && document.getElementById('tab-photo').classList.contains('active')) {
-            switchTab('direct');
-        }
-
-        const rows = document.querySelectorAll('.food-list-row');
-        rows.forEach(row => {
-            const foodName = row.querySelector('.food-name').innerText.toLowerCase();
-            if(foodName.includes(keyword)) {
-                row.style.display = 'flex';
-            } else {
-                row.style.display = 'none';
-            }
-        });
-    });
+    // 브라우저 렌더링이 완료되는 즉시 '최근 상장 추천 종목' 모드로 화면 송출
+    window.onload = () => { fetchAndRender(); };
 </script>
 </body>
 </html>
