@@ -95,7 +95,6 @@
         .nav-item.active { color: #222222; font-weight: bold; }
         .nav-item span { display: block; }
 
-        /* 💸 [신규] 영웅문 실물 핏 현금 매수 주문 확인 모달 테마 */
         .trade-popup-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: rgba(0, 0, 0, 0.6); z-index: 99999;
@@ -258,7 +257,7 @@
                 <tr><th>주문수량</th><td id="pop-trade-qty" style="font-weight: bold; color: #BD4D77;">1주</td></tr>
                 <tr><th>주문가격</th><td id="pop-trade-price" class="highlight-cell">0원</td></tr>
 
-                <tr><td colspan="2" class="nutrition-header-row">📊 총 매수 영양성분 명세</td></tr>
+                <tr><td colspan="2" class="nutrition-header-row">매수 영양성분 명세</td></tr>
                 <tr><th>열량</th><td><span id="pop-nut-kcal">0</span> kcal</td></tr>
                 <tr><th>나트륨</th><td><span id="pop-nut-sodium">0</span> mg</td></tr>
                 <tr><th>탄수화물</th><td><span id="pop-nut-carbo">0</span> g</td></tr>
@@ -285,8 +284,6 @@
     const tickSize = serverBasePrice >= 50000 ? 100 : 50;
     let volumes = [12, 542, 8, 4, 1, 28, 2, 84].map(() => Math.floor(Math.random() * 200) + 5);
 
-    // ⚡ [핵심 연동] 서버(app.py)에서 넘어온 1회분 기준 9대 영양소 바인딩
-    // 백엔드에서 값을 못 받았을 경우 0으로 안전하게 방어 (NaN 에러 방지)
     const baseNutrition = {
         kcal: parseFloat("{{ nutrients.kcal | default(0) }}") || 0,
         sodium: parseFloat("{{ nutrients.sodium | default(0) }}") || 0,
@@ -364,13 +361,10 @@
     document.getElementById('price-minus').addEventListener('click', () => { currentPrice -= tickSize; updateUI(); });
     document.getElementById('price-plus').addEventListener('click', () => { currentPrice += tickSize; updateUI(); });
 
-    // ⚡ [신규] 현금 매수 버튼 클릭 시 모달창 오픈 및 실시간 곱연산 바인딩 함수
     function openTradeConfirmModal() {
-        // 기본 거래 스펙 세팅
         document.getElementById('pop-trade-qty').innerText = qty + " 주";
         document.getElementById('pop-trade-price').innerText = currentPrice.toLocaleString() + "원";
 
-        // 🎯 9대 영양소 * 수량(qty) 곱연산 로직 (소수점 1자리 컷팅)
         document.getElementById('pop-nut-kcal').innerText = Math.round(baseNutrition.kcal * qty);
         document.getElementById('pop-nut-sodium').innerText = (baseNutrition.sodium * qty).toFixed(1);
         document.getElementById('pop-nut-carbo').innerText = (baseNutrition.carbo * qty).toFixed(1);
@@ -381,29 +375,23 @@
         document.getElementById('pop-nut-tfat').innerText = (baseNutrition.tfat * qty).toFixed(1);
         document.getElementById('pop-nut-chol').innerText = (baseNutrition.chol * qty).toFixed(1);
 
-        // 팝업 레이어 스위치 ON
         document.getElementById('trade-confirm-modal').style.display = 'flex';
     }
 
-    // 모달창 닫기 (취소)
     function closeTradeModal() {
         document.getElementById('trade-confirm-modal').style.display = 'none';
     }
 
-// 최종 확인 (체결 신호 전송 및 계좌 적립 트리거)
     function executeFinalTrade() {
-        // 🚀 [안전핀] 템플릿 변수에 따옴표가 섞여서 스크립트가 터지는 것을 방지
         const rawStockName = {{ stock_name | tojson | safe }};
         const rawAccountName = {{ account_name | default('0000-0000 [위탁종합]') | tojson | safe }};
 
-        alert(`🔔 [매수 체결 완료]\nSTU ${rawStockName} ${qty}주가 성공적으로 매수되었습니다.\n\n해당 영양분은 자산 포트폴리오에 즉시 반영됩니다.`);
+        alert(`매수 체결 완료\nSTU ${rawStockName} ${qty}주가 성공적으로 매수되었습니다.`);
         closeTradeModal();
 
-        // 현재 주소창에서 사용자 정보 안전하게 백업
         const urlParams = new URLSearchParams(window.location.search);
         const currentAccount = urlParams.get('account_name') || rawAccountName;
 
-        // 팝업창 테이블 안에 실시간 곱연산되어 있는 진짜 영양소 문자열 파싱
         const finalKcal = document.getElementById('pop-nut-kcal').innerText;
         const finalSodium = document.getElementById('pop-nut-sodium').innerText;
         const finalCarbo = document.getElementById('pop-nut-carbo').innerText;
@@ -414,14 +402,13 @@
         const finalTfat = document.getElementById('pop-nut-tfat').innerText;
         const finalChol = document.getElementById('pop-nut-chol').innerText;
 
-        // 🚀 [통신 파이프 연결] 수량(qty)과 체결가(forced_price)를 추가로 쏴줍니다!
         location.href = `/main?stock_name=${encodeURIComponent(rawStockName)}` +
                       `&account_name=${encodeURIComponent(currentAccount)}` +
                       `&page=main` +
-                      `&execute_trade=true` + // 🎯 이거 없으면 주문 안 됨!
+                      `&execute_trade=true` +
                       `&food_name=${encodeURIComponent(rawStockName)}` +
-                      `&qty=${qty}` + // 🎯 포트폴리오 누적용 수량
-                      `&forced_price=${currentPrice}` + // 🎯 포트폴리오 누적용 평단가
+                      `&qty=${qty}` +
+                      `&forced_price=${currentPrice}` +
                       `&kcal=${finalKcal}&carbo=${finalCarbo}&sugar=${finalSugar}` +
                       `&protein=${finalProtein}&fat=${finalFat}&sfat=${finalSfat}` +
                       `&tfat=${finalTfat}&chol=${finalChol}&sodium=${finalSodium}`;

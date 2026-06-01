@@ -14,7 +14,6 @@
         }
         .wrapper { display: flex; flex-direction: column; height: 100%; padding-bottom: 55px; box-sizing: border-box; }
 
-        /* 🟢 [메인 동기화] 민트색 헤더 */
         header { background-color: #55B2B5; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; color: #FFFFFF; }
         .header-left { display: flex; align-items: center; gap: 18px; }
         .back-arrow { font-size: 1.4rem; font-weight: 300; cursor: pointer; }
@@ -23,7 +22,6 @@
         .header-tabs span.active { opacity: 1; border-bottom: 2px solid #FFFFFF; padding-bottom: 2px; }
         .header-right { font-size: 1.3rem; cursor: pointer; opacity: 0.9; }
 
-        /* 🔍 [스크린샷 반영] 필터 및 검색 구역 */
         .filter-section {
             background-color: #FFFFFF; padding: 10px 14px;
             border-bottom: 1px solid #E5E5E5; display: flex; flex-direction: column; gap: 8px;
@@ -39,7 +37,6 @@
         }
 
         .search-row { display: flex; align-items: center; gap: 6px; height: 34px; }
-        /* 토글 스위치 UI */
         .toggle-wrap { display: flex; align-items: center; gap: 4px; font-size: 0.75rem; font-weight: bold; color: #555; }
         .toggle-btn {
             width: 36px; height: 20px; background-color: #1E3A8A; border-radius: 10px;
@@ -65,7 +62,6 @@
             font-size: 1.1rem; color: #888; cursor: pointer; padding: 0; box-sizing: border-box;
         }
 
-        /* 📜 [스크롤 컨테이너] 뉴스 리스트 */
         .news-feed-pane {
             flex: 1; overflow-y: auto; background-color: #FFFFFF;
             -webkit-overflow-scrolling: touch;
@@ -87,7 +83,6 @@
             display: flex; gap: 8px; font-size: 0.8rem; color: #888888; align-items: center;
         }
 
-        /* 💬 [메인 동기화] 하단 배너 및 내비게이션 바 */
         .bottom-banner-text {
             background-color: #F6F6F6; padding: 6px 12px; font-size: 0.8rem; color: #444444;
             border-top: 1px solid #E5E5E5; display: flex; align-items: center; gap: 6px;
@@ -144,7 +139,6 @@
     <div class="news-row">
         <div class="news-title">{{ news.title | safe }}</div>
 
-        <!-- 🚀 [신규 추가] 뉴스 본문 미리보기 (2줄까지만 노출되고 ... 처리됨) -->
         <div style="font-size: 0.85rem; color: #666; margin-top: 6px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
             {{ news.content }}
         </div>

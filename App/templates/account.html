@@ -44,7 +44,6 @@
         .btn-view-asset { background-color: #CFCFCF; color: #FFF; border: none; padding: 4px 8px; font-size: 0.75rem; border-radius: 4px; font-weight: bold; cursor: pointer; }
         .asset-search-link { font-size: 0.85rem; color: #666666; display: flex; align-items: center; gap: 4px; margin-bottom: 24px; }
 
-        /* 📊 🚀 [차트 디자인] 심플 트렌드 틱 차트 레이아웃 */
         .trend-chart-container {
             width: 100%; height: 65px; background-color: #F8F9FA;
             border-radius: 8px; margin: 10px 0 20px 0; border: 1px dashed #E0E0E0;
@@ -205,10 +204,9 @@
         </div>
 
         <div class="promo-banner">
-            🎁 부담없이 소수점으로 꾸준히 <span>더 모아볼까요? ></span>
+            🎁 부담없이 꾸준히 <span>더 모아볼까요?</span>
         </div>
         <div class="dividend-banner">
-            이번달 배당수익 <span>></span>
         </div>
     </div>
 
@@ -226,7 +224,6 @@
 </div>
 
 <script>
-    // 🚀 [기본 보임 세팅 및 SVG 드로잉 핵심 코어 스크립트]
     let isAssetHidden = false;
     const rawAsset = parseFloat("{{ asset.current_price | default(100000000) }}");
     const realTotalAsset = rawAsset.toLocaleString('ko-KR') + "원";
@@ -245,22 +242,18 @@
         }
     }
 
-    // 🎰 [정통 미니 틱 차트 가동] Jinja2 배열을 자바스크립트 수치 배열로 직수혈
     const historyData = {{ asset.price_history | default([100000000]) | tojson | safe }};
 
     function drawSparkline(data) {
         const svg = document.getElementById("sparkline-svg");
         if (!svg || data.length === 0) return;
 
-        // 컨테이너 크기 동적 계산
         const width = svg.clientWidth || 340;
         const height = 35;
 
-        // 퀀트 데이터 스케일링 연산 (최대/최소 경계선 도출)
         let min = Math.min(...data);
         let max = Math.max(...data);
 
-        // 보합(일직선) 방어선
         if (min === max) { min -= 1000000; max += 1000000; }
 
         const padding = 2;
@@ -269,21 +262,17 @@
 
         for (let i = 0; i < data.length; i++) {
             const x = i * step;
-            // 가치 폭등 시 위로, 폭락 시 아래로 그리기 위한 Y축 반전 보정 계산
             const y = height - ((data[i] - min) / (max - min) * (height - padding * 2) + padding);
             points.push(`${x},${y}`);
         }
 
-        // 상승장(레드) / 하락장(블루) 컬러 스위칭 싱크
         const lastPrice = data[data.length - 1];
         const initialPrice = data[0];
         const strokeColor = lastPrice >= initialPrice ? "#D9383A" : "#2B66CC";
 
-        // SVG 폴리라인 생성 및 화면 주입
         svg.innerHTML = `<polyline fill="none" stroke="${strokeColor}" stroke-width="2" points="${points.join(' ')}"/>`;
     }
 
-    // 윈도우 로드 완료 및 창 크기 변경 시 실시간 그래픽 렌더링 동기화
     window.addEventListener("load", () => drawSparkline(historyData));
     window.addEventListener("resize", () => drawSparkline(historyData));
 </script>

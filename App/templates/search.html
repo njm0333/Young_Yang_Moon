@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>영양문 모바일 - 종목검색</title>
     <style>
-        /* MTS 화이트 테마 완벽 동기화 초기화 */
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
             background-color: #FFFFFF;
@@ -44,7 +43,6 @@
         .view-pane { display: none; width: 100%; height: 100%; }
         .view-pane.active { display: block; }
 
-        /* 📸 투트랙 업로드 구역 */
         .photo-upload-zone { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 80%; padding: 40px 20px; text-align: center; box-sizing: border-box; }
         .action-buttons-wrap { display: flex; gap: 30px; margin-bottom: 24px; }
         .circle-btn-wrap { display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; }
@@ -64,7 +62,6 @@
         .badge-kcal { background-color: #FFF2CC; border: 1px solid #FCD366; color: #B25E00; padding: 3px 6px; border-radius: 2px; font-size: 0.78rem; font-weight: bold; min-width: 50px; text-align: center; }
         .tag-category { border: 1px solid #CCCCCC; background-color: #FFFFFF; color: #666666; padding: 3px 6px; border-radius: 2px; font-size: 0.75rem; min-width: 50px; text-align: center; }
 
-        /* MTS 블루 톤 모달 공통 (OCR & YOLO) */
         .ocr-overlay-panel {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background-color: #F8F9FA; z-index: 10000; display: none;
@@ -92,7 +89,6 @@
         .ocr-field-wrap input:focus { border: 2px solid #2F528F; }
         .ocr-unit { font-size: 0.9rem; font-weight: 500; color: #888888; width: 30px; text-align: left; }
 
-        /* ⏳ AI 전용 풀스크린 로딩 오버레이 */
         .loading-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background-color: rgba(255, 255, 255, 0.9); z-index: 99999;
@@ -117,8 +113,6 @@
 
     <header>
         <div class="header-left" onclick="location.reload();">
-            <span class="refresh-icon">↻</span>
-            <span>종목정보<br>다시받기</span>
         </div>
         <div class="header-title">종목검색</div>
         <div class="close-btn" onclick="history.back();">✕</div>
@@ -157,7 +151,7 @@
                     </div>
                 </div>
                 <h3>일반 식단 인식</h3>
-                <p style="font-size: 0.9rem; color: #777;">YOLOv3와 ResNet AI가 종목 및<br>중량 비율을 자동으로 분석합니다.</p>
+                <p style="font-size: 0.9rem; color: #777;">영양문 AI 엔진이<br>음식과 중량을 분석합니다.</p>
             </div>
             <input type="file" id="input-yolo-cam" class="hidden-camera-input" accept="image/*" capture="environment">
             <input type="file" id="input-yolo-gal" class="hidden-camera-input" accept="image/*">
@@ -176,7 +170,7 @@
                     </div>
                 </div>
                 <h3>상품 성분표 인식</h3>
-                <p style="font-size: 0.9rem; color: #777;">영양문 OCR 엔진이 라벨지의<br>영양성분 텍스트를 정밀하게 스캔합니다.</p>
+                <p style="font-size: 0.9rem; color: #777;">영양문 OCR 엔진이 라벨지의<br>영양성분 텍스트를 스캔합니다.</p>
             </div>
             <input type="file" id="input-ocr-cam" class="hidden-camera-input" accept="image/*" capture="environment">
             <input type="file" id="input-ocr-gal" class="hidden-camera-input" accept="image/*">
@@ -274,7 +268,6 @@
         return (Math.abs(hash % 900000) + 100000).toString();
     }
 
-    // 🔍 [수술 완료] 직접 검색 결과 렌더링 및 클릭 연계 파트
     function fetchAndRender() {
         const query = searchBox.value.trim();
         fetch(`/api/search_food?q=${encodeURIComponent(query)}&mode=${currentSubMode}`)
@@ -290,7 +283,6 @@
                     const row = document.createElement('div');
                     row.className = 'food-list-row';
 
-                    // 🎯 클릭할 때 item 오브젝트 전체를 토스하도록 수정!
                     row.onclick = () => selectAndTrade(item);
 
                     row.innerHTML = `
@@ -351,14 +343,12 @@
         }, 250);
     });
 
-    // 🎯 [완치 핵심 패치] 허공에 떠서 전체 스크립트를 박살 내던 row.onclick 구역 완벽 파괴 완료!
 
     function selectAndTrade(item) {
         const encodedName = encodeURIComponent(item.name);
         const urlParams = new URLSearchParams(window.location.search);
         const account = urlParams.get('account_name') || '6084-2227 [위탁종합]';
 
-        // 🚀 [오타 완벽 교정] 깨졌던 콜레스테롤(&chol=) 파라미터 링크 복구 완료
         location.href = `/main?stock_name=${encodedName}` +
                       `&account_name=${encodeURIComponent(account)}` +
                       `&page=main` +
@@ -373,7 +363,6 @@
                       `&sodium=${item.sodium || 0}`;
     }
 
-    // ⚡ [핵심 연동] YOLO 식단 인식 파이프라인 (이제 셧다운 에러가 풀려 정상 작동함)
     document.getElementById('input-yolo-cam').addEventListener('change', handleYoloUpload);
     document.getElementById('input-yolo-gal').addEventListener('change', handleYoloUpload);
 

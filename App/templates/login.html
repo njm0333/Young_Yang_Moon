@@ -12,7 +12,6 @@
             overflow: hidden;
         }
 
-        /* 0. 로그인 스크린 */
         #login-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: #0A0A0A;
@@ -33,7 +32,6 @@
         .input-user-name:focus { border-color: #007AFF; }
         .input-user-name::placeholder { color: #666666; font-size: 0.95rem; }
 
-        /* Select 박스 다크테마 커스텀 */
         select.input-user-name { appearance: none; -webkit-appearance: none; cursor: pointer; }
         select.input-user-name option { background-color: #1C1C1E; color: #FFFFFF; }
 
@@ -43,7 +41,6 @@
             box-shadow: 0 4px 15px rgba(255, 82, 217, 0.2); margin-top: 10px; margin-bottom: 40px;
         }
 
-        /* 1. 로딩(스플래시) 스크린 */
         #splash-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: radial-gradient(circle at center, #1c1026 0%, #0a0a0a 100%);
@@ -89,9 +86,9 @@
             <select name="invest_type" class="input-user-name" required>
                 <option value="가치투자형">가치투자형 (건강 유지 / 안정형)</option>
                 <option value="배당성장형">배당성장형 (근육 증가 / 단백질형)</option>
-                <option value="스몰캡_클린주">스몰캡 클린주 (린매스업)</option>
-                <option value="숏스퀴즈형">숏스퀴즈형 (다이어트 / 감량)</option>
-                <option value="레버리지형">레버리지형 (벌크업 / 고칼로리)</option>
+                <option value="스몰캡_클린주">자산축적형 (린매스업 / 체형 개선)</option>
+                <option value="숏스퀴즈형">손실감수형 (다이어트 / 감량)</option>
+                <option value="레버리지형">공격투자형 (벌크업 / 고칼로리)</option>
             </select>
         </div>
 
@@ -134,20 +131,16 @@
         const height = document.getElementById('height').value.trim();
         const weight = document.getElementById('weight').value.trim();
 
-        // 🛡️ 빈칸 제출 방지 유효성 검사
         if (name === "" || age === "" || height === "" || weight === "") {
             alert("상장 주식명과 모든 신체 스펙(나이, 키, 체중)을 입력해주세요!");
             return;
         }
 
-        // 1. 로그인 폼 숨기고 스플래시 화면 노출
         loginScreen.style.display = 'none';
         splashScreen.style.display = 'flex';
 
-        // 2. 가짜 프로그레스 바 게이지 애니메이션 시작
         setTimeout(() => { progressFill.style.width = '100%'; }, 50);
 
-        // 3. 💡 이전에 제안했던 실시간 숫자 카운팅 기믹 적용
         let count = 0;
         const interval = setInterval(() => {
             count += 5;
@@ -166,7 +159,6 @@
         }, 2050);
     });
 
-    // 엔터키 제출 지원
     document.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') { e.preventDefault(); btnSubmit.click(); }
     });
