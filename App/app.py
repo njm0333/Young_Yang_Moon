@@ -86,6 +86,7 @@ def login_process():
 
     return redirect(url_for('universal_router', stock_name=full_stock_name, account_name=full_account_name, page='main'))
 
+
 @app.route('/main')
 def universal_router():
     stock_name = request.args.get('stock_name', '무명주주(000000)')
@@ -96,44 +97,40 @@ def universal_router():
     stock_code = str((hash_val % 900000) + 100000)
     base_price = int(request.args.get('forced_price', (random.randint(10000, 100000) // 50) * 50))
 
-    # 📡 [MTS 주문 체결 실시간 감시 센서 (PRG 패턴 및 CEO 저널리즘 엔진 연동 완료)]
-    req_kcal = request.args.get('kcal', '0')
-    if req_kcal and req_kcal != '0':
+    # 검색창에서 넘어온 영양소 데이터를 먼저 안전하게 파싱합니다.
+    nutrients = {
+        'kcal': request.args.get('kcal', '0'),
+        'carbo': request.args.get('carbo', '0'),
+        'sugar': request.args.get('sugar', '0'),
+        'protein': request.args.get('protein', '0'),
+        'fat': request.args.get('fat', '0'),
+        'sfat': request.args.get('sfat', '0'),
+        'tfat': request.args.get('tfat', '0'),
+        'chol': request.args.get('chol', '0'),
+        'sodium': request.args.get('sodium', '0')
+    }
+
+    # 📡 [수술 완료] 이제 kcal가 아니라 'execute_trade' 플래그가 있어야만 실제 결제를 진행합니다!
+    is_execute = request.args.get('execute_trade', 'false')
+
+    if is_execute == 'true':
         food_title = request.args.get('food_name', stock_name)
-        buy_qty = int(request.args.get('qty', 1)) # 수량 파싱 (기본 1)
+        buy_qty = int(request.args.get('qty', 1))
 
-        nutrients = {
-            'kcal': req_kcal,
-            'carbo': request.args.get('carbo', '0'),
-            'sugar': request.args.get('sugar', '0'),
-            'protein': request.args.get('protein', '0'),
-            'fat': request.args.get('fat', '0'),
-            'sfat': request.args.get('sfat', '0'),
-            'tfat': request.args.get('tfat', '0'),
-            'chol': request.args.get('chol', '0'),
-            'sodium': request.args.get('sodium', '0')
-        }
-
-        # 1) 세션에서 유저 스펙(나이, 몸무게 등) 꺼내오기
         user_profile = session.get('user_profile', {'age': 24, 'height': 175.0, 'weight': 70.0, 'invest_type': '가치투자형'})
-
-        # 2) 메타 라벨(BMI, 연령대) 조립
         bmi_label, _ = get_bmi_status(user_profile['height'], user_profile['weight'])
-        age_label = f"{user_profile['age'] // 10 * 10}대"  # 예: 24 -> 20대
+        age_label = f"{user_profile['age'] // 10 * 10}대"
         meta_labels = {'bmi_label': bmi_label, 'age_label': age_label}
 
-        # 3) 💰 통합 자산 매니저에 매수 주문 전송 후 악재/호재 키워드 리턴받기
         news_keywords = execute_buy_order(food_title, buy_qty, base_price, nutrients, user_profile)
-
-        # 4) 📰 [신규 뉴스룸 엔진 가동] 애널리스트 톤의 기사 조립 및 발행
         generate_dynamic_combination_news(food_title, news_keywords, user_profile, meta_labels)
 
-        # 5) 🧹 [치명적 버그 해결] 새로고침 중복 결제 방지를 위한 주소창 세탁 리다이렉트
+        # 결제 완료 후 새로고침 방지용 리다이렉트 (영양소 꼬리표 떼어내기)
         return redirect(url_for('universal_router', stock_name=stock_name, account_name=account_name, page=target_page))
 
-    # 화면 렌더링 분기
+    # 화면 렌더링 분기 (결제가 아닐 땐 영양소 딕셔너리를 HTML로 예쁘게 내려줌)
     if target_page == 'main':
-        return render_template('main.html', stock_name=stock_name, stock_code=stock_code, base_price=base_price, account_name=account_name, nutrients={})
+        return render_template('main.html', stock_name=stock_name, stock_code=stock_code, base_price=base_price, account_name=account_name, nutrients=nutrients)
 
     elif target_page == 'search':
         return render_template('search.html', stock_name=stock_name, account_name=account_name)
@@ -142,10 +139,12 @@ def universal_router():
         return render_template('news.html', stock_name=stock_name, account_name=account_name, news_list=get_all_news())
 
     elif target_page == 'account':
-        # 🚀 [자산 탭 연동] 템플릿에 MECORP_ASSET 전역 장부를 그대로 꽂아줌
         return render_template('account.html', stock_name=stock_name, account_name=account_name, asset=MECORP_ASSET)
 
     return render_template(f'{target_page}.html', stock_name=stock_name, account_name=account_name)
+
+
+# ====================================================================
 
 # ====================================================================
 # ⚡ [AI 연동 비동기 통신 비즈니스 라우터 파트]
@@ -258,18 +257,14 @@ def api_search_food():
     else:
         if not food_df.empty and not processed_df.empty:
             df = pd.concat([food_df, processed_df], ignore_index=True)
-        elif not food_df.empty:
-            df = food_df
-        else:
-            df = processed_df
+        elif not food_df.empty: df = food_df
+        else: df = processed_df
 
-    if df.empty:
-        return jsonify([])
+    if df.empty: return jsonify([])
 
     if query:
         name_series = df.get('식품명', df.get('대표식품명', pd.Series(dtype=str)))
         cat_series = df.get('식품대분류명', df.get('대표식품명', pd.Series(dtype=str)))
-
         mask = name_series.fillna('').astype(str).str.lower().str.contains(query) | \
                cat_series.fillna('').astype(str).str.lower().str.contains(query)
         result_df = df[mask]
@@ -279,7 +274,8 @@ def api_search_food():
     output = []
     for _, row in result_df.iterrows():
         name = row.get('식품명', row.get('대표식품명', '이름 없음'))
-        cat = row.get('식품대분류명', row.get('상위클래스명', '분류 없음'))
+        # 🚀 [오류 수정 완료] 가공식품의 경우 원래 형님이 짰던 '대표식품명' 폴백으로 롤백!
+        cat = row.get('식품대분류명', row.get('대표식품명', '분류 없음'))
 
         def clean_val(val):
             if pd.isna(val) or str(val).strip() == '-' or str(val).strip() == '': return 0

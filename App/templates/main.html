@@ -426,6 +426,7 @@
         location.href = `/main?stock_name=${encodeURIComponent(rawStockName)}` +
                       `&account_name=${encodeURIComponent(currentAccount)}` +
                       `&page=main` +
+                      `&execute_trade=true` + // 🎯 이거 없으면 주문 안 됨!
                       `&food_name=${encodeURIComponent(rawStockName)}` +
                       `&qty=${qty}` + // 🎯 포트폴리오 누적용 수량
                       `&forced_price=${currentPrice}` + // 🎯 포트폴리오 누적용 평단가
