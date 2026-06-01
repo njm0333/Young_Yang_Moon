@@ -2,12 +2,10 @@
 
 <img width="1762" height="893" alt="image" src="https://github.com/user-attachments/assets/c0c1bdc5-82ef-4cc9-a877-148d270f519c" />
 
----
 
 ## Young Yang Moon - 영양문 모바일
 영양문 모바일은 사용자의 신체 조건과 영양소 섭취 목표를 고려하여, MTS 인터페이스 기반의 목표 달성을 지원하는 것을 목표로 합니다. 비전 인식과 OCR 기능을 활용하여 개인의 일일 영양 자산을 실시간으로 기록, 누적, 분석하는 웰니스 플랫폼입니다.
 
----
 
 ## Introduction
 
