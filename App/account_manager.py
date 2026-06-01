@@ -14,7 +14,6 @@ MECORP_ASSET = {
     'total_eval_profit': 0,
     'total_eval_rate': 0.0,
     'today_realized_profit': 0,
-    # 🚀 [차트 엔진] 타임시리즈 주가 이력 데이터 스토리지 신설 (초기 상장가 1억 원 설정)
     'price_history': [100000000]
 }
 
@@ -134,7 +133,6 @@ def update_asset_and_calculate_stock(nutrients, user_profile):
     MECORP_ASSET['change_amt'] = int(round(MECORP_ASSET['current_price'] - 100000000.0))
     MECORP_ASSET['change_rate'] = ((MECORP_ASSET['current_price'] - 100000000.0) / 100000000.0) * 100
 
-    # 🚀 [차트 엔진] 시가총액 변동 역사를 배열에 정수형태로 차곡차곡 누적 축적
     MECORP_ASSET['price_history'].append(int(round(MECORP_ASSET['current_price'])))
 
     return news_keywords

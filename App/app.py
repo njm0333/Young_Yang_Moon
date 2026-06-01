@@ -9,18 +9,13 @@ import numpy as np
 from flask import Flask, render_template, request, redirect, url_for, jsonify, session
 from werkzeug.utils import secure_filename
 
-# 📰 [모듈화 링킹] 외부 격리 매니저 부품들 일제히 소환
 from news_manager import get_all_news, generate_dynamic_combination_news
 from diet_manager import calculate_diet_nutrition
-from account_manager import execute_buy_order, MECORP_ASSET, get_bmi_status # 🚀 통합 자산 매니저 & 메타데이터 분석기 소환
+from account_manager import execute_buy_order, MECORP_ASSET, get_bmi_status
 
 app = Flask(__name__)
-# 🚀 [신규 추가] 세션 암호화 키 (로그인 데이터 유지용)
 app.secret_key = 'young_yang_moon_secret_key'
 
-# ====================================================================
-# 🛠️ [경로 주입 및 인라인 모듈 결합 파트]
-# ====================================================================
 current_dir = os.path.dirname(os.path.abspath(__file__))
 root_dir = os.path.dirname(current_dir)
 
@@ -32,34 +27,25 @@ if yolo_folder_path not in sys.path: sys.path.append(yolo_folder_path)
 
 try:
     from ocr import process_nutrition_image
-    print("🔤 [시스템 신호] 형의 EasyOCR 크로스체크 엔진 결합 완료.")
+    print("OCR 로딩완료.")
 except Exception as e:
-    print(f"⚠️ [경고] OCR 모듈 임포트 실패: {e}")
+    print(f"⚠OCR 모듈 임포트 실패: {e}")
 
 try:
     from detection import init_yolo_model, run_yolo_detection
     init_yolo_model()
 except Exception as e:
-    print(f"⚠️ [경고] YOLO 딥러닝 모듈 함수 링킹 실패: {e}")
+    print(f"⚠YOLO 딥러닝 모듈 함수 링킹 실패: {e}")
 
-# ====================================================================
-# 📊 [CSV 데이터 통합 로드 파트]
-# ====================================================================
 try:
     food_df = pd.read_csv('../Fooddata/19k_food.csv', encoding='utf-8')
     processed_df = pd.read_csv('../Fooddata/27M_product.csv', encoding='utf-8')
     nutrient_df = pd.read_csv('../Fooddata/food_nutrition.csv', encoding='utf-8')
     nutrient_df['음 식 명'] = nutrient_df['음 식 명'].astype(str).str.strip()
-    print("\n" + "═"*60)
-    print("📊 [영양문 거래소] 상장 음식/가공식품/식단 CSV 로드 완료!")
-    print("═"*60 + "\n")
 except Exception as e:
-    print(f"⚠️ [경고] CSV 상장 데이터 로드 실패: {e}")
+    print(f"⚠CSV 상장 데이터 로드 실패: {e}")
     nutrient_df = pd.DataFrame()
 
-# ====================================================================
-# 🌐 [웹 브라우저 라우팅 파트]
-# ====================================================================
 @app.route('/')
 def login_page():
     return render_template('login.html')
@@ -68,7 +54,6 @@ def login_page():
 def login_process():
     user_name = request.form.get('username', '무명주주')
 
-    # 🚀 [핵심 연결부] 프론트엔드에서 넘어온 신체 펀더멘털을 세션에 영구 저장
     session['user_profile'] = {
         'age': int(request.form.get('age', 24)),
         'height': float(request.form.get('height', 175.0)),
@@ -97,7 +82,6 @@ def universal_router():
     stock_code = str((hash_val % 900000) + 100000)
     base_price = int(request.args.get('forced_price', (random.randint(10000, 100000) // 50) * 50))
 
-    # 검색창에서 넘어온 영양소 데이터를 먼저 안전하게 파싱합니다.
     nutrients = {
         'kcal': request.args.get('kcal', '0'),
         'carbo': request.args.get('carbo', '0'),
@@ -110,7 +94,6 @@ def universal_router():
         'sodium': request.args.get('sodium', '0')
     }
 
-    # 📡 이제 kcal가 아니라 'execute_trade' 플래그가 있어야만 실제 결제를 진행합니다!
     is_execute = request.args.get('execute_trade', 'false')
 
     if is_execute == 'true':
@@ -125,10 +108,8 @@ def universal_router():
         news_keywords = execute_buy_order(food_title, buy_qty, base_price, nutrients, user_profile)
         generate_dynamic_combination_news(food_title, news_keywords, user_profile, meta_labels)
 
-        # 결제 완료 후 새로고침 방지용 리다이렉트 (영양소 꼬리표 떼어내기)
         return redirect(url_for('universal_router', stock_name=stock_name, account_name=account_name, page=target_page))
 
-    # 화면 렌더링 분기
     if target_page == 'main':
         return render_template('main.html', stock_name=stock_name, stock_code=stock_code, base_price=base_price, account_name=account_name, nutrients=nutrients)
 
@@ -139,7 +120,6 @@ def universal_router():
         return render_template('news.html', stock_name=stock_name, account_name=account_name, news_list=get_all_news())
 
     elif target_page == 'account':
-        # 🚀 [안전핀] 매수 전에 자산 탭을 먼저 눌러도 1억 원이 초기 세팅되도록 방어!
         if MECORP_ASSET.get('current_price', 0) < 1000000:
             MECORP_ASSET['current_price'] = 100000000.0
         return render_template('account.html', stock_name=stock_name, account_name=account_name, asset=MECORP_ASSET)
@@ -147,9 +127,6 @@ def universal_router():
     return render_template(f'{target_page}.html', stock_name=stock_name, account_name=account_name)
 
 
-# ====================================================================
-# ⚡ [AI 연동 비동기 통신 비즈니스 라우터 파트]
-# ====================================================================
 
 @app.route('/api/upload_ocr', methods=['POST'])
 def api_upload_ocr():
@@ -212,17 +189,16 @@ def api_upload_yolo():
         saved_image_path = os.path.join(save_dir, filename)
         file.save(saved_image_path)
 
-        print(f"\n🚀 [AI 파이프라인] YOLOv3 내부 엔진 가동 시작: {filename}")
         xml_output_dir = os.path.join(root_dir, 'Yolo_output')
 
         yolo_success, detected_code = run_yolo_detection(saved_image_path, xml_output_dir)
 
         if not yolo_success:
-            print(f"⚠️ [탐지 실패] XML 미생성 혹은 인식물체 없음 ➔ 직접 검색 이동!")
+            print(f"⚠ 탐지 실패.직접 검색 사용")
             return jsonify({'status': 'fail', 'code': 'YOLO_FAIL'})
 
         final_result = calculate_diet_nutrition(filename, xml_output_dir, nutrient_df)
-        print(f"✅ [탐지 성공] 코드: {detected_code} ➔ 찐 이름 매칭 완료: '{final_result['food_name']}'")
+        print(f"탐지 성공")
 
         web_image_url = f"/api/yolo_image/{filename}"
 
@@ -233,7 +209,7 @@ def api_upload_yolo():
         })
 
     except Exception as e:
-        print(f"❌ [YOLO/ResNet 연동 내부 장애]: {str(e)}")
+        print(f"YOLO/ResNet 연동 내부 장애: {str(e)}")
         return jsonify({'status': 'error', 'message': str(e)}), 500
 
 @app.route('/api/yolo_image/<filename>')
@@ -243,9 +219,6 @@ def serve_yolo_image(filename):
     return send_from_directory(save_dir, filename)
 
 
-# ====================================================================
-# ⚡ 초고속 실시간 종목 검색 백엔드 API
-# ====================================================================
 @app.route('/api/search_food')
 def api_search_food():
     query = request.args.get('q', '').strip().lower()
