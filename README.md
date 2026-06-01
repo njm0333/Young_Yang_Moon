@@ -50,13 +50,12 @@
 
 본 프로젝트는 conda 환경을 통해 의존성을 관리합니다. 아래 순서대로 환경을 생성하고 필요한 패키지를 설치해주세요.
 
-#### 1. 설치 및 환경 구축
+### **1. 설치 및 환경 구축**
 
-Windows 시작 메뉴에서 전용 터미널(**Anaconda Prompt** 또는 **Miniconda Prompt**)을 열고 원하는 저장소로 이동합니다. 이후 아래 명령어를 순서대로 복사하여 실행합니다.
+Windows 시작 메뉴에서 전용 터미널(**Anaconda Prompt** 또는 **Miniconda Prompt**)을 열고 원하는 저장소로 이동합니다. 바탕화면 등 한글 이름의 폴더는 피하고 영문 경로(예: `C:\Workspace`)를 이용해 주세요.
 
-> ⚠️ **주의 사항:** 새 폴더 및 사용자 계정 등 전체 경로에 **한글**이 섞이면 컴퓨터 비전(OpenCV) 모듈이 이미지를 읽지 못해 실행이 불가능합니다. 바탕화면 등 한글 이름 폴더를 피하고 영문 경로(예: `C:\Workspace`)를 이용해 주세요.
+이후 아래의 명령어를 입력해주세요.
 
-Bash
 
 ```
 git clone https://github.com/njm0333/Young_Yang_Moon.git
@@ -65,39 +64,35 @@ conda env create -f environment.yaml
 conda activate yolov3
 ```
 
-- 설치 중 약관 동의(ToS)를 묻는 프롬프트 `[(a)ccept/(r)eject/(v)iew]`가 나오면 `a`를 입력하고 엔터를 누르세요.
-
-- 가상환경 구축 및 패키지 다운로드에 다소 시간이 소요될 수 있습니다 (약 3~5분).
+- 가상환경 구축 및 패키지 다운로드에 다소 시간이 소요될 수 있습니다 (약 5~8분).
 
 
-#### 2. AI 가중치 파일 수동 다운로드 (필수)
+### **2. AI 가중치 파일 수동 다운로드**
 
-가상환경 세팅이 완료되면, 용량 문제로 깃허브에 업로드되지 않은 딥러닝 가중치 파일을 직접 다운로드하여 프로젝트 폴더 내 지정된 경로에 넣어주세요.
+가상환경 세팅이 완료되면 가중치 파일을 직접 다운로드하여 프로젝트 폴더 내 지정된 경로에 넣어주세요.
 
 - [best_403food_e200b150v2.pt 다운로드](https://drive.google.com/file/d/1iwbbaJjO-zrD2FTxpRU-vVZOjIEGDvu0/view?usp=sharing)
 
-  ➡️ `Young_Yang_Moon/Yolo/` 폴더 안으로 이동
+  `Young_Yang_Moon/Yolo/` 폴더 안으로 이동
 
 - [new_opencv_ckpt_b84_e200.pth 다운로드](https://drive.google.com/file/d/1M7tH-za2Y9kbN08J5GD7yYgnwNGecNLJ/view?usp=drive_link)
 
-  ➡️ `Young_Yang_Moon/Resnet/weights/` 폴더 안으로 이동 _(폴더가 없다면 새로 만들어주세요)_
+  `Young_Yang_Moon/Resnet/weights/` 폴더 안으로 이동
 
 
-#### 3. 서버 실행
+### 3. 서버 실행
 
-가중치 파일 배치가 모두 끝났다면, 열려있는 터미널(`(yolov3)` 환경)에서 아래 명령어를 실행하여 웹 서버를 가동합니다.
-
-Bash
+열려있는 터미널에서 아래 명령어를 실행하여 웹 서버를 가동합니다.
 
 ```
 python App/app.py
 ```
 
-- 첫 실행 시 딥러닝 모델(YOLO, OCR)을 메모리에 로딩하느라 시간이 다소 걸릴 수 있습니다 (1분 이내).
+- 첫 실행 시 시간이 다소 걸릴 수 있습니다 (1분 이내).
 
 - 터미널에 로딩 완료 메시지가 뜨면 브라우저에서 `http://127.0.0.1:5000` 으로 접속하여 이용하실 수 있습니다.
 
-- 컴퓨터와 스마트폰이 같은 Wi-Fi 네트워크에 있다면, 핸드폰 브라우저에 내부 IP(예: `192.168.x.x:5000`)를 입력하여 모바일 MTS 화면과 카메라 기능을 동일하게 사용할 수 있습니다.
+- 컴퓨터와 스마트폰이 같은 Wi-Fi 네트워크에 있다면, 핸드폰 브라우저에 내부 IP(예: `192.168.x.x:5000`)를 입력하여 모바일에서도 모든 기능을 사용할 수 있습니다.
 
 - [best_403food_e200b150v2.pt](https://drive.google.com/file/d/1iwbbaJjO-zrD2FTxpRU-vVZOjIEGDvu0/view?usp=sharing) : NutriNomics\Yolo\best_403food_e200b150v2.pt
 - [new_opencv_ckpt_b84_e200.pth](https://drive.google.com/file/d/1M7tH-za2Y9kbN08J5GD7yYgnwNGecNLJ/view?usp=drive_link) : NutriNomics\Resnet\weights\new_opencv_ckpt_b84_e200.pth
