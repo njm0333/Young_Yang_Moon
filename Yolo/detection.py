@@ -50,7 +50,7 @@ def init_yolo_model(cfg='yolov3-spp-403cls.cfg', names_path='403food.names', wei
 
     attempt_download(weights)
     if weights.endswith('.pt'):
-        _model.load_state_dict(torch.load(weights, map_location=_device)['model'], strict=False)
+        _model.load_state_dict(torch.load(weights, map_location=_device, weights_only=False)['model'], strict=False)
     else:
         load_darknet_weights(_model, weights)
 
