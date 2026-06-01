@@ -2,10 +2,6 @@
 import pandas as pd
 
 def filter_food_search(query, mode, food_df, processed_df):
-    """
-    🔍 [실시간 종목 검색 연산 엔진]
-    app.py에서 메모리에 올려둔 대용량 데이터프레임을 받아 조건별로 필터링합니다.
-    """
     if mode == 'food':
         df = food_df
     elif mode == 'processed':

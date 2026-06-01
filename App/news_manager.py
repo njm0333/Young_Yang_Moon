@@ -10,7 +10,7 @@ GLOBAL_NEWS_LIST = [
         "author": "연합인포맥스"
     },
     {
-        "title": '[긴급공시] Me.corp, 단기과열 종목 지정 예고... 리스크 관리 사이렌',
+        "title": '[공시] Me.corp, 단기과열 종목 지정 예고... 리스크 관리 사이렌',
         "content": "장중 아메리카노 등 고카페인 자산의 비정상적인 대량 매입 자금 유입이 포착됨에 따라 당국은 단기 과열 종목 지정을 예고했다. 무리한 유입은 당사 리스크를 가중시킬 수 있다.",
         "time": "11:55:12",
         "author": "파이낸셜뉴스"
@@ -22,11 +22,6 @@ def get_all_news():
     return GLOBAL_NEWS_LIST
 
 def generate_dynamic_combination_news(food_name, keywords, user_profile, meta_labels):
-    """
-    🎰 [CEO 컨셉 - 기업 분석 저널리즘 엔진 V6]
-    사용자를 상장사 'Me.corp'의 경영 주체로 설정.
-    '계좌/주주' 중심의 화법을 '당사/기업 펀더멘털/재무제표' 관점의 전문 경제 기사 문체로 개편.
-    """
     global GLOBAL_NEWS_LIST
     current_time = time.strftime('%H:%M:%S', time.localtime())
 
