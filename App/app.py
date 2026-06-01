@@ -6,23 +6,17 @@ import sys
 import hashlib
 import pandas as pd
 import numpy as np
-from flask import Flask, render_template, request, redirect, url_for, jsonify
+from flask import Flask, render_template, request, redirect, url_for, jsonify, session
 from werkzeug.utils import secure_filename
 
 # 📰 [모듈화 링킹] 외부 격리 매니저 부품들 일제히 소환
-from news_manager import get_all_news, trigger_purchase_news
+from news_manager import get_all_news, generate_dynamic_combination_news
 from diet_manager import calculate_diet_nutrition
+from account_manager import execute_buy_order, MECORP_ASSET, get_bmi_status # 🚀 통합 자산 매니저 & 메타데이터 분석기 소환
 
 app = Flask(__name__)
-
-# ====================================================================
-# 💰 [정민's 가상 계좌 장부 시스템 개설]
-# 유저가 매수(체결)할 때마다 9대 영양소를 누적 합산하여 보관하는 든든한 금고
-# ====================================================================
-MY_ACCOUNT_BALANCE = {
-    'kcal': 0, 'carbo': 0, 'sugar': 0, 'protein': 0, 'fat': 0,
-    'sfat': 0, 'tfat': 0, 'chol': 0, 'sodium': 0
-}
+# 🚀 [신규 추가] 세션 암호화 키 (로그인 데이터 유지용)
+app.secret_key = 'young_yang_moon_secret_key'
 
 # ====================================================================
 # 🛠️ [경로 주입 및 인라인 모듈 결합 파트]
@@ -33,12 +27,9 @@ root_dir = os.path.dirname(current_dir)
 ocr_folder_path = os.path.join(root_dir, 'OCR')
 yolo_folder_path = os.path.join(root_dir, 'Yolo')
 
-if ocr_folder_path not in sys.path:
-    sys.path.append(ocr_folder_path)
-if yolo_folder_path not in sys.path:
-    sys.path.append(yolo_folder_path)
+if ocr_folder_path not in sys.path: sys.path.append(ocr_folder_path)
+if yolo_folder_path not in sys.path: sys.path.append(yolo_folder_path)
 
-# AI 핵심 엔진 임포트
 try:
     from ocr import process_nutrition_image
     print("🔤 [시스템 신호] 형의 EasyOCR 크로스체크 엔진 결합 완료.")
@@ -57,14 +48,10 @@ except Exception as e:
 try:
     food_df = pd.read_csv('../Fooddata/19k_food.csv', encoding='utf-8')
     processed_df = pd.read_csv('../Fooddata/27M_product.csv', encoding='utf-8')
-
-    # 🎯 [트랙 A 저격] 일반 식단 전용 핵심 영양 성분표 로드 및 띄어쓰기 공백 정제
     nutrient_df = pd.read_csv('../Fooddata/food_nutrition.csv', encoding='utf-8')
     nutrient_df['음 식 명'] = nutrient_df['음 식 명'].astype(str).str.strip()
-
     print("\n" + "═"*60)
     print("📊 [영양문 거래소] 상장 음식/가공식품/식단 CSV 로드 완료!")
-    print(f"   • 일반 식단 영양 데이터 수: {len(nutrient_df)}개 종목 상장 중")
     print("═"*60 + "\n")
 except Exception as e:
     print(f"⚠️ [경고] CSV 상장 데이터 로드 실패: {e}")
@@ -79,64 +66,44 @@ def login_page():
 
 @app.route('/login_process', methods=['POST'])
 def login_process():
-    user_name = request.form.get('username')
+    user_name = request.form.get('username', '무명주주')
+
+    # 🚀 [핵심 연결부] 프론트엔드에서 넘어온 신체 펀더멘털을 세션에 영구 저장
+    session['user_profile'] = {
+        'age': int(request.form.get('age', 24)),
+        'height': float(request.form.get('height', 175.0)),
+        'weight': float(request.form.get('weight', 70.0)),
+        'invest_type': request.form.get('invest_type', '가치투자형')
+    }
+
     random_code = random.randint(100000, 999999)
     full_stock_name = f"{user_name}({random_code})"
 
     acc_part1 = random.randint(1000, 9999)
     acc_part2 = random.randint(1000, 9999)
-
     account_types = ["위탁종합", "증권종합", "종합계좌", "MTS종합", "해외종합"]
-    chosen_type = random.choice(account_types)
-    full_account_name = f"{acc_part1}-{acc_part2} [{chosen_type}]"
+    full_account_name = f"{acc_part1}-{acc_part2} [{random.choice(account_types)}]"
 
     return redirect(url_for('universal_router', stock_name=full_stock_name, account_name=full_account_name, page='main'))
 
 @app.route('/main')
 def universal_router():
-    global MY_ACCOUNT_BALANCE  # 가상 장부 소환
     stock_name = request.args.get('stock_name', '무명주주(000000)')
     account_name = request.args.get('account_name', '0000-0000 [위탁종합]')
     target_page = request.args.get('page', 'main')
 
-    if target_page == 'main':
-        hash_val = int(hashlib.md5(stock_name.encode('utf-8')).hexdigest(), 16)
-        stock_code = str((hash_val % 900000) + 100000)
+    hash_val = int(hashlib.md5(stock_name.encode('utf-8')).hexdigest(), 16)
+    stock_code = str((hash_val % 900000) + 100000)
+    base_price = int(request.args.get('forced_price', (random.randint(10000, 100000) // 50) * 50))
 
-        forced_price = request.args.get('forced_price', None)
-        if forced_price:
-            base_price = int(forced_price)
-        else:
-            raw_random_price = random.randint(10000, 100000)
-            base_price = (raw_random_price // 50) * 50
+    # 📡 [MTS 주문 체결 실시간 감시 센서 (PRG 패턴 및 CEO 저널리즘 엔진 연동 완료)]
+    req_kcal = request.args.get('kcal', '0')
+    if req_kcal and req_kcal != '0':
+        food_title = request.args.get('food_name', stock_name)
+        buy_qty = int(request.args.get('qty', 1)) # 수량 파싱 (기본 1)
 
-        # 📡 [MTS 주문 체결 실시간 감시 센서 장착]
-        # main.html에서 현금 매수 확정을 치고 주소창에 수치를 실어 보냈을 때 작동
-        req_kcal = request.args.get('kcal', '0')
-        if req_kcal and req_kcal != '0':
-            try:
-                current_kcal = int(float(req_kcal))
-            except Exception as e:
-                print(f"⚠️ [센서 예외 보정] {e}")
-                current_kcal = 1
-
-            food_title = request.args.get('food_name', stock_name)
-            print(f"📡 [MTS 체결 센서] 감지 성공 -> 종목: {food_title} / {current_kcal}kcal 뉴스룸 전송")
-
-            # 1) 📰 뉴스룸 기사 즉시 동적 증식 발행
-            trigger_purchase_news(food_title, current_kcal)
-
-            # 2) 💰 전역 계좌 장부에 영양소 실시간 누적 합산 (자산 탭 빌드업)
-            for key in MY_ACCOUNT_BALANCE.keys():
-                try:
-                    val_str = request.args.get(key, '0')
-                    MY_ACCOUNT_BALANCE[key] += float(val_str) if val_str else 0.0
-                except:
-                    pass
-
-        is_ocr = request.args.get('is_ocr', 'false')
         nutrients = {
-            'kcal': request.args.get('kcal', '0'),
+            'kcal': req_kcal,
             'carbo': request.args.get('carbo', '0'),
             'sugar': request.args.get('sugar', '0'),
             'protein': request.args.get('protein', '0'),
@@ -147,25 +114,38 @@ def universal_router():
             'sodium': request.args.get('sodium', '0')
         }
 
-        return render_template('main.html',
-                               stock_name=stock_name,
-                               stock_code=stock_code,
-                               base_price=base_price,
-                               account_name=account_name,
-                               is_ocr=is_ocr,
-                               nutrients=nutrients)
+        # 1) 세션에서 유저 스펙(나이, 몸무게 등) 꺼내오기
+        user_profile = session.get('user_profile', {'age': 24, 'height': 175.0, 'weight': 70.0, 'invest_type': '가치투자형'})
+
+        # 2) 메타 라벨(BMI, 연령대) 조립
+        bmi_label, _ = get_bmi_status(user_profile['height'], user_profile['weight'])
+        age_label = f"{user_profile['age'] // 10 * 10}대"  # 예: 24 -> 20대
+        meta_labels = {'bmi_label': bmi_label, 'age_label': age_label}
+
+        # 3) 💰 통합 자산 매니저에 매수 주문 전송 후 악재/호재 키워드 리턴받기
+        news_keywords = execute_buy_order(food_title, buy_qty, base_price, nutrients, user_profile)
+
+        # 4) 📰 [신규 뉴스룸 엔진 가동] 애널리스트 톤의 기사 조립 및 발행
+        generate_dynamic_combination_news(food_title, news_keywords, user_profile, meta_labels)
+
+        # 5) 🧹 [치명적 버그 해결] 새로고침 중복 결제 방지를 위한 주소창 세탁 리다이렉트
+        return redirect(url_for('universal_router', stock_name=stock_name, account_name=account_name, page=target_page))
+
+    # 화면 렌더링 분기
+    if target_page == 'main':
+        return render_template('main.html', stock_name=stock_name, stock_code=stock_code, base_price=base_price, account_name=account_name, nutrients={})
 
     elif target_page == 'search':
         return render_template('search.html', stock_name=stock_name, account_name=account_name)
 
     elif target_page == 'news':
-        return render_template('news.html',
-                               stock_name=stock_name,
-                               account_name=account_name,
-                               news_list=get_all_news())
+        return render_template('news.html', stock_name=stock_name, account_name=account_name, news_list=get_all_news())
+
+    elif target_page == 'account':
+        # 🚀 [자산 탭 연동] 템플릿에 MECORP_ASSET 전역 장부를 그대로 꽂아줌
+        return render_template('account.html', stock_name=stock_name, account_name=account_name, asset=MECORP_ASSET)
 
     return render_template(f'{target_page}.html', stock_name=stock_name, account_name=account_name)
-
 
 # ====================================================================
 # ⚡ [AI 연동 비동기 통신 비즈니스 라우터 파트]
@@ -244,9 +224,6 @@ def api_upload_yolo():
         final_result = calculate_diet_nutrition(filename, xml_output_dir, nutrient_df)
         print(f"✅ [탐지 성공] 코드: {detected_code} ➔ 찐 이름 매칭 완료: '{final_result['food_name']}'")
 
-        # 📰 YOLO 촬영 성공 시 즉각 뉴스룸 기본 발행 트리거 발동
-        trigger_purchase_news(final_result['food_name'], final_result['열량'])
-
         web_image_url = f"/api/yolo_image/{filename}"
 
         return jsonify({
@@ -267,7 +244,7 @@ def serve_yolo_image(filename):
 
 
 # ====================================================================
-# ⚡ 초고속 실시간 종목 검색 백엔드 API (직접 검색용 9대 영양소 동기화 패치)
+# ⚡ 초고속 실시간 종목 검색 백엔드 API
 # ====================================================================
 @app.route('/api/search_food')
 def api_search_food():
@@ -293,7 +270,6 @@ def api_search_food():
         name_series = df.get('식품명', df.get('대표식품명', pd.Series(dtype=str)))
         cat_series = df.get('식품대분류명', df.get('대표식품명', pd.Series(dtype=str)))
 
-        # 🚀 [오타 수술 완료] 에러를 유발하던 'cat_section =' 찌꺼기를 삭제했습니다!
         mask = name_series.fillna('').astype(str).str.lower().str.contains(query) | \
                cat_series.fillna('').astype(str).str.lower().str.contains(query)
         result_df = df[mask]

@@ -141,17 +141,22 @@
         </div>
     </div>
 
-    <div class="news-feed-pane">
-        {% for news in news_list %}
-        <div class="news-row">
-            <div class="news-title">{{ news.title | safe }}</div>
-            <div class="news-meta">
-                <span>2026.06.01</span>
-                <span>{{ news.time }}</span>
-                <span>|</span>
-                <span>{{ news.author }}</span>
-            </div>
+    {% for news in news_list %}
+    <div class="news-row">
+        <div class="news-title">{{ news.title | safe }}</div>
+
+        <!-- 🚀 [신규 추가] 뉴스 본문 미리보기 (2줄까지만 노출되고 ... 처리됨) -->
+        <div style="font-size: 0.85rem; color: #666; margin-top: 6px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+            {{ news.content }}
         </div>
+
+        <div class="news-meta" style="margin-top: 8px;">
+            <span>2026.06.01</span>
+            <span>{{ news.time }}</span>
+            <span>|</span>
+            <span>{{ news.author }}</span>
+        </div>
+    </div>
         {% else %}
         <div style="text-align:center; padding:40px; color:#999; font-size:0.9rem;">
             등록된 시황 뉴스가 없습니다.

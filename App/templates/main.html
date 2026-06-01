@@ -398,15 +398,18 @@
         document.getElementById('trade-confirm-modal').style.display = 'none';
     }
 
-    // 최종 확인 (체결)
-    // 최종 확인 (체결 신호 전송 및 계좌 적립 트리거)
+// 최종 확인 (체결 신호 전송 및 계좌 적립 트리거)
     function executeFinalTrade() {
-        alert(`🔔 [매수 체결 완료]\nSTU {{ stock_name }} ${qty}주가 성공적으로 매수되었습니다.\n\n해당 영양분은 자산 포트폴리오에 즉시 반영됩니다.`);
+        // 🚀 [안전핀] 템플릿 변수에 따옴표가 섞여서 스크립트가 터지는 것을 방지
+        const rawStockName = {{ stock_name | tojson | safe }};
+        const rawAccountName = {{ account_name | default('0000-0000 [위탁종합]') | tojson | safe }};
+
+        alert(`🔔 [매수 체결 완료]\nSTU ${rawStockName} ${qty}주가 성공적으로 매수되었습니다.\n\n해당 영양분은 자산 포트폴리오에 즉시 반영됩니다.`);
         closeTradeModal();
 
         // 현재 주소창에서 사용자 정보 안전하게 백업
         const urlParams = new URLSearchParams(window.location.search);
-        const currentAccount = urlParams.get('account_name') || '0000-0000 [위탁종합]';
+        const currentAccount = urlParams.get('account_name') || rawAccountName;
 
         // 팝업창 테이블 안에 실시간 곱연산되어 있는 진짜 영양소 문자열 파싱
         const finalKcal = document.getElementById('pop-nut-kcal').innerText;
@@ -419,11 +422,13 @@
         const finalTfat = document.getElementById('pop-nut-tfat').innerText;
         const finalChol = document.getElementById('pop-nut-chol').innerText;
 
-        // 🚀 [통신 파이프 연결] 꼬리표 분기 규칙(?page=main)을 유지하며 백엔드 센서로 격발 리다이렉트
-        location.href = `/main?stock_name=${encodeURIComponent('{{ stock_name }}')}` +
+        // 🚀 [통신 파이프 연결] 수량(qty)과 체결가(forced_price)를 추가로 쏴줍니다!
+        location.href = `/main?stock_name=${encodeURIComponent(rawStockName)}` +
                       `&account_name=${encodeURIComponent(currentAccount)}` +
                       `&page=main` +
-                      `&food_name=${encodeURIComponent('{{ stock_name }}')}` + // 매수 종목명 토스
+                      `&food_name=${encodeURIComponent(rawStockName)}` +
+                      `&qty=${qty}` + // 🎯 포트폴리오 누적용 수량
+                      `&forced_price=${currentPrice}` + // 🎯 포트폴리오 누적용 평단가
                       `&kcal=${finalKcal}&carbo=${finalCarbo}&sugar=${finalSugar}` +
                       `&protein=${finalProtein}&fat=${finalFat}&sfat=${finalSfat}` +
                       `&tfat=${finalTfat}&chol=${finalChol}&sodium=${finalSodium}`;

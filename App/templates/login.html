@@ -17,23 +17,30 @@
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: #0A0A0A;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
-            z-index: 10000; padding: 20px; box-sizing: border-box;
+            z-index: 10000; padding: 20px; box-sizing: border-box; overflow-y: auto;
         }
-        .login-box { width: 100%; max-width: 360px; text-align: center; }
+        .login-box { width: 100%; max-width: 360px; text-align: center; padding-top: 20px; }
         .login-title { color: #FFFFFF; font-size: 2rem; font-weight: 800; margin-bottom: 10px; letter-spacing: -1px; }
         .login-title .highlight { color: #FF52D9; }
-        .login-sub { color: #8E8E93; font-size: 0.9rem; margin-bottom: 40px; }
+        .login-sub { color: #8E8E93; font-size: 0.9rem; margin-bottom: 30px; }
+
         .input-group { margin-bottom: 20px; text-align: left; }
-        .input-group label { color: #BBBBBB; font-size: 0.85rem; display: block; margin-bottom: 8px; padding-left: 4px; }
+        .input-group label { color: #BBBBBB; font-size: 0.85rem; display: block; margin-bottom: 8px; padding-left: 4px; font-weight: 500; }
         .input-user-name {
             width: 100%; background-color: #1C1C1E; border: 1px solid #2C2C2E; border-radius: 6px;
-            padding: 14px; box-sizing: border-box; color: #FFFFFF; font-size: 1.1rem; outline: none;
+            padding: 14px; box-sizing: border-box; color: #FFFFFF; font-size: 1.05rem; outline: none;
         }
         .input-user-name:focus { border-color: #007AFF; }
+        .input-user-name::placeholder { color: #666666; font-size: 0.95rem; }
+
+        /* Select 박스 다크테마 커스텀 */
+        select.input-user-name { appearance: none; -webkit-appearance: none; cursor: pointer; }
+        select.input-user-name option { background-color: #1C1C1E; color: #FFFFFF; }
+
         .btn-login {
             width: 100%; background: linear-gradient(90deg, #007AFF, #FF52D9); border: none; border-radius: 6px;
             color: #FFFFFF; padding: 14px; font-size: 1.1rem; font-weight: 700; cursor: pointer;
-            box-shadow: 0 4px 15px rgba(255, 82, 217, 0.2);
+            box-shadow: 0 4px 15px rgba(255, 82, 217, 0.2); margin-top: 10px; margin-bottom: 40px;
         }
 
         /* 1. 로딩(스플래시) 스크린 */
@@ -54,6 +61,7 @@
         .progress-bar-bg { width: 100%; height: 4px; background-color: #2C2C2E; border-radius: 2px; overflow: hidden; }
         .progress-bar-fill { width: 0%; height: 100%; background: linear-gradient(90deg, #007AFF, #FF52D9); transition: width 2s linear; }
     </style>
+    <link rel="preload" href="{{ url_for('static', filename='logo.png') }}" as="image">
 </head>
 <body>
 
@@ -65,6 +73,26 @@
         <div class="input-group">
             <label for="username">상장 주식명 (사용자 이름)</label>
             <input type="text" id="username" name="username" class="input-user-name" placeholder="이름을 입력하세요" autocomplete="off" required>
+        </div>
+
+        <div class="input-group">
+            <label>상장 스펙 (나이 / 키 / 체중)</label>
+            <div style="display: flex; gap: 8px;">
+                <input type="number" name="age" id="age" class="input-user-name" placeholder="나이" value="24" required>
+                <input type="number" name="height" id="height" class="input-user-name" placeholder="키(cm)" required>
+                <input type="number" name="weight" id="weight" class="input-user-name" placeholder="체중(kg)" required>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label>투자 성향 (운용 목표)</label>
+            <select name="invest_type" class="input-user-name" required>
+                <option value="가치투자형">가치투자형 (건강 유지 / 안정형)</option>
+                <option value="배당성장형">배당성장형 (근육 증가 / 단백질형)</option>
+                <option value="스몰캡_클린주">스몰캡 클린주 (린매스업)</option>
+                <option value="숏스퀴즈형">숏스퀴즈형 (다이어트 / 감량)</option>
+                <option value="레버리지형">레버리지형 (벌크업 / 고칼로리)</option>
+            </select>
         </div>
 
         <button type="button" id="btn-submit" class="btn-login">영양문 정규장 접속</button>
@@ -96,34 +124,50 @@
     const loginForm = document.getElementById('login-form');
     const loginScreen = document.getElementById('login-screen');
     const splashScreen = document.getElementById('splash-screen');
-    const usernameInput = document.getElementById('username');
     const btnSubmit = document.getElementById('btn-submit');
     const progressFill = document.getElementById('progress-fill');
     const statusText = document.getElementById('status-text');
 
     btnSubmit.addEventListener('click', () => {
-        const name = usernameInput.value.trim();
-        if (name === "") {
-            alert("상장할 주식명(이름)을 입력해주세요!");
+        const name = document.getElementById('username').value.trim();
+        const age = document.getElementById('age').value.trim();
+        const height = document.getElementById('height').value.trim();
+        const weight = document.getElementById('weight').value.trim();
+
+        // 🛡️ 빈칸 제출 방지 유효성 검사
+        if (name === "" || age === "" || height === "" || weight === "") {
+            alert("상장 주식명과 모든 신체 스펙(나이, 키, 체중)을 입력해주세요!");
             return;
         }
 
-        // 1. 로그인 숨기고 가짜 로딩바 작동
+        // 1. 로그인 폼 숨기고 스플래시 화면 노출
         loginScreen.style.display = 'none';
         splashScreen.style.display = 'flex';
 
-        setTimeout(() => {
-            progressFill.style.width = '100%';
-            statusText.innerText = `[${name}] 종목 동기화 완료... 100%`;
-        }, 50);
+        // 2. 가짜 프로그레스 바 게이지 애니메이션 시작
+        setTimeout(() => { progressFill.style.width = '100%'; }, 50);
 
-        // 2. 2초 로딩바 완료 후 Flask 서버로 폼 전송(Submit)하여 다음 페이지로 이동
+        // 3. 💡 이전에 제안했던 실시간 숫자 카운팅 기믹 적용
+        let count = 0;
+        const interval = setInterval(() => {
+            count += 5;
+            if (count >= 100) {
+                count = 100;
+                clearInterval(interval);
+                statusText.innerText = `[${name}] 펀더멘털 분석 완료... 100%`;
+            } else {
+                statusText.innerText = `자산 데이터 동기화중... ${count}%`;
+            }
+        }, 90);
+
+        // 4. 2초 후 최종 백엔드로 Form 전송
         setTimeout(() => {
             loginForm.submit();
         }, 2050);
     });
 
-    usernameInput.addEventListener('keypress', (e) => {
+    // 엔터키 제출 지원
+    document.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') { e.preventDefault(); btnSubmit.click(); }
     });
 </script>
