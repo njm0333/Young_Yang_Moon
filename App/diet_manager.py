@@ -4,10 +4,7 @@ import xml.etree.ElementTree as ET
 import pandas as pd
 
 def calculate_diet_nutrition(filename, xml_output_dir, nutrient_df):
-    """
-    🧠 [YOLO 결과 가공 및 영양소 계산 엔진]
-    app.py에서 주차한 사진 이름을 받아 XML 파싱 및 CSV 매칭 연산을 전담합니다.
-    """
+
     file_basename = os.path.splitext(filename)[0]
     xml_path = os.path.join(xml_output_dir, f"{file_basename}.xml")
 
@@ -21,7 +18,6 @@ def calculate_diet_nutrition(filename, xml_output_dir, nutrient_df):
             if fn_tag is not None and fn_tag.text:
                 real_food_name = fn_tag.text.strip()
 
-    # ResNet 예측 등급 예시 (기본 가이드 유지)
     mock_q_level = "Q3"
     q_ratio_map = {"Q1": 0.25, "Q2": 0.50, "Q3": 0.75, "Q4": 1.00, "Q5": 1.25}
     current_ratio = q_ratio_map.get(mock_q_level, 1.00)
