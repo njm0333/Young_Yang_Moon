@@ -21,7 +21,7 @@ def indent(elem, level=0):
 def load_food_name_map(csv_path="../Fooddata/code_foodname.csv"):
     food_map = {}
     if not os.path.exists(csv_path):
-        print(f"⚠️ 경고: {csv_path} 파일을 찾을 수 없어 한글 이름 매핑을 생략합니다.")
+        print(f"⚠경고: {csv_path} 파일을 찾을 수 없습니다.")
         return food_map
 
     try:
@@ -45,10 +45,10 @@ def load_food_name_map(csv_path="../Fooddata/code_foodname.csv"):
 
             food_map[code_str] = name_str
 
-        print(f"📊 [DB 로드 성공] 총 {len(food_map)}종의 한식 이름 매핑 데이터셋 동기화 완료.")
+        print(f"한식DB 로드 완료.")
 
     except Exception as e:
-        print(f"⚠️ 경고: 음식 리스트 CSV 파싱 중 오류 발생: {e}")
+        print(f"⚠경고: 음식 리스트 CSV 파싱 중 오류 발생: {e}")
 
     return food_map
 

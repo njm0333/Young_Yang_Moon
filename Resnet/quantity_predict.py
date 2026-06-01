@@ -29,31 +29,26 @@ def process_image(image_path):
 if __name__ == '__main__':
     weights_path = os.path.join(".", "weights", "new_opencv_ckpt_b84_e200.pth")
 
-    print("🔄 조교의 ResNet 뇌를 장착하는 중...")
     model = load_checkpoint(weights_path)
     model.eval()
 
-    # 다중 이미지 탐색을 위한 폴더 경로 설정
     target_dir = os.path.join("..", "Fooddata", "test")
 
     if not os.path.exists(target_dir):
-        print(f"❌ [에러] 탐색할 폴더가 없습니다! 경로 확인: {target_dir}")
+        print(f"탐색할 폴더가 없습니다. 경로 확인: {target_dir}")
         sys.exit()
 
-    # 폴더 내 지원하는 이미지 파일들만 확장자 필터링하여 리스트업
     valid_extensions = ('.jpg', '.jpeg', '.png', '.bmp', '.JPG', '.JPEG', '.PNG')
     image_files = [f for f in os.listdir(target_dir) if f.endswith(valid_extensions)]
 
     if not image_files:
-        print(f"🔍 폴더 내에 분석 가능한 이미지 파일이 없습니다: {target_dir}")
+        print(f"폴더 내에 분석 가능한 이미지 파일이 없습니다. 경로확인: {target_dir}")
         sys.exit()
 
     class_names = ['Q1 (아주 적음)', 'Q2 (적음)', 'Q3 (보통 양)', 'Q4 (많음)', 'Q5 (아주 많음)']
 
-    print(f"📂 총 {len(image_files)}개의 이미지를 발견했습니다. 순차 분석을 시작합니다.")
     print('===============================================================')
 
-    # 모든 이미지를 순회하며 예측 루프 가동
     for file_name in image_files:
         target_image_path = os.path.join(target_dir, file_name)
 
@@ -76,10 +71,10 @@ if __name__ == '__main__':
 
         result_grade = class_names[idx]
 
-        print(f"📁 파일명 : {file_name}")
-        print(f"📊 등급   : {result_grade}")
-        print(f"🔥 확신도 : {confidence_score * 100:.2f}%")
+        print(f"파일명 : {file_name}")
+        print(f" 등급   : {result_grade}")
+        print(f" 확신도 : {confidence_score * 100:.2f}%")
         print('---------------------------------------------------------------')
 
-    print("🎉 모든 이미지에 대한 양 추정 연산이 종료되었습니다.")
+    print("모든 이미지에 대한 양 추정 연산이 종료되었습니다.")
     print('===============================================================')
