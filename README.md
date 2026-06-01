@@ -94,7 +94,5 @@ python App/app.py
 
 - 컴퓨터와 스마트폰이 같은 Wi-Fi 네트워크에 있다면, 핸드폰 브라우저에 내부 IP(예: `192.168.x.x:5000`)를 입력하여 모바일에서도 모든 기능을 사용할 수 있습니다.
 
-- [best_403food_e200b150v2.pt](https://drive.google.com/file/d/1iwbbaJjO-zrD2FTxpRU-vVZOjIEGDvu0/view?usp=sharing) : NutriNomics\Yolo\best_403food_e200b150v2.pt
-- [new_opencv_ckpt_b84_e200.pth](https://drive.google.com/file/d/1M7tH-za2Y9kbN08J5GD7yYgnwNGecNLJ/view?usp=drive_link) : NutriNomics\Resnet\weights\new_opencv_ckpt_b84_e200.pth
 
 
