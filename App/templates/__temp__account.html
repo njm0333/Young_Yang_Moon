@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>영양문 모바일 - 내계좌</title>
+    <style>
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background-color: #F8F9FA; /* 배경은 살짝 회색빛으로 구분감 */
+            font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+            color: #000000; overflow: hidden;
+            -webkit-user-select: none; user-select: none;
+        }
+        .wrapper { display: flex; flex-direction: column; height: 100%; padding-bottom: 55px; box-sizing: border-box; overflow-y: auto; background-color: #FFFFFF;}
+
+        /* 🟢 1. 헤더 (기존 민트 테마 유지하되 탭은 내계좌 위주로) */
+        header { background-color: #55B2B5; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; color: #FFFFFF; }
+        .header-left { display: flex; align-items: center; gap: 18px; overflow-x: auto; white-space: nowrap; }
+        .header-left::-webkit-scrollbar { display: none; }
+        .back-arrow { font-size: 1.4rem; font-weight: 300; cursor: pointer; }
+        .header-tabs { display: flex; gap: 16px; font-size: 1.1rem; font-weight: bold; }
+        .header-tabs span { opacity: 0.7; cursor: pointer; }
+        .header-tabs span.active { opacity: 1; border-bottom: 2px solid #FFFFFF; padding-bottom: 2px; }
+        .header-right { font-size: 1.3rem; cursor: pointer; opacity: 0.9; }
+
+        /* 🔍 2. 계좌 선택 바 */
+        .account-selector-bar {
+            background-color: #F0F2F5; padding: 10px 16px; display: flex; justify-content: space-between;
+            align-items: center; border-bottom: 1px solid #E5E5E5;
+        }
+        .account-dropdown {
+            font-size: 1rem; font-weight: bold; color: #333; display: flex; align-items: center; gap: 6px;
+        }
+        .icon-refresh { color: #888; font-size: 1.1rem; cursor: pointer; font-weight: normal; }
+        .btn-domestic {
+            background-color: #FFFFFF; border: 1px solid #CCCCCC; padding: 5px 10px;
+            font-size: 0.85rem; border-radius: 4px; color: #333; font-weight: 500;
+        }
+
+        /* 💰 3. 해외 총 자산 영역 */
+        .asset-summary-section { padding: 24px 16px 16px 16px; background-color: #FFFFFF; }
+        .asset-title { font-size: 0.9rem; color: #666666; margin-bottom: 8px; display: flex; align-items: center; gap: 4px; }
+        .icon-info {
+            display: inline-block; width: 14px; height: 14px; background-color: #CCC;
+            color: #FFF; font-size: 0.65rem; text-align: center; line-height: 14px; border-radius: 50%;
+        }
+        .asset-main-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+        .asset-blind-text { font-size: 2.2rem; font-weight: 900; color: #111; letter-spacing: -1px; }
+        .btn-view-asset {
+            background-color: #CFCFCF; color: #FFF; border: none; padding: 4px 8px;
+            font-size: 0.75rem; border-radius: 4px; font-weight: bold; cursor: pointer;
+        }
+        .asset-search-link { font-size: 0.85rem; color: #666666; display: flex; align-items: center; gap: 4px; margin-bottom: 24px; }
+
+        /* 📊 4. 일반/소수점 탭 및 손익 요약 */
+        .sub-tab-bar { display: flex; border-bottom: 1px solid #E5E5E5; justify-content: space-between; align-items: flex-end; padding-bottom: 8px; margin-bottom: 20px;}
+        .sub-tabs { display: flex; gap: 16px; font-size: 1.05rem; font-weight: bold; color: #999; }
+        .sub-tabs span.active { color: #111; border-bottom: 3px solid #111; padding-bottom: 6px; }
+        .detail-view-link { font-size: 0.85rem; color: #666; }
+
+        .profit-loss-table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+        .profit-loss-table td { padding: 6px 0; font-size: 0.95rem; }
+        .profit-loss-table td:first-child { color: #666666; width: 40%; }
+        .profit-loss-table td:last-child { text-align: right; font-weight: bold; font-size: 1.05rem; }
+
+        /* 주식 컬러 전역 클래스 */
+        .text-up { color: #D9383A !important; }
+        .text-down { color: #2B66CC !important; }
+        .text-flat { color: #333333 !important; }
+
+        /* 📜 5. 보유종목 리스트 */
+        .holdings-header { display: flex; flex-direction: column; gap: 14px; margin-bottom: 10px; }
+        .holdings-title { font-size: 1.1rem; font-weight: bold; color: #111; margin: 0; }
+        .holdings-filters { display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; color: #666; }
+        .currency-toggle {
+            display: flex; background-color: #F0F2F5; border-radius: 15px; overflow: hidden;
+        }
+        .currency-toggle span { padding: 4px 12px; font-weight: 500; }
+        .currency-toggle span.active { background-color: #FFFFFF; border: 1px solid #DDD; border-radius: 15px; color: #111; font-weight: bold; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .filter-right { display: flex; gap: 12px; align-items: center; }
+
+        /* 개별 종목 아이템 */
+        .stock-item { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-bottom: 1px solid #F0F0F0; }
+        .stock-info-left { display: flex; align-items: center; gap: 12px; }
+        .stock-icon {
+            width: 42px; height: 42px; background-color: #F370B0; border-radius: 50%;
+            display: flex; justify-content: center; align-items: center; color: #FFF; font-weight: bold;
+            font-size: 1rem; position: relative;
+        }
+        .stock-icon-badge {
+            position: absolute; bottom: -2px; right: -2px; width: 16px; height: 16px;
+            background-color: #FFF; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 0.6rem;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+        .stock-name-box { display: flex; flex-direction: column; gap: 4px; }
+        .stock-name { font-size: 1.05rem; font-weight: bold; color: #111; }
+        .stock-qty { font-size: 0.85rem; color: #888; }
+
+        .stock-info-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+        .stock-eval-amount { font-size: 1.1rem; font-weight: bold; color: #111; }
+        .stock-profit-rate { font-size: 0.9rem; font-weight: 500; }
+
+        /* 🎁 6. 배너 영역 */
+        .promo-banner {
+            background-color: #FFF2F7; border-radius: 12px; padding: 16px;
+            text-align: center; margin-top: 20px; font-size: 0.95rem; font-weight: bold; color: #333; cursor: pointer;
+        }
+        .promo-banner span { color: #D9383A; }
+        .dividend-banner {
+            border: 1px solid #E5E5E5; border-radius: 12px; padding: 18px 16px;
+            display: flex; justify-content: space-between; align-items: center;
+            margin-top: 12px; font-size: 1.05rem; font-weight: bold; color: #111; cursor: pointer;
+        }
+
+        /* 💬 7. 하단 배너 및 내비게이션 바 (공통) */
+        .bottom-banner-text {
+            background-color: #F6F6F6; padding: 6px 12px; font-size: 0.8rem; color: #444444;
+            border-top: 1px solid #E5E5E5; display: flex; align-items: center; gap: 6px;
+            margin-top: 30px;
+        }
+        .badge-purple { background-color: #E2D1F9; color: #7B3EBF; font-size: 0.7rem; padding: 1px 4px; border-radius: 8px; font-weight: bold; }
+
+        .nav-tab-bar {
+            position: fixed; bottom: 0; left: 0; width: 100%; height: 55px;
+            background-color: #FFFFFF; border-top: 1px solid #E5E5E5;
+            display: flex; align-items: center; justify-content: space-around;
+            box-sizing: border-box; z-index: 9000;
+        }
+        .nav-item {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            color: #777777; font-size: 0.8rem; width: 25%; font-weight: 500; text-decoration: none; height: 100%;
+        }
+        .nav-item.active { color: #222222; font-weight: bold; }
+        .nav-item span { display: block; }
+
+    </style>
+</head>
+<body>
+
+<div class="wrapper">
+    <!-- 헤더 -->
+    <header>
+        <div class="header-left">
+            <span class="back-arrow" onclick="location.href='/main?stock_name={{ stock_name }}&account_name={{ account_name }}&page=main'">←</span>
+            <div class="header-tabs">
+                <span class="active">내계좌</span>
+                <span>해외잔고</span>
+                <span>미체결</span>
+                <span>주문체결</span>
+                <span>실시간</span>
+            </div>
+        </div>
+        <div class="header-right">⋮</div>
+    </header>
+
+    <!-- 계좌 선택바 -->
+    <div class="account-selector-bar">
+        <div class="account-dropdown">
+            {{ account_name }} 노정민 <span>∨</span> <span class="icon-refresh">↻</span>
+        </div>
+        <button class="btn-domestic">국내잔고</button>
+    </div>
+
+    <!-- 해외 총 자산 및 포트폴리오 영역 -->
+    <div class="asset-summary-section">
+
+        <div class="asset-title">해외 총 자산 <span class="icon-info">i</span></div>
+        <div class="asset-main-row">
+            <!-- 스크린샷처럼 처음엔 '자산조회'로 가려둠 -->
+            <span class="asset-blind-text" id="asset-display-text">자산조회</span>
+            <button class="btn-view-asset" id="btn-toggle-asset" onclick="toggleAssetVisibility()">보기</button>
+        </div>
+        <div class="asset-search-link">🔍 내 자산 상세보기</div>
+
+        <!-- 탭 및 요약 -->
+        <div class="sub-tab-bar">
+            <div class="sub-tabs">
+                <span class="active">일반</span>
+                <span>소수점</span>
+            </div>
+            <div class="detail-view-link">자세히보기 ∨</div>
+        </div>
+
+        <!-- 평가손익 테이블 -->
+        <table class="profit-loss-table">
+            <tr>
+                <td>평가손익</td>
+                <!-- 백엔드에서 넘겨준 total_eval_profit 기준 색상 렌더링 -->
+                <td class="{% if asset.total_eval_profit > 0 %}text-up{% elif asset.total_eval_profit < 0 %}text-down{% else %}text-flat{% endif %}">
+                    {% if asset.total_eval_profit > 0 %}+{% endif %}{{ "{:,}".format(asset.total_eval_profit) }}원({% if asset.total_eval_rate > 0 %}+{% endif %}{{ "%.2f" | format(asset.total_eval_rate) }}%)
+                </td>
+            </tr>
+            <tr>
+                <td>당일 실현손익</td>
+                <td class="{% if asset.today_realized_profit > 0 %}text-up{% elif asset.today_realized_profit < 0 %}text-down{% else %}text-flat{% endif %}">
+                    {% if asset.today_realized_profit > 0 %}+{% endif %}{{ "{:,}".format(asset.today_realized_profit) }}원
+                </td>
+            </tr>
+        </table>
+
+        <!-- 보유종목 -->
+        <div class="holdings-header">
+            <h3 class="holdings-title">보유종목</h3>
+            <div class="holdings-filters">
+                <div class="currency-toggle">
+                    <span class="active">원화</span>
+                    <span>외화</span>
+                </div>
+                <div class="filter-right">
+                    <span><input type="checkbox" style="vertical-align: middle; accent-color: #CCC;"> 환차손익</span>
+                    <span>평가금액 순 ∨</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 주식 리스트 (Jinja2 반복문) -->
+        <div class="holdings-list">
+            {% if asset.portfolio %}
+            {% for food, data in asset.portfolio.items() %}
+            <div class="stock-item">
+                <div class="stock-info-left">
+                    <!-- 스크린샷의 핑크색 원 아이콘 구현 -->
+                    <div class="stock-icon" style="background-color: {% if loop.index0 % 2 == 0 %}#F370B0{% else %}#55B2B5{% endif %};">
+                        {% if data.quantity > 1 %}
+                        {{ data.quantity }}x
+                        {% else %}
+                        1x
+                        {% endif %}
+                        <div class="stock-icon-badge">🇺🇸</div>
+                    </div>
+                    <div class="stock-name-box">
+                        <span class="stock-name">{{ food }}</span>
+                        <span class="stock-qty">{{ data.quantity }}주</span>
+                    </div>
+                </div>
+                <div class="stock-info-right">
+                    <span class="stock-eval-amount">{{ "{:,}".format(data.eval_amount) }}원</span>
+                    <span class="stock-profit-rate {% if data.eval_profit > 0 %}text-up{% elif data.eval_profit < 0 %}text-down{% else %}text-flat{% endif %}">
+                            {% if data.eval_profit > 0 %}+{% endif %}{{ "{:,}".format(data.eval_profit) }}({% if data.eval_rate > 0 %}+{% endif %}{{ "%.2f" | format(data.eval_rate) }}%)
+                        </span>
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <div style="text-align: center; padding: 40px 0; color: #999; font-size: 0.9rem;">
+                보유 중인 종목(음식)이 없습니다.<br>주문 탭에서 영양을 매수해보세요!
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- 하단 배너 -->
+        <div class="promo-banner">
+            🎁 부담없이 소수점으로 꾸준히 <span>더 모아볼까요? ></span>
+        </div>
+        <div class="dividend-banner">
+            이번달 배당수익 <span>></span>
+        </div>
+
+    </div>
+
+    <!-- 하단 챗 및 네비게이션 -->
+    <div class="bottom-banner-text">
+        <span class="badge-purple">지수 채팅</span>
+        <span>이제 님 차례에요-들어와서 한 마디만 던져봐요</span>
+    </div>
+
+    <nav class="nav-tab-bar">
+        <a href="/main?stock_name={{ stock_name }}&account_name={{ account_name }}&page=search" class="nav-item"><span>검색</span></a>
+        <a href="/main?stock_name={{ stock_name }}&account_name={{ account_name }}&page=main" class="nav-item"><span>주문</span></a>
+        <a href="/main?stock_name={{ stock_name }}&account_name={{ account_name }}&page=news" class="nav-item"><span>뉴스</span></a>
+        <a href="/main?stock_name={{ stock_name }}&account_name={{ account_name }}&page=account" class="nav-item active"><span>자산</span></a>
+    </nav>
+</div>
+
+<script>
+    // 스크린샷의 '자산조회' 가리기/보기 기능 구현
+    let isAssetHidden = true;
+    const realTotalAsset = "{{ '{:,}'.format(asset.total_asset) }}원";
+
+    function toggleAssetVisibility() {
+        const textEl = document.getElementById('asset-display-text');
+        const btnEl = document.getElementById('btn-toggle-asset');
+
+        if (isAssetHidden) {
+            textEl.innerText = realTotalAsset;
+            btnEl.innerText = "숨김";
+            isAssetHidden = false;
+        } else {
+            textEl.innerText = "자산조회";
+            btnEl.innerText = "보기";
+            isAssetHidden = true;
+        }
+    }
+</script>
+
+</body>
+</html>
