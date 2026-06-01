@@ -1,11 +1,21 @@
 # -*-coding:utf-8-*-
+import os
+import logging
+import warnings
+
+warnings.filterwarnings("ignore")
+os.environ['YOLO_VERBOSE'] = 'False'
+os.environ['PYTHONWARNINGS'] = 'ignore'
+logging.getLogger("ultralytics").setLevel(logging.ERROR)
+
+
 import random
 import socket
-import os
 import sys
 import hashlib
 import pandas as pd
 import numpy as np
+import torch
 from flask import Flask, render_template, request, redirect, url_for, jsonify, session
 from werkzeug.utils import secure_filename
 
@@ -34,6 +44,16 @@ except Exception as e:
 
 try:
     from detection import init_yolo_model, run_yolo_detection
+    if not hasattr(torch, '_load_legacy_serialized_file'):
+        import torch.serialization
+        _orig_load = torch.load
+        def _patched_load(*args, **kwargs):
+            if 'weights_only' in kwargs:
+                kwargs.pop('weights_only')
+            return _orig_load(*args, **kwargs)
+        torch.load = _patched_load
+
+
     init_yolo_model()
 except Exception as e:
     print(f"⚠YOLO 딥러닝 모듈 함수 링킹 실패: {e}")
@@ -207,4 +227,4 @@ def api_search_food():
     return jsonify(output[:30])
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=False)
