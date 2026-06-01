@@ -14,7 +14,6 @@
         }
         .wrapper { display: flex; flex-direction: column; height: 100%; padding-bottom: 55px; box-sizing: border-box; overflow-y: auto; background-color: #FFFFFF;}
 
-        /* 🟢 1. 헤더 */
         header { background-color: #55B2B5; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; color: #FFFFFF; }
         .header-left { display: flex; align-items: center; gap: 18px; overflow-x: auto; white-space: nowrap; }
         .header-left::-webkit-scrollbar { display: none; }
@@ -24,7 +23,6 @@
         .header-tabs span.active { opacity: 1; border-bottom: 2px solid #FFFFFF; padding-bottom: 2px; }
         .header-right { font-size: 1.3rem; cursor: pointer; opacity: 0.9; }
 
-        /* 🔍 2. 계좌 선택 바 */
         .account-selector-bar {
             background-color: #F0F2F5; padding: 10px 16px; display: flex; justify-content: space-between;
             align-items: center; border-bottom: 1px solid #E5E5E5;
@@ -38,28 +36,28 @@
             font-size: 0.85rem; border-radius: 4px; color: #333; font-weight: 500;
         }
 
-        /* 💰 3. 해외 총 자산 영역 */
         .asset-summary-section { padding: 24px 16px 16px 16px; background-color: #FFFFFF; }
         .asset-title { font-size: 0.9rem; color: #666666; margin-bottom: 8px; display: flex; align-items: center; gap: 4px; }
-        .icon-info {
-            display: inline-block; width: 14px; height: 14px; background-color: #CCC;
-            color: #FFF; font-size: 0.65rem; text-align: center; line-height: 14px; border-radius: 50%;
-        }
+        .icon-info { display: inline-block; width: 14px; height: 14px; background-color: #CCC; color: #FFF; font-size: 0.65rem; text-align: center; line-height: 14px; border-radius: 50%; }
         .asset-main-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
         .asset-blind-text { font-size: 2.2rem; font-weight: 900; color: #111; letter-spacing: -1px; }
-        .btn-view-asset {
-            background-color: #CFCFCF; color: #FFF; border: none; padding: 4px 8px;
-            font-size: 0.75rem; border-radius: 4px; font-weight: bold; cursor: pointer;
-        }
+        .btn-view-asset { background-color: #CFCFCF; color: #FFF; border: none; padding: 4px 8px; font-size: 0.75rem; border-radius: 4px; font-weight: bold; cursor: pointer; }
         .asset-search-link { font-size: 0.85rem; color: #666666; display: flex; align-items: center; gap: 4px; margin-bottom: 24px; }
 
-        /* 📊 4. 일반/소수점 탭 및 손익 요약 */
+        /* 📊 🚀 [차트 디자인] 심플 트렌드 틱 차트 레이아웃 */
+        .trend-chart-container {
+            width: 100%; height: 65px; background-color: #F8F9FA;
+            border-radius: 8px; margin: 10px 0 20px 0; border: 1px dashed #E0E0E0;
+            display: flex; align-items: center; justify-content: center; position: relative;
+        }
+        .trend-chart-label { position: absolute; left: 10px; top: 6px; font-size: 0.68rem; color: #888; font-weight: bold; }
+
         .sub-tab-bar { display: flex; border-bottom: 1px solid #E5E5E5; justify-content: space-between; align-items: flex-end; padding-bottom: 8px; margin-bottom: 20px;}
         .sub-tabs { display: flex; gap: 16px; font-size: 1.05rem; font-weight: bold; color: #999; }
         .sub-tabs span.active { color: #111; border-bottom: 3px solid #111; padding-bottom: 6px; }
         .detail-view-link { font-size: 0.85rem; color: #666; }
 
-        .profit-loss-table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+        .profit-loss-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
         .profit-loss-table td { padding: 6px 0; font-size: 0.95rem; }
         .profit-loss-table td:first-child { color: #666666; width: 40%; }
         .profit-loss-table td:last-child { text-align: right; font-weight: bold; font-size: 1.05rem; }
@@ -68,80 +66,35 @@
         .text-down { color: #2B66CC !important; }
         .text-flat { color: #333333 !important; }
 
-        /* 📜 5. 보유종목 리스트 */
         .holdings-header { display: flex; flex-direction: column; gap: 14px; margin-bottom: 10px; }
         .holdings-title { font-size: 1.1rem; font-weight: bold; color: #111; margin: 0; }
         .holdings-filters { display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; color: #666; }
-        .currency-toggle {
-            display: flex; background-color: #F0F2F5; border-radius: 15px; overflow: hidden;
-        }
+        .currency-toggle { display: flex; background-color: #F0F2F5; border-radius: 15px; overflow: hidden; }
         .currency-toggle span { padding: 4px 12px; font-weight: 500; }
         .currency-toggle span.active { background-color: #FFFFFF; border: 1px solid #DDD; border-radius: 15px; color: #111; font-weight: bold; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
         .filter-right { display: flex; gap: 12px; align-items: center; }
 
-        /* 개별 종목 아이템 */
         .stock-item { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid #F0F0F0; }
         .stock-info-left { display: flex; align-items: center; gap: 12px; flex: 1; }
-        .stock-icon {
-            width: 42px; height: 42px; background-color: #F370B0; border-radius: 50%;
-            display: flex; justify-content: center; align-items: center; color: #FFF; font-weight: bold;
-            font-size: 1rem; position: relative; flex-shrink: 0;
-        }
-        .stock-icon-badge {
-            position: absolute; bottom: -2px; right: -2px; width: 16px; height: 16px;
-            background-color: #FFF; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 0.6rem;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.2);
-        }
+        .stock-icon { width: 42px; height: 42px; background-color: #F370B0; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: #FFF; font-weight: bold; font-size: 1rem; position: relative; flex-shrink: 0; }
+        .stock-icon-badge { position: absolute; bottom: -2px; right: -2px; width: 16px; height: 16px; background-color: #FFF; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 0.6rem; box-shadow: 0 1px 2px rgba(0,0,0,0.2); }
         .stock-name-box { display: flex; flex-direction: column; gap: 4px; }
         .stock-name { font-size: 1.05rem; font-weight: bold; color: #111; }
         .stock-qty { font-size: 0.85rem; color: #888; }
 
-        /* 🚀 [기능 1] 우측 가격 영역을 영양성분그리드로 교체 */
         .stock-info-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; min-width: 160px; }
-        .nutrient-spec-box {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 2px 6px;
-            font-size: 0.72rem;
-            color: #555;
-            text-align: right;
-            background: #F8F9FA;
-            padding: 6px;
-            border-radius: 6px;
-        }
+        .nutrient-spec-box { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px 6px; font-size: 0.72rem; color: #555; text-align: right; background: #F8F9FA; padding: 6px; border-radius: 6px; }
         .nutrient-spec-box span { white-space: nowrap; }
         .stock-profit-rate { font-size: 0.85rem; font-weight: bold; }
 
-        /* 🎁 6. 배너 영역 */
-        .promo-banner {
-            background-color: #FFF2F7; border-radius: 12px; padding: 16px;
-            text-align: center; margin-top: 20px; font-size: 0.95rem; font-weight: bold; color: #333; cursor: pointer;
-        }
+        .promo-banner { background-color: #FFF2F7; border-radius: 12px; padding: 16px; text-align: center; margin-top: 20px; font-size: 0.95rem; font-weight: bold; color: #333; cursor: pointer; }
         .promo-banner span { color: #D9383A; }
-        .dividend-banner {
-            border: 1px solid #E5E5E5; border-radius: 12px; padding: 18px 16px;
-            display: flex; justify-content: space-between; align-items: center;
-            margin-top: 12px; font-size: 1.05rem; font-weight: bold; color: #111; cursor: pointer;
-        }
-
-        /* 💬 7. 하단 내비게이션 바 */
-        .bottom-banner-text {
-            background-color: #F6F6F6; padding: 6px 12px; font-size: 0.8rem; color: #444444;
-            border-top: 1px solid #E5E5E5; display: flex; align-items: center; gap: 6px;
-            margin-top: 30px;
-        }
+        .dividend-banner { border: 1px solid #E5E5E5; border-radius: 12px; padding: 18px 16px; display: flex; justify-content: space-between; align-items: center; margin-top: 12px; font-size: 1.05rem; font-weight: bold; color: #111; cursor: pointer; }
+        .bottom-banner-text { background-color: #F6F6F6; padding: 6px 12px; font-size: 0.8rem; color: #444444; border-top: 1px solid #E5E5E5; display: flex; align-items: center; gap: 6px; margin-top: 30px; }
         .badge-purple { background-color: #E2D1F9; color: #7B3EBF; font-size: 0.7rem; padding: 1px 4px; border-radius: 8px; font-weight: bold; }
 
-        .nav-tab-bar {
-            position: fixed; bottom: 0; left: 0; width: 100%; height: 55px;
-            background-color: #FFFFFF; border-top: 1px solid #E5E5E5;
-            display: flex; align-items: center; justify-content: space-around;
-            box-sizing: border-box; z-index: 9000;
-        }
-        .nav-item {
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            color: #777777; font-size: 0.8rem; width: 25%; font-weight: 500; text-decoration: none; height: 100%;
-        }
+        .nav-tab-bar { position: fixed; bottom: 0; left: 0; width: 100%; height: 55px; background-color: #FFFFFF; border-top: 1px solid #E5E5E5; display: flex; align-items: center; justify-content: space-around; box-sizing: border-box; z-index: 9000; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; color: #777777; font-size: 0.8rem; width: 25%; font-weight: 500; text-decoration: none; height: 100%; }
         .nav-item.active { color: #222222; font-weight: bold; }
     </style>
 </head>
@@ -153,6 +106,7 @@
             <span class="back-arrow" onclick="location.href='/main?stock_name={{ stock_name }}&account_name={{ account_name }}&page=main'">←</span>
             <div class="header-tabs">
                 <span class="active">내계좌</span>
+
             </div>
         </div>
         <div class="header-right">⋮</div>
@@ -165,21 +119,13 @@
     </div>
 
     <div class="asset-summary-section">
-
         <div class="asset-title">Me.corp 가치 조회 <span class="icon-info">i</span></div>
         <div class="asset-main-row">
             <span class="asset-blind-text" id="asset-display-text" style="font-size: 2.5rem; letter-spacing: -1.5px;">{{ "{:,}".format(asset.current_price | int) }}원</span>
             <button class="btn-view-asset" id="btn-toggle-asset" onclick="toggleAssetVisibility()">숨김</button>
         </div>
 
-        <div class="sub-tab-bar">
-            <div class="sub-tabs">
-                <span class="active">일반</span>
-                <span>소수점</span>
-            </div>
-        </div>
-
-        <table class="profit-loss-table" style="margin-bottom: 20px;">
+        <table class="profit-loss-table">
             <tr>
                 <td>기업 가치 변동</td>
                 <td class="{% if asset.change_amt > 0 %}text-up{% elif asset.change_amt < 0 %}text-down{% else %}text-flat{% endif %}">
@@ -187,6 +133,17 @@
                 </td>
             </tr>
         </table>
+
+        <div class="trend-chart-container">
+            <div class="trend-chart-label">TREND CHART (최근 틱 추이)</div>
+            <svg id="sparkline-svg" width="100%" height="45" style="padding: 10px 5px 0 5px; box-sizing: border-box;"></svg>
+        </div>
+
+        <div class="sub-tab-bar">
+            <div class="sub-tabs">
+                <span class="active">일반</span>
+            </div>
+        </div>
 
         <div class="holdings-header">
             <h3 class="holdings-title">보유종목</h3>
@@ -207,7 +164,6 @@
             {% set total_qty.value = total_qty.value + data.quantity %}
             {% endfor %}
 
-            {# 💡 수량(quantity) 기준 내림차순 자동 정렬 #}
             {% for food, data in asset.portfolio.items() | sort(attribute='1.quantity', reverse=True) %}
             <div class="stock-item">
                 <div class="stock-info-left">
@@ -223,15 +179,15 @@
 
                 <div class="stock-info-right">
                     <div class="nutrient-spec-box">
-                        <span>🔥 {{ data.get('kcal', 0) | int }}k</span>
-                        <span>🌾 탄 {{ data.get('carbo', 0) | round(1) }}g</span>
-                        <span>🍬 당 {{ data.get('sugar', 0) | round(1) }}g</span>
-                        <span>💪 단 {{ data.get('protein', 0) | round(1) }}g</span>
-                        <span>🥑 지 {{ data.get('fat', 0) | round(1) }}g</span>
-                        <span>🥩 포 {{ data.get('sfat', 0) | round(1) }}g</span>
-                        <span>🍿 트 {{ data.get('tfat', 0) | round(1) }}g</span>
-                        <span>🍳 콜 {{ data.get('chol', 0) | int }}m</span>
-                        <span>🧂 나 {{ data.get('sodium', 0) | int }}m</span>
+                        <span><span style="color:#888;">열량</span> <b style="color:#000;">{{ data.get('kcal', 0) | int }}</b>kcal</span>
+                        <span><span style="color:#888;">탄수화물</span> <b style="color:#000;">{{ data.get('carbo', 0) | round(1) }}</b>g</span>
+                        <span><span style="color:#888;">당류</span> <b style="color:#000;">{{ data.get('sugar', 0) | round(1) }}</b>g</span>
+                        <span><span style="color:#888;">단백질</span> <b style="color:#000;">{{ data.get('protein', 0) | round(1) }}</b>g</span>
+                        <span><span style="color:#888;">지방</span> <b style="color:#000;">{{ data.get('fat', 0) | round(1) }}</b>g</span>
+                        <span><span style="color:#888;">포화지방</span> <b style="color:#000;">{{ data.get('sfat', 0) | round(1) }}</b>g</span>
+                        <span><span style="color:#888;">트랜스지방</span> <b style="color:#000;">{{ data.get('tfat', 0) | round(1) }}</b>g</span>
+                        <span><span style="color:#888;">콜레스테롤</span> <b style="color:#000;">{{ data.get('chol', 0) | int }}</b>mg</span>
+                        <span><span style="color:#888;">나트륨</span> <b style="color:#000;">{{ data.get('sodium', 0) | int }}</b>mg</span>
                     </div>
 
                     {% set qty_weight = (data.quantity / total_qty.value * 100) if total_qty.value > 0 else 0 %}
@@ -254,7 +210,6 @@
         <div class="dividend-banner">
             이번달 배당수익 <span>></span>
         </div>
-
     </div>
 
     <div class="bottom-banner-text">
@@ -271,6 +226,7 @@
 </div>
 
 <script>
+    // 🚀 [기본 보임 세팅 및 SVG 드로잉 핵심 코어 스크립트]
     let isAssetHidden = false;
     const rawAsset = parseFloat("{{ asset.current_price | default(100000000) }}");
     const realTotalAsset = rawAsset.toLocaleString('ko-KR') + "원";
@@ -278,8 +234,6 @@
     function toggleAssetVisibility() {
         const textEl = document.getElementById('asset-display-text');
         const btnEl = document.getElementById('btn-toggle-asset');
-
-        // 상태 로직이 반대로 쾌적하게 작동하도록 토글 스위치 정렬
         if (isAssetHidden) {
             textEl.innerText = realTotalAsset;
             btnEl.innerText = "숨김";
@@ -290,6 +244,48 @@
             isAssetHidden = true;
         }
     }
+
+    // 🎰 [정통 미니 틱 차트 가동] Jinja2 배열을 자바스크립트 수치 배열로 직수혈
+    const historyData = {{ asset.price_history | default([100000000]) | tojson | safe }};
+
+    function drawSparkline(data) {
+        const svg = document.getElementById("sparkline-svg");
+        if (!svg || data.length === 0) return;
+
+        // 컨테이너 크기 동적 계산
+        const width = svg.clientWidth || 340;
+        const height = 35;
+
+        // 퀀트 데이터 스케일링 연산 (최대/최소 경계선 도출)
+        let min = Math.min(...data);
+        let max = Math.max(...data);
+
+        // 보합(일직선) 방어선
+        if (min === max) { min -= 1000000; max += 1000000; }
+
+        const padding = 2;
+        const points = [];
+        const step = width / (data.length > 1 ? data.length - 1 : 1);
+
+        for (let i = 0; i < data.length; i++) {
+            const x = i * step;
+            // 가치 폭등 시 위로, 폭락 시 아래로 그리기 위한 Y축 반전 보정 계산
+            const y = height - ((data[i] - min) / (max - min) * (height - padding * 2) + padding);
+            points.push(`${x},${y}`);
+        }
+
+        // 상승장(레드) / 하락장(블루) 컬러 스위칭 싱크
+        const lastPrice = data[data.length - 1];
+        const initialPrice = data[0];
+        const strokeColor = lastPrice >= initialPrice ? "#D9383A" : "#2B66CC";
+
+        // SVG 폴리라인 생성 및 화면 주입
+        svg.innerHTML = `<polyline fill="none" stroke="${strokeColor}" stroke-width="2" points="${points.join(' ')}"/>`;
+    }
+
+    // 윈도우 로드 완료 및 창 크기 변경 시 실시간 그래픽 렌더링 동기화
+    window.addEventListener("load", () => drawSparkline(historyData));
+    window.addEventListener("resize", () => drawSparkline(historyData));
 </script>
 </body>
 </html>
