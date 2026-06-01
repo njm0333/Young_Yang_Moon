@@ -7,14 +7,14 @@
     <style>
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
-            background-color: #F8F9FA; /* 배경은 살짝 회색빛으로 구분감 */
+            background-color: #F8F9FA;
             font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
             color: #000000; overflow: hidden;
             -webkit-user-select: none; user-select: none;
         }
         .wrapper { display: flex; flex-direction: column; height: 100%; padding-bottom: 55px; box-sizing: border-box; overflow-y: auto; background-color: #FFFFFF;}
 
-        /* 🟢 1. 헤더 (기존 민트 테마 유지하되 탭은 내계좌 위주로) */
+        /* 🟢 1. 헤더 */
         header { background-color: #55B2B5; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; color: #FFFFFF; }
         .header-left { display: flex; align-items: center; gap: 18px; overflow-x: auto; white-space: nowrap; }
         .header-left::-webkit-scrollbar { display: none; }
@@ -64,7 +64,6 @@
         .profit-loss-table td:first-child { color: #666666; width: 40%; }
         .profit-loss-table td:last-child { text-align: right; font-weight: bold; font-size: 1.05rem; }
 
-        /* 주식 컬러 전역 클래스 */
         .text-up { color: #D9383A !important; }
         .text-down { color: #2B66CC !important; }
         .text-flat { color: #333333 !important; }
@@ -81,12 +80,12 @@
         .filter-right { display: flex; gap: 12px; align-items: center; }
 
         /* 개별 종목 아이템 */
-        .stock-item { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-bottom: 1px solid #F0F0F0; }
-        .stock-info-left { display: flex; align-items: center; gap: 12px; }
+        .stock-item { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid #F0F0F0; }
+        .stock-info-left { display: flex; align-items: center; gap: 12px; flex: 1; }
         .stock-icon {
             width: 42px; height: 42px; background-color: #F370B0; border-radius: 50%;
             display: flex; justify-content: center; align-items: center; color: #FFF; font-weight: bold;
-            font-size: 1rem; position: relative;
+            font-size: 1rem; position: relative; flex-shrink: 0;
         }
         .stock-icon-badge {
             position: absolute; bottom: -2px; right: -2px; width: 16px; height: 16px;
@@ -97,9 +96,21 @@
         .stock-name { font-size: 1.05rem; font-weight: bold; color: #111; }
         .stock-qty { font-size: 0.85rem; color: #888; }
 
-        .stock-info-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
-        .stock-eval-amount { font-size: 1.1rem; font-weight: bold; color: #111; }
-        .stock-profit-rate { font-size: 0.9rem; font-weight: 500; }
+        /* 🚀 [기능 1] 우측 가격 영역을 영양성분그리드로 교체 */
+        .stock-info-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; min-width: 160px; }
+        .nutrient-spec-box {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2px 6px;
+            font-size: 0.72rem;
+            color: #555;
+            text-align: right;
+            background: #F8F9FA;
+            padding: 6px;
+            border-radius: 6px;
+        }
+        .nutrient-spec-box span { white-space: nowrap; }
+        .stock-profit-rate { font-size: 0.85rem; font-weight: bold; }
 
         /* 🎁 6. 배너 영역 */
         .promo-banner {
@@ -113,7 +124,7 @@
             margin-top: 12px; font-size: 1.05rem; font-weight: bold; color: #111; cursor: pointer;
         }
 
-        /* 💬 7. 하단 배너 및 내비게이션 바 (공통) */
+        /* 💬 7. 하단 내비게이션 바 */
         .bottom-banner-text {
             background-color: #F6F6F6; padding: 6px 12px; font-size: 0.8rem; color: #444444;
             border-top: 1px solid #E5E5E5; display: flex; align-items: center; gap: 6px;
@@ -132,114 +143,101 @@
             color: #777777; font-size: 0.8rem; width: 25%; font-weight: 500; text-decoration: none; height: 100%;
         }
         .nav-item.active { color: #222222; font-weight: bold; }
-        .nav-item span { display: block; }
-
     </style>
 </head>
 <body>
 
 <div class="wrapper">
-    <!-- 헤더 -->
     <header>
         <div class="header-left">
             <span class="back-arrow" onclick="location.href='/main?stock_name={{ stock_name }}&account_name={{ account_name }}&page=main'">←</span>
             <div class="header-tabs">
                 <span class="active">내계좌</span>
-                <span>해외잔고</span>
-                <span>미체결</span>
-                <span>주문체결</span>
-                <span>실시간</span>
             </div>
         </div>
         <div class="header-right">⋮</div>
     </header>
 
-    <!-- 계좌 선택바 -->
     <div class="account-selector-bar">
         <div class="account-dropdown">
-            {{ account_name }} 노정민 <span>∨</span> <span class="icon-refresh">↻</span>
+            {{ account_name }} <span>∨</span> <span class="icon-refresh">↻</span>
         </div>
-        <button class="btn-domestic">국내잔고</button>
     </div>
 
-    <!-- 🏢 Me.corp 기업 가치 및 포트폴리오 영역 -->
     <div class="asset-summary-section">
 
         <div class="asset-title">Me.corp 가치 조회 <span class="icon-info">i</span></div>
         <div class="asset-main-row">
-            <!-- 스크린샷처럼 처음엔 '자산조회'로 가려둠 -->
-            <span class="asset-blind-text" id="asset-display-text">자산조회</span>
-            <button class="btn-view-asset" id="btn-toggle-asset" onclick="toggleAssetVisibility()">보기</button>
+            <span class="asset-blind-text" id="asset-display-text" style="font-size: 2.5rem; letter-spacing: -1.5px;">{{ "{:,}".format(asset.current_price | int) }}원</span>
+            <button class="btn-view-asset" id="btn-toggle-asset" onclick="toggleAssetVisibility()">숨김</button>
         </div>
-        <div class="asset-search-link">🔍 내 신체 자산 상세보기</div>
 
-        <!-- 탭 및 요약 -->
         <div class="sub-tab-bar">
             <div class="sub-tabs">
                 <span class="active">일반</span>
                 <span>소수점</span>
             </div>
-            <div class="detail-view-link">자세히보기 ∨</div>
         </div>
 
-        <!-- 🚀 평가손익 테이블 변경: 기업 가치 변동 및 누적 섭취량으로 변경 -->
-        <table class="profit-loss-table">
+        <table class="profit-loss-table" style="margin-bottom: 20px;">
             <tr>
                 <td>기업 가치 변동</td>
-                <!-- 백엔드의 change_amt (1억 기준 등락) 적용 -->
                 <td class="{% if asset.change_amt > 0 %}text-up{% elif asset.change_amt < 0 %}text-down{% else %}text-flat{% endif %}">
                     {% if asset.change_amt > 0 %}+{% endif %}{{ "{:,}".format(asset.change_amt | int) }}원({% if asset.change_rate > 0 %}+{% endif %}{{ "%.2f" | format(asset.change_rate) }}%)
                 </td>
             </tr>
-            <tr>
-                <td>누적 투자금(섭취량)</td>
-                <td class="text-flat">
-                    {{ "{:,}".format(asset.total_asset | int) }}원
-                </td>
-            </tr>
         </table>
 
-        <!-- 보유종목 -->
         <div class="holdings-header">
-            <h3 class="holdings-title">보유종목 (포트폴리오)</h3>
+            <h3 class="holdings-title">보유종목</h3>
             <div class="holdings-filters">
                 <div class="currency-toggle">
                     <span class="active">원화</span>
-                    <span>외화</span>
                 </div>
                 <div class="filter-right">
-                    <span><input type="checkbox" style="vertical-align: middle; accent-color: #CCC;"> 환차손익</span>
-                    <span>비중 높은 순 ∨</span>
+                    <span style="font-weight: bold; color: #111;">비중 높은 순 ∨</span>
                 </div>
             </div>
         </div>
 
-        <!-- 주식 리스트 (Jinja2 반복문) -->
-        <div class="holdings-list">
+        <div class="holdings-list" id="holdings-container">
+            {% set total_qty = namespace(value=0) %}
             {% if asset.portfolio %}
             {% for food, data in asset.portfolio.items() %}
+            {% set total_qty.value = total_qty.value + data.quantity %}
+            {% endfor %}
+
+            {# 💡 수량(quantity) 기준 내림차순 자동 정렬 #}
+            {% for food, data in asset.portfolio.items() | sort(attribute='1.quantity', reverse=True) %}
             <div class="stock-item">
                 <div class="stock-info-left">
                     <div class="stock-icon" style="background-color: {% if loop.index0 % 2 == 0 %}#F370B0{% else %}#55B2B5{% endif %};">
-                        {% if data.quantity > 1 %}
                         {{ data.quantity }}x
-                        {% else %}
-                        1x
-                        {% endif %}
                         <div class="stock-icon-badge">🇺🇸</div>
                     </div>
                     <div class="stock-name-box">
                         <span class="stock-name">{{ food }}</span>
-                        <span class="stock-qty">{{ data.quantity }}주</span>
+                        <span class="stock-qty">{{ data.quantity }}주 보유</span>
                     </div>
                 </div>
+
                 <div class="stock-info-right">
-                    <span class="stock-eval-amount">{{ "{:,}".format(data.eval_amount) }}원</span>
-                    <!-- 🚀 포트폴리오 비중(%) 자동 계산 로직 적용 -->
-                    {% set weight = (data.eval_amount / asset.total_asset * 100) if asset.total_asset > 0 else 0 %}
-                    <span class="stock-profit-rate" style="color: #666666; font-weight: bold;">
-                        비중 {{ "%.1f" | format(weight) }}%
-                    </span>
+                    <div class="nutrient-spec-box">
+                        <span>🔥 {{ data.get('kcal', 0) | int }}k</span>
+                        <span>🌾 탄 {{ data.get('carbo', 0) | round(1) }}g</span>
+                        <span>🍬 당 {{ data.get('sugar', 0) | round(1) }}g</span>
+                        <span>💪 단 {{ data.get('protein', 0) | round(1) }}g</span>
+                        <span>🥑 지 {{ data.get('fat', 0) | round(1) }}g</span>
+                        <span>🥩 포 {{ data.get('sfat', 0) | round(1) }}g</span>
+                        <span>🍿 트 {{ data.get('tfat', 0) | round(1) }}g</span>
+                        <span>🍳 콜 {{ data.get('chol', 0) | int }}m</span>
+                        <span>🧂 나 {{ data.get('sodium', 0) | int }}m</span>
+                    </div>
+
+                    {% set qty_weight = (data.quantity / total_qty.value * 100) if total_qty.value > 0 else 0 %}
+                    <span class="stock-profit-rate text-up">
+                            비중 {{ "%.1f" | format(qty_weight) }}%
+                        </span>
                 </div>
             </div>
             {% endfor %}
@@ -250,7 +248,6 @@
             {% endif %}
         </div>
 
-        <!-- 하단 배너 -->
         <div class="promo-banner">
             🎁 부담없이 소수점으로 꾸준히 <span>더 모아볼까요? ></span>
         </div>
@@ -260,7 +257,6 @@
 
     </div>
 
-    <!-- 하단 챗 및 네비게이션 -->
     <div class="bottom-banner-text">
         <span class="badge-purple">지수 채팅</span>
         <span>이제 님 차례에요-들어와서 한 마디만 던져봐요</span>
@@ -275,8 +271,7 @@
 </div>
 
 <script>
-    let isAssetHidden = true;
-
+    let isAssetHidden = false;
     const rawAsset = parseFloat("{{ asset.current_price | default(100000000) }}");
     const realTotalAsset = rawAsset.toLocaleString('ko-KR') + "원";
 
@@ -284,6 +279,7 @@
         const textEl = document.getElementById('asset-display-text');
         const btnEl = document.getElementById('btn-toggle-asset');
 
+        // 상태 로직이 반대로 쾌적하게 작동하도록 토글 스위치 정렬
         if (isAssetHidden) {
             textEl.innerText = realTotalAsset;
             btnEl.innerText = "숨김";
@@ -295,6 +291,5 @@
         }
     }
 </script>
-
 </body>
 </html>
