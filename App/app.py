@@ -25,6 +25,7 @@ yolo_folder_path = os.path.join(root_dir, 'Yolo')
 if ocr_folder_path not in sys.path: sys.path.append(ocr_folder_path)
 if yolo_folder_path not in sys.path: sys.path.append(yolo_folder_path)
 
+
 try:
     from ocr import process_nutrition_image
     print("OCR 로딩완료.")
@@ -61,16 +62,10 @@ def login_process():
         'invest_type': request.form.get('invest_type', '가치투자형')
     }
 
-    random_code = random.randint(100000, 999999)
-    full_stock_name = f"{user_name}({random_code})"
-
-    acc_part1 = random.randint(1000, 9999)
-    acc_part2 = random.randint(1000, 9999)
-    account_types = ["위탁종합", "증권종합", "종합계좌", "MTS종합", "해외종합"]
-    full_account_name = f"{acc_part1}-{acc_part2} [{random.choice(account_types)}]"
+    full_stock_name = f"{user_name}({random.randint(100000, 999999)})"
+    full_account_name = f"{random.randint(1000, 9999)}-{random.randint(1000, 9999)} [{random.choice(['위탁종합', '증권종합', '종합계좌', 'MTS종합', '해외종합'])}]"
 
     return redirect(url_for('universal_router', stock_name=full_stock_name, account_name=full_account_name, page='main'))
-
 
 @app.route('/main')
 def universal_router():
@@ -94,164 +89,104 @@ def universal_router():
         'sodium': request.args.get('sodium', '0')
     }
 
-    is_execute = request.args.get('execute_trade', 'false')
-
-    if is_execute == 'true':
+    if request.args.get('execute_trade', 'false') == 'true':
         food_title = request.args.get('food_name', stock_name)
         buy_qty = int(request.args.get('qty', 1))
 
         user_profile = session.get('user_profile', {'age': 24, 'height': 175.0, 'weight': 70.0, 'invest_type': '가치투자형'})
         bmi_label, _ = get_bmi_status(user_profile['height'], user_profile['weight'])
-        age_label = f"{user_profile['age'] // 10 * 10}대"
-        meta_labels = {'bmi_label': bmi_label, 'age_label': age_label}
 
         news_keywords = execute_buy_order(food_title, buy_qty, base_price, nutrients, user_profile)
-        generate_dynamic_combination_news(food_title, news_keywords, user_profile, meta_labels)
+        generate_dynamic_combination_news(food_title, news_keywords, user_profile, {'bmi_label': bmi_label, 'age_label': f"{user_profile['age'] // 10 * 10}대"})
 
         return redirect(url_for('universal_router', stock_name=stock_name, account_name=account_name, page=target_page))
 
     if target_page == 'main':
         return render_template('main.html', stock_name=stock_name, stock_code=stock_code, base_price=base_price, account_name=account_name, nutrients=nutrients)
-
     elif target_page == 'search':
         return render_template('search.html', stock_name=stock_name, account_name=account_name)
-
     elif target_page == 'news':
         return render_template('news.html', stock_name=stock_name, account_name=account_name, news_list=get_all_news())
-
     elif target_page == 'account':
-        if MECORP_ASSET.get('current_price', 0) < 1000000:
-            MECORP_ASSET['current_price'] = 100000000.0
+        if MECORP_ASSET.get('current_price', 0) < 1000000: MECORP_ASSET['current_price'] = 100000000.0
         return render_template('account.html', stock_name=stock_name, account_name=account_name, asset=MECORP_ASSET)
 
     return render_template(f'{target_page}.html', stock_name=stock_name, account_name=account_name)
 
-
-
 @app.route('/api/upload_ocr', methods=['POST'])
 def api_upload_ocr():
-    if 'file' not in request.files:
-        return jsonify({'status': 'error', 'message': '파일이 전달되지 않았습니다.'}), 400
-
-    file = request.files['file']
-    if file.filename == '':
-        return jsonify({'status': 'error', 'message': '선택된 사진 파일이 없습니다.'}), 400
-
+    if 'file' not in request.files or request.files['file'].filename == '':
+        return jsonify({'status': 'error', 'message': '파일 오류'}), 400
     try:
         save_dir = os.path.join(root_dir, 'OCR', 'Images')
-        if not os.path.exists(save_dir):
-            os.makedirs(save_dir)
-
-        filename = secure_filename(file.filename)
-        if not filename or len(filename.split('.')) < 2:
-            filename = f"ocr_input_{random.randint(1000, 9999)}.jpg"
-
-        saved_image_path = os.path.join(save_dir, filename)
-        file.save(saved_image_path)
-
-        final_nutrition_dto = process_nutrition_image(saved_image_path)
-        web_image_url = f"/api/ocr_image/{filename}"
-
-        return jsonify({
-            'status': 'success',
-            'result': final_nutrition_dto,
-            'image_url': web_image_url
-        })
-
+        os.makedirs(save_dir, exist_ok=True)
+        filename = secure_filename(request.files['file'].filename) or f"ocr_{random.randint(1000, 9999)}.jpg"
+        saved_path = os.path.join(save_dir, filename)
+        request.files['file'].save(saved_path)
+        return jsonify({'status': 'success', 'result': process_nutrition_image(saved_path), 'image_url': f"/api/ocr_image/{filename}"})
     except Exception as e:
-        return jsonify({'status': 'error', 'message': f'AI 연산 중 장애 발생: {str(e)}'}), 500
+        return jsonify({'status': 'error', 'message': str(e)}), 500
 
 @app.route('/api/ocr_image/<filename>')
 def serve_ocr_image(filename):
     from flask import send_from_directory
-    save_dir = os.path.join(root_dir, 'OCR', 'Images')
-    return send_from_directory(save_dir, filename)
-
+    return send_from_directory(os.path.join(root_dir, 'OCR', 'Images'), filename)
 
 @app.route('/api/upload_yolo', methods=['POST'])
 def api_upload_yolo():
-    if 'file' not in request.files:
-        return jsonify({'status': 'error', 'message': '파일이 없습니다.'}), 400
-
-    file = request.files['file']
-    if file.filename == '':
-        return jsonify({'status': 'error', 'message': '파일명이 비어있습니다.'}), 400
-
+    if 'file' not in request.files or request.files['file'].filename == '':
+        return jsonify({'status': 'error'}), 400
     try:
         save_dir = os.path.join(root_dir, 'Yolo', 'Images')
-        if not os.path.exists(save_dir):
-            os.makedirs(save_dir)
+        os.makedirs(save_dir, exist_ok=True)
+        filename = secure_filename(request.files['file'].filename) or f"yolo_{random.randint(1000, 9999)}.jpg"
+        saved_path = os.path.join(save_dir, filename)
+        request.files['file'].save(saved_path)
 
-        filename = secure_filename(file.filename)
-        if not filename:
-            filename = f"yolo_input_{random.randint(1000, 9999)}.jpg"
+        xml_dir = os.path.join(root_dir, 'Yolo_output')
+        yolo_success, _ = run_yolo_detection(saved_path, xml_dir)
 
-        saved_image_path = os.path.join(save_dir, filename)
-        file.save(saved_image_path)
-
-        xml_output_dir = os.path.join(root_dir, 'Yolo_output')
-
-        yolo_success, detected_code = run_yolo_detection(saved_image_path, xml_output_dir)
-
-        if not yolo_success:
-            print(f"⚠ 탐지 실패.직접 검색 사용")
-            return jsonify({'status': 'fail', 'code': 'YOLO_FAIL'})
-
-        final_result = calculate_diet_nutrition(filename, xml_output_dir, nutrient_df)
-        print(f"탐지 성공")
-
-        web_image_url = f"/api/yolo_image/{filename}"
-
-        return jsonify({
-            'status': 'success',
-            'result': final_result,
-            'image_url': web_image_url
-        })
-
+        if not yolo_success: return jsonify({'status': 'fail', 'code': 'YOLO_FAIL'})
+        return jsonify({'status': 'success', 'result': calculate_diet_nutrition(filename, xml_dir, nutrient_df), 'image_url': f"/api/yolo_image/{filename}"})
     except Exception as e:
-        print(f"YOLO/ResNet 연동 내부 장애: {str(e)}")
         return jsonify({'status': 'error', 'message': str(e)}), 500
 
 @app.route('/api/yolo_image/<filename>')
 def serve_yolo_image(filename):
     from flask import send_from_directory
-    save_dir = os.path.join(root_dir, 'Yolo', 'Images')
-    return send_from_directory(save_dir, filename)
-
+    return send_from_directory(os.path.join(root_dir, 'Yolo', 'Images'), filename)
 
 @app.route('/api/search_food')
 def api_search_food():
     query = request.args.get('q', '').strip().lower()
     mode = request.args.get('mode', 'recent')
 
-    if mode == 'food':
-        df = food_df
-    elif mode == 'processed':
-        df = processed_df
-    else:
-        if not food_df.empty and not processed_df.empty:
-            df = pd.concat([food_df, processed_df], ignore_index=True)
-        elif not food_df.empty: df = food_df
-        else: df = processed_df
+    if mode == 'food': df = food_df
+    elif mode == 'processed': df = processed_df
+    else: df = pd.concat([food_df, processed_df], ignore_index=True) if not food_df.empty and not processed_df.empty else food_df if not food_df.empty else processed_df
 
     if df.empty: return jsonify([])
 
     if query:
-        name_series = df.get('식품명', df.get('대표식품명', pd.Series(dtype=str)))
-        cat_series = df.get('식품대분류명', df.get('대표식품명', pd.Series(dtype=str)))
-        mask = name_series.fillna('').astype(str).str.lower().str.contains(query) | \
-               cat_series.fillna('').astype(str).str.lower().str.contains(query)
-        result_df = df[mask]
+        name_s = df.get('식품명', df.get('대표식품명', pd.Series(dtype=str)))
+        cat_s = df.get('식품대분류명', df.get('대표식품명', pd.Series(dtype=str)))
+        mask = name_s.fillna('').astype(str).str.lower().str.contains(query) | cat_s.fillna('').astype(str).str.lower().str.contains(query)
+        result_df = df[mask].head(50)
     else:
-        result_df = df.sample(n=min(6, len(df))) if mode == 'recent' else df.head(50)
+        result_df = df.head(50)
 
     output = []
     for _, row in result_df.iterrows():
-        name = row.get('식품명', row.get('대표식품명', '이름 없음'))
-        cat = row.get('식품대분류명', row.get('대표식품명', '분류 없음'))
+        n1 = row.get('식품명')
+        n2 = row.get('대표식품명')
+        name = n1 if pd.notna(n1) and str(n1).strip().lower() != 'nan' else (n2 if pd.notna(n2) and str(n2).strip().lower() != 'nan' else '이름 없음')
+
+        c1 = row.get('식품대분류명')
+        c2 = row.get('대표식품명')
+        cat = c1 if pd.notna(c1) and str(c1).strip().lower() != 'nan' else (c2 if pd.notna(c2) and str(c2).strip().lower() != 'nan' else '분류 없음')
 
         def clean_val(val):
-            if pd.isna(val) or str(val).strip() == '-' or str(val).strip() == '': return 0
+            if pd.isna(val) or str(val).strip() == '-' or str(val).strip() == '' or str(val).strip().lower() == 'nan': return 0
             try: return round(float(str(val).replace(',', '')), 1)
             except: return 0
 

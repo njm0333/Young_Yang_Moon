@@ -12,37 +12,26 @@
             color: #000000; overflow: hidden;
             -webkit-user-select: none; user-select: none;
         }
-
         .wrapper { display: flex; flex-direction: column; height: 100%; position: relative; }
-
-        header {
-            background-color: #FFFFFF; padding: 14px 16px;
-            display: flex; align-items: center; justify-content: space-between;
-            border-bottom: 1px solid #E5E5E5;
-        }
+        header { background-color: #FFFFFF; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #E5E5E5; }
         .header-left { display: flex; align-items: center; gap: 6px; color: #666666; font-size: 0.85rem; cursor: pointer; }
         .refresh-icon { font-size: 1.1rem; rotate: -45deg; display: inline-block; }
         .header-title { font-size: 1.2rem; font-weight: bold; color: #000000; letter-spacing: -0.5px; margin: 0 auto 0 24%; }
         .close-btn { font-size: 1.4rem; font-weight: 300; color: #888888; cursor: pointer; padding: 0 4px; }
-
         .search-type-tabs { display: flex; border-bottom: 1px solid #D5D5D5; background-color: #FFFFFF; }
         .type-tab { flex: 1; text-align: center; padding: 12px 0; font-size: 1rem; font-weight: bold; color: #666666; cursor: pointer; white-space: nowrap; }
         .type-tab.active { color: #2F528F; border-bottom: 3px solid #2F528F; font-weight: 900; }
-
         .search-bar-container { padding: 12px 14px; background-color: #FFFFFF; border-bottom: 1px solid #E5E5E5; display: none; }
         .search-input-wrapper { display: flex; align-items: center; border: 1px solid #999999; border-radius: 3px; padding: 0 10px; background-color: #FFFFFF; height: 40px; }
         .search-input { flex: 1; border: none; outline: none; font-size: 0.95rem; color: #000000; font-weight: 500; }
         .search-input::placeholder { color: #A9A9A9; }
         .search-submit-btn { background: none; border: none; font-size: 1.2rem; color: #666666; cursor: pointer; display: flex; align-items: center; }
-
         .sub-filter-bar { display: none; background-color: #FFFFFF; border-bottom: 1px solid #E5E5E5; padding: 0 8px; gap: 8px; }
         .filter-item { padding: 12px 14px; font-size: 0.9rem; color: #666666; font-weight: 500; cursor: pointer; text-align: center; }
         .filter-item.active { color: #000000; font-weight: bold; border-bottom: 2px solid #2F528F; }
-
         .content-container { flex: 1; overflow-y: auto; background-color: #FFFFFF; }
         .view-pane { display: none; width: 100%; height: 100%; }
         .view-pane.active { display: block; }
-
         .photo-upload-zone { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 80%; padding: 40px 20px; text-align: center; box-sizing: border-box; }
         .action-buttons-wrap { display: flex; gap: 30px; margin-bottom: 24px; }
         .circle-btn-wrap { display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; }
@@ -52,7 +41,6 @@
         .camera-circle.ocr-variant:active { background-color: #F4E2F2; }
         .btn-label { font-size: 0.9rem; font-weight: bold; color: #555555; }
         .hidden-camera-input { display: none; }
-
         .food-list-row { display: flex; align-items: center; justify-content: space-between; padding: 13px 16px; border-bottom: 1px solid #F2F2F2; cursor: pointer; }
         .food-list-row:active { background-color: #F9F9F9; }
         .food-left-info { display: flex; align-items: center; gap: 14px; }
@@ -61,26 +49,12 @@
         .food-right-meta { display: flex; align-items: center; gap: 6px; }
         .badge-kcal { background-color: #FFF2CC; border: 1px solid #FCD366; color: #B25E00; padding: 3px 6px; border-radius: 2px; font-size: 0.78rem; font-weight: bold; min-width: 50px; text-align: center; }
         .tag-category { border: 1px solid #CCCCCC; background-color: #FFFFFF; color: #666666; padding: 3px 6px; border-radius: 2px; font-size: 0.75rem; min-width: 50px; text-align: center; }
-
-        .ocr-overlay-panel {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: #F8F9FA; z-index: 10000; display: none;
-            flex-direction: column; overflow-y: scroll; -webkit-overflow-scrolling: touch; box-sizing: border-box;
-        }
-        .ocr-header {
-            padding: 16px; display: flex; justify-content: space-between; align-items: center;
-            background-color: #2F528F; box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
+        .ocr-overlay-panel { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: #F8F9FA; z-index: 10000; display: none; flex-direction: column; overflow-y: scroll; -webkit-overflow-scrolling: touch; box-sizing: border-box; }
+        .ocr-header { padding: 16px; display: flex; justify-content: space-between; align-items: center; background-color: #2F528F; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         .ocr-header h2 { margin: 0; font-size: 1.15rem; font-weight: bold; color: #FFFFFF; letter-spacing: 1px; }
         .ocr-save-btn { background-color: #FFFFFF; color: #2F528F; border: none; padding: 8px 20px; font-size: 0.9rem; font-weight: 900; border-radius: 4px; cursor: pointer; }
-
-        .ocr-preview-zone {
-            width: 100%; height: 320px; min-height: 320px; flex-shrink: 0;
-            background-color: #1A1A1A; display: flex; justify-content: center; align-items: center;
-            border-bottom: 2px solid #D5D5D5; overflow: hidden;
-        }
+        .ocr-preview-zone { width: 100%; height: 320px; min-height: 320px; flex-shrink: 0; background-color: #1A1A1A; display: flex; justify-content: center; align-items: center; border-bottom: 2px solid #D5D5D5; overflow: hidden; }
         .ocr-preview-img { max-width: 100%; max-height: 100%; object-fit: contain; }
-
         .ocr-body-content { padding: 20px 16px; display: flex; flex-direction: column; gap: 14px; background-color: #FFFFFF; }
         .ocr-input-group { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; }
         .ocr-label { font-size: 0.95rem; font-weight: bold; color: #333333; }
@@ -88,17 +62,8 @@
         .ocr-field-wrap input { border: 1px solid #CCCCCC; border-radius: 4px; padding: 8px 12px; font-size: 1rem; font-weight: bold; text-align: center; width: 90px; outline: none; color: #2F528F; }
         .ocr-field-wrap input:focus { border: 2px solid #2F528F; }
         .ocr-unit { font-size: 0.9rem; font-weight: 500; color: #888888; width: 30px; text-align: left; }
-
-        .loading-overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(255, 255, 255, 0.9); z-index: 99999;
-            display: none; flex-direction: column; align-items: center; justify-content: center;
-        }
-        .spinner {
-            width: 50px; height: 50px; border: 5px solid #EAEAEA;
-            border-top: 5px solid #2F528F; border-radius: 50%;
-            animation: spin 1s linear infinite; margin-bottom: 20px;
-        }
+        .loading-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(255, 255, 255, 0.9); z-index: 99999; display: none; flex-direction: column; align-items: center; justify-content: center; }
+        .spinner { width: 50px; height: 50px; border: 5px solid #EAEAEA; border-top: 5px solid #2F528F; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
         .loading-text { font-size: 1.1rem; font-weight: bold; color: #2F528F; text-align: center; line-height: 1.5; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
@@ -108,12 +73,11 @@
 <div class="wrapper">
     <div class="loading-overlay" id="loading-overlay">
         <div class="spinner"></div>
-        <div class="loading-text" id="loading-msg">AI 엔진이 이미지를<br>정밀 분석 중입니다...</div>
+        <div class="loading-text" id="loading-msg">분석 중...</div>
     </div>
 
     <header>
-        <div class="header-left" onclick="location.reload();">
-        </div>
+        <div class="header-left" onclick="location.reload();"></div>
         <div class="header-title">종목검색</div>
         <div class="close-btn" onclick="history.back();">✕</div>
     </header>
@@ -142,16 +106,13 @@
             <div class="photo-upload-zone">
                 <div class="action-buttons-wrap">
                     <div class="circle-btn-wrap" onclick="document.getElementById('input-yolo-cam').click();">
-                        <div class="camera-circle">📸</div>
-                        <span class="btn-label">카메라 촬영</span>
+                        <div class="camera-circle">📸</div><span class="btn-label">카메라 촬영</span>
                     </div>
                     <div class="circle-btn-wrap" onclick="document.getElementById('input-yolo-gal').click();">
-                        <div class="camera-circle">🖼️</div>
-                        <span class="btn-label">앨범에서 선택</span>
+                        <div class="camera-circle">🖼️</div><span class="btn-label">앨범에서 선택</span>
                     </div>
                 </div>
-                <h3>일반 식단 인식</h3>
-                <p style="font-size: 0.9rem; color: #777;">영양문 AI 엔진이<br>음식과 중량을 분석합니다.</p>
+                <h3>일반 식단 인식</h3><p style="font-size: 0.9rem; color: #777;">영양문 AI 엔진이<br>음식과 중량을 분석합니다.</p>
             </div>
             <input type="file" id="input-yolo-cam" class="hidden-camera-input" accept="image/*" capture="environment">
             <input type="file" id="input-yolo-gal" class="hidden-camera-input" accept="image/*">
@@ -161,16 +122,13 @@
             <div class="photo-upload-zone">
                 <div class="action-buttons-wrap">
                     <div class="circle-btn-wrap" onclick="document.getElementById('input-ocr-cam').click();">
-                        <div class="camera-circle ocr-variant">📸</div>
-                        <span class="btn-label">카메라 촬영</span>
+                        <div class="camera-circle ocr-variant">📸</div><span class="btn-label">카메라 촬영</span>
                     </div>
                     <div class="circle-btn-wrap" onclick="document.getElementById('input-ocr-gal').click();">
-                        <div class="camera-circle ocr-variant">🖼️</div>
-                        <span class="btn-label">앨범에서 선택</span>
+                        <div class="camera-circle ocr-variant">🖼️</div><span class="btn-label">앨범에서 선택</span>
                     </div>
                 </div>
-                <h3>상품 성분표 인식</h3>
-                <p style="font-size: 0.9rem; color: #777;">영양문 OCR 엔진이 라벨지의<br>영양성분 텍스트를 스캔합니다.</p>
+                <h3>상품 성분표 인식</h3><p style="font-size: 0.9rem; color: #777;">영양문 OCR 엔진이 라벨지의<br>영양성분 텍스트를 스캔합니다.</p>
             </div>
             <input type="file" id="input-ocr-cam" class="hidden-camera-input" accept="image/*" capture="environment">
             <input type="file" id="input-ocr-gal" class="hidden-camera-input" accept="image/*">
@@ -189,11 +147,7 @@
                 <button id="btn-cancel-x" style="background: none; border: none; color: white; font-size: 24px; font-weight: bold; cursor: pointer; padding: 0 4px;">×</button>
             </div>
         </div>
-
-        <div class="ocr-preview-zone">
-            <img id="yolo-preview-img" class="ocr-preview-img" src="" alt="식단 미리보기">
-        </div>
-
+        <div class="ocr-preview-zone"><img id="yolo-preview-img" class="ocr-preview-img" src="" alt="식단 미리보기"></div>
         <div class="ocr-body-content">
             <div class="ocr-input-group" style="border-bottom:2px solid #2F528F; padding-bottom:12px; margin-bottom:8px;">
                 <span class="ocr-label" style="color:#2F528F;">AI 인식 메뉴 (필수)</span>
@@ -201,7 +155,6 @@
                     <input type="text" id="yolo-food-name" placeholder="음식명 입력" style="width:100%; text-align:left;">
                 </div>
             </div>
-
             <div class="ocr-input-group" style="background-color: #F0F4FA; padding: 10px; border-radius: 6px; margin-bottom: 10px;">
                 <span class="ocr-label" style="color:#1E50A2;">섭취 중량 조절</span>
                 <div class="ocr-field-wrap">
@@ -211,7 +164,6 @@
                     <button id="w-plus" style="background-color: #10b981; color: white; border: none; width: 28px; height: 28px; font-weight: bold; border-radius: 4px; cursor: pointer;">+</button>
                 </div>
             </div>
-
             <div class="ocr-input-group"><span class="ocr-label">칼로리</span><div class="ocr-field-wrap"><input type="number" id="yolo-kcal" value="0"><span class="ocr-unit">kcal</span></div></div>
             <div class="ocr-input-group"><span class="ocr-label">탄수화물</span><div class="ocr-field-wrap"><input type="number" id="yolo-carbo" value="0"><span class="ocr-unit">g</span></div></div>
             <div class="ocr-input-group"><span class="ocr-label">당류</span><div class="ocr-field-wrap"><input type="number" id="yolo-sugar" value="0"><span class="ocr-unit">g</span></div></div>
@@ -229,11 +181,7 @@
             <h2>영양 정보 교정</h2>
             <button class="ocr-save-btn" onclick="saveOcrAndGoToTrade()">저장</button>
         </div>
-
-        <div class="ocr-preview-zone">
-            <img id="ocr-preview-img" class="ocr-preview-img" src="" alt="성분표 미리보기">
-        </div>
-
+        <div class="ocr-preview-zone"><img id="ocr-preview-img" class="ocr-preview-img" src="" alt="성분표 미리보기"></div>
         <div class="ocr-body-content">
             <div class="ocr-input-group" style="border-bottom:2px solid #2F528F; padding-bottom:12px; margin-bottom:8px;">
                 <span class="ocr-label" style="color:#2F528F;">상장 제품명 (필수)</span>
@@ -241,7 +189,6 @@
                     <input type="text" id="ocr-food-name" placeholder="제품명 입력" style="width:100%; text-align:left;">
                 </div>
             </div>
-
             <div class="ocr-input-group"><span class="ocr-label">칼로리</span><div class="ocr-field-wrap"><input type="number" id="ocr-kcal" value="0"><span class="ocr-unit">kcal</span></div></div>
             <div class="ocr-input-group"><span class="ocr-label">탄수화물</span><div class="ocr-field-wrap"><input type="number" id="ocr-carbo" value="0"><span class="ocr-unit">g</span></div></div>
             <div class="ocr-input-group"><span class="ocr-label">당류</span><div class="ocr-field-wrap"><input type="number" id="ocr-sugar" value="0"><span class="ocr-unit">g</span></div></div>
@@ -262,46 +209,48 @@
 
     function generateStockCode(str) {
         let hash = 0;
-        for (let i = 0; i < str.length; i++) {
-            hash = str.charCodeAt(i) + ((hash << 5) - hash);
-        }
+        for (let i = 0; i < str.length; i++) { hash = str.charCodeAt(i) + ((hash << 5) - hash); }
         return (Math.abs(hash % 900000) + 100000).toString();
+    }
+
+    function renderListItems(items, emptyMsg) {
+        listTarget.innerHTML = '';
+        if(items.length === 0) {
+            listTarget.innerHTML = `<div style="text-align:center; color:#999; padding:40px; font-size:0.9rem;">${emptyMsg}</div>`;
+            return;
+        }
+        items.forEach(item => {
+            const code = generateStockCode(item.name);
+            const row = document.createElement('div');
+            row.className = 'food-list-row';
+            row.onclick = () => selectAndTrade(item);
+            row.innerHTML = `
+                <div class="food-left-info">
+                    <span class="food-code">${code}</span>
+                    <span class="food-name">${item.name}</span>
+                </div>
+                <div class="food-right-meta">
+                    <span class="badge-kcal">${item.kcal} kcal</span>
+                    <span class="tag-category">${item.cat}</span>
+                </div>
+            `;
+            listTarget.appendChild(row);
+        });
     }
 
     function fetchAndRender() {
         const query = searchBox.value.trim();
+
+        if (currentSubMode === 'recent' && query === '') {
+            const recents = JSON.parse(sessionStorage.getItem('recent_foods') || '[]');
+            renderListItems(recents, '최근 검색 기록이 없습니다.');
+            return;
+        }
+
         fetch(`/api/search_food?q=${encodeURIComponent(query)}&mode=${currentSubMode}`)
             .then(res => res.json())
-            .then(items => {
-                listTarget.innerHTML = '';
-                if(items.length === 0) {
-                    listTarget.innerHTML = `<div style="text-align:center; color:#999; padding:40px; font-size:0.9rem;">일치하는 상장 종목이 없습니다.</div>`;
-                    return;
-                }
-                items.forEach(item => {
-                    const code = generateStockCode(item.name);
-                    const row = document.createElement('div');
-                    row.className = 'food-list-row';
-
-                    row.onclick = () => selectAndTrade(item);
-
-                    row.innerHTML = `
-                        <div class="food-left-info">
-                            <span class="food-code">${code}</span>
-                            <span class="food-name">${item.name}</span>
-                        </div>
-                        <div class="food-right-meta">
-                            <span class="badge-kcal">${item.kcal} kcal</span>
-                            <span class="tag-category">${item.cat}</span>
-                        </div>
-                    `;
-                    listTarget.appendChild(row);
-                });
-            })
-            .catch(err => {
-                console.error("데이터 로드 실패:", err);
-                listTarget.innerHTML = `<div style="text-align:center; color:red; padding:40px; font-size:0.9rem;">서버 통신 오류 발생</div>`;
-            });
+            .then(items => renderListItems(items, '일치하는 상장 종목이 없습니다.'))
+            .catch(() => { listTarget.innerHTML = `<div style="text-align:center; color:red; padding:40px; font-size:0.9rem;">서버 통신 오류 발생</div>`; });
     }
 
     function switchMainTab(type) {
@@ -338,89 +287,60 @@
     let debounceTimeout;
     searchBox.addEventListener('input', function() {
         clearTimeout(debounceTimeout);
-        debounceTimeout = setTimeout(() => {
-            fetchAndRender();
-        }, 250);
+        debounceTimeout = setTimeout(() => { fetchAndRender(); }, 250);
     });
 
-
     function selectAndTrade(item) {
+        let recents = JSON.parse(sessionStorage.getItem('recent_foods') || '[]');
+        recents = recents.filter(f => f.name !== item.name);
+        recents.unshift(item);
+        if(recents.length > 20) recents.pop();
+        sessionStorage.setItem('recent_foods', JSON.stringify(recents));
+
         const encodedName = encodeURIComponent(item.name);
         const urlParams = new URLSearchParams(window.location.search);
         const account = urlParams.get('account_name') || '6084-2227 [위탁종합]';
 
-        location.href = `/main?stock_name=${encodedName}` +
-                      `&account_name=${encodeURIComponent(account)}` +
-                      `&page=main` +
-                      `&kcal=${item.kcal}` +
-                      `&carbo=${item.carbo || 0}` +
-                      `&sugar=${item.sugar || 0}` +
-                      `&protein=${item.protein || 0}` +
-                      `&fat=${item.fat || 0}` +
-                      `&sfat=${item.sfat || 0}` +
-                      `&tfat=${item.tfat || 0}` +
-                      `&chol=${item.chol || 0}` +
-                      `&sodium=${item.sodium || 0}`;
+        location.href = `/main?stock_name=${encodedName}&account_name=${encodeURIComponent(account)}&page=main&kcal=${item.kcal}&carbo=${item.carbo || 0}&sugar=${item.sugar || 0}&protein=${item.protein || 0}&fat=${item.fat || 0}&sfat=${item.sfat || 0}&tfat=${item.tfat || 0}&chol=${item.chol || 0}&sodium=${item.sodium || 0}`;
     }
 
     document.getElementById('input-yolo-cam').addEventListener('change', handleYoloUpload);
     document.getElementById('input-yolo-gal').addEventListener('change', handleYoloUpload);
-
     let yoloBaseNutrients = null;
 
     function handleYoloUpload(event) {
         if(event.target.files && event.target.files[0]) {
-            const file = event.target.files[0];
             const formData = new FormData();
-            formData.append('file', file);
-
-            document.getElementById('loading-msg').innerHTML = 'YOLOv3 & ResNet AI가 식단을<br>정밀 분석 중입니다...';
+            formData.append('file', event.target.files[0]);
+            document.getElementById('loading-msg').innerHTML = '분석 중...';
             document.getElementById('loading-overlay').style.display = 'flex';
 
-            fetch('/api/upload_yolo', {
-                method: 'POST',
-                body: formData
-            })
+            fetch('/api/upload_yolo', { method: 'POST', body: formData })
             .then(res => res.json())
             .then(data => {
                 document.getElementById('loading-overlay').style.display = 'none';
-
                 if (data.status === 'fail' && data.code === 'YOLO_FAIL') {
-                    alert("⚠️ AI가 음식을 인식하지 못했습니다. 직접 검색창으로 이동합니다.");
+                    alert("인식 실패. 직접 검색으로 이동합니다.");
                     switchMainTab('direct');
                     return;
                 }
-
                 if (data.status === 'success') {
                     document.getElementById('yolo-preview-img').src = data.image_url;
                     const baseWeight = parseFloat(data.result.quantity_level) || 300;
-
                     yoloBaseNutrients = {
-                        weight: baseWeight,
-                        kcal: data.result.열량 || 0,
-                        carbo: data.result.탄수화물 || 0,
-                        sugar: data.result.당류 || 0,
-                        protein: data.result.단백질 || 0,
-                        fat: data.result.지방 || 0,
-                        sfat: data.result.포화지방 || 0,
-                        tfat: data.result.트랜스지방 || 0,
-                        chol: data.result.콜레스테롤 || 0,
-                        sodium: data.result.나트륨 || 0
+                        weight: baseWeight, kcal: data.result.열량 || 0, carbo: data.result.탄수화물 || 0,
+                        sugar: data.result.당류 || 0, protein: data.result.단백질 || 0, fat: data.result.지방 || 0,
+                        sfat: data.result.포화지방 || 0, tfat: data.result.트랜스지방 || 0,
+                        chol: data.result.콜레스테롤 || 0, sodium: data.result.나트륨 || 0
                     };
-
                     document.getElementById('yolo-food-name').value = data.result.food_name || "";
                     document.getElementById('yolo-quantity-input').value = baseWeight;
-
                     syncYoloFields(baseWeight);
                     document.getElementById('yolo-overlay-comp').style.display = 'flex';
-                } else {
-                    alert("⚠️ 식단 분석 실패. 다시 시도해주세요.");
-                }
-            })
-            .catch(err => {
-                console.error("YOLO 연동 에러:", err);
+                } else { alert("실패. 다시 시도해주세요."); }
+            }).catch(() => {
                 document.getElementById('loading-overlay').style.display = 'none';
-                alert("서버 통신 오류 발생. 직접 검색을 이용해 주세요.");
+                alert("통신 오류 발생.");
                 switchMainTab('direct');
             });
         }
@@ -429,9 +349,7 @@
     function syncYoloFields(currentG) {
         if (!yoloBaseNutrients) return;
         if (isNaN(currentG) || currentG < 10) currentG = 10;
-
         const ratio = currentG / yoloBaseNutrients.weight;
-
         document.getElementById('yolo-kcal').value = Math.round(yoloBaseNutrients.kcal * ratio);
         document.getElementById('yolo-carbo').value = (yoloBaseNutrients.carbo * ratio).toFixed(2);
         document.getElementById('yolo-sugar').value = (yoloBaseNutrients.sugar * ratio).toFixed(2);
@@ -444,52 +362,33 @@
     }
 
     document.getElementById('w-plus').addEventListener('click', () => {
-        const qtyInput = document.getElementById('yolo-quantity-input');
-        let currentVal = parseInt(qtyInput.value) || 0;
-        qtyInput.value = currentVal + 10;
-        syncYoloFields(currentVal + 10);
+        const q = document.getElementById('yolo-quantity-input');
+        q.value = (parseInt(q.value) || 0) + 10;
+        syncYoloFields(q.value);
     });
-
     document.getElementById('w-minus').addEventListener('click', () => {
-        const qtyInput = document.getElementById('yolo-quantity-input');
-        let currentVal = parseInt(qtyInput.value) || 0;
-        if (currentVal > 10) {
-            qtyInput.value = currentVal - 10;
-            syncYoloFields(currentVal - 10);
-        }
+        const q = document.getElementById('yolo-quantity-input');
+        if ((parseInt(q.value) || 0) > 10) { q.value = (parseInt(q.value) || 0) - 10; syncYoloFields(q.value); }
     });
-
-    document.getElementById('yolo-quantity-input').addEventListener('input', (e) => {
-        syncYoloFields(parseFloat(e.target.value));
-    });
-
-    document.getElementById('btn-cancel-x').addEventListener('click', () => {
-        document.getElementById('yolo-overlay-comp').style.display = 'none';
-    });
+    document.getElementById('yolo-quantity-input').addEventListener('input', (e) => { syncYoloFields(parseFloat(e.target.value)); });
+    document.getElementById('btn-cancel-x').addEventListener('click', () => { document.getElementById('yolo-overlay-comp').style.display = 'none'; });
 
     document.getElementById('input-ocr-cam').addEventListener('change', handleOcrUpload);
     document.getElementById('input-ocr-gal').addEventListener('change', handleOcrUpload);
 
     function handleOcrUpload(event) {
         if(event.target.files && event.target.files[0]) {
-            const file = event.target.files[0];
             const formData = new FormData();
-            formData.append('file', file);
-
+            formData.append('file', event.target.files[0]);
             document.getElementById('loading-msg').innerHTML = '영양문 OCR 엔진이 텍스트를<br>정밀 파싱 중입니다...';
             document.getElementById('loading-overlay').style.display = 'flex';
 
-            fetch('/api/upload_ocr', {
-                method: 'POST',
-                body: formData
-            })
+            fetch('/api/upload_ocr', { method: 'POST', body: formData })
             .then(res => res.json())
             .then(data => {
                 document.getElementById('loading-overlay').style.display = 'none';
-
                 if (data.status === 'success') {
                     document.getElementById('ocr-preview-img').src = data.image_url;
-
                     document.getElementById('ocr-food-name').value = data.result.food_name || "";
                     document.getElementById('ocr-kcal').value = data.result.열량 || 0;
                     document.getElementById('ocr-carbo').value = data.result.탄수화물 || 0;
@@ -500,70 +399,33 @@
                     document.getElementById('ocr-tfat').value = data.result.트랜스지방 || 0;
                     document.getElementById('ocr-chol').value = data.result.콜레스테롤 || 0;
                     document.getElementById('ocr-sodium').value = data.result.나트륨 || 0;
-
                     document.getElementById('ocr-overlay-comp').style.display = 'flex';
                 } else {
-                    alert("⚠️ 영양성분표 파싱 실패. 수동으로 입력해 주세요.");
+                    alert("인식 실패. 수동으로 입력해 주세요.");
                     document.getElementById('ocr-overlay-comp').style.display = 'flex';
                 }
-            })
-            .catch(err => {
-                console.error("OCR 연동 에러:", err);
+            }).catch(() => {
                 document.getElementById('loading-overlay').style.display = 'none';
-                alert("서버 통신 오류 발생. 수동으로 입력해 주세요.");
+                alert("통신 오류 발생.");
                 document.getElementById('ocr-overlay-comp').style.display = 'flex';
             });
         }
     }
 
     function saveYoloAndGoToTrade() {
-        const nameInput = document.getElementById('yolo-food-name').value.trim();
-        if(!nameInput) {
-            alert("⚠️ [식단 메뉴명 필수 명시]\n음식 이름을 반드시 입력해야 거래소에 상장할 수 있습니다.");
-            document.getElementById('yolo-food-name').focus();
-            return;
-        }
-
-        const name = encodeURIComponent(nameInput);
-        const kcal = document.getElementById('yolo-kcal').value;
-        const carbo = document.getElementById('yolo-carbo').value;
-        const sugar = document.getElementById('yolo-sugar').value;
-        const protein = document.getElementById('yolo-protein').value;
-        const fat = document.getElementById('yolo-fat').value;
-        const sfat = document.getElementById('yolo-sfat').value;
-        const tfat = document.getElementById('yolo-tfat').value;
-        const chol = document.getElementById('yolo-chol').value;
-        const sodium = document.getElementById('yolo-sodium').value;
-
+        const name = document.getElementById('yolo-food-name').value.trim();
+        if(!name) { alert("메뉴명을 입력하세요."); return; }
         const urlParams = new URLSearchParams(window.location.search);
         const account = urlParams.get('account_name') || '6084-2227 [위탁종합]';
-
-        location.href = `/main?stock_name=${name}&account_name=${encodeURIComponent(account)}&page=main&is_yolo=true&kcal=${kcal}&carbo=${carbo}&sugar=${sugar}&protein=${protein}&fat=${fat}&sfat=${sfat}&tfat=${tfat}&chol=${chol}&sodium=${sodium}`;
+        location.href = `/main?stock_name=${encodeURIComponent(name)}&account_name=${encodeURIComponent(account)}&page=main&is_yolo=true&kcal=${document.getElementById('yolo-kcal').value}&carbo=${document.getElementById('yolo-carbo').value}&sugar=${document.getElementById('yolo-sugar').value}&protein=${document.getElementById('yolo-protein').value}&fat=${document.getElementById('yolo-fat').value}&sfat=${document.getElementById('yolo-sfat').value}&tfat=${document.getElementById('yolo-tfat').value}&chol=${document.getElementById('yolo-chol').value}&sodium=${document.getElementById('yolo-sodium').value}`;
     }
 
     function saveOcrAndGoToTrade() {
-        const nameInput = document.getElementById('ocr-food-name').value.trim();
-        if(!nameInput) {
-            alert("⚠️ [상장 주식명 필수 명시]\n제품 이름을 반드시 입력해야 거래소에 상장할 수 있습니다.");
-            document.getElementById('ocr-food-name').focus();
-            return;
-        }
-
-        const name = encodeURIComponent(nameInput);
-        const kcal = document.getElementById('ocr-kcal').value;
-        const carbo = document.getElementById('ocr-carbo').value;
-        const sugar = document.getElementById('ocr-sugar').value;
-        const protein = document.getElementById('ocr-protein').value;
-        const fat = document.getElementById('ocr-fat').value;
-        const sfat = document.getElementById('ocr-sfat').value;
-        const tfat = document.getElementById('ocr-tfat').value;
-        const chol = document.getElementById('ocr-chol').value;
-        const sodium = document.getElementById('ocr-sodium').value;
-
+        const name = document.getElementById('ocr-food-name').value.trim();
+        if(!name) { alert("제품명을 입력하세요."); return; }
         const urlParams = new URLSearchParams(window.location.search);
         const account = urlParams.get('account_name') || '6084-2227 [위탁종합]';
-
-        location.href = `/main?stock_name=${name}&account_name=${encodeURIComponent(account)}&page=main&is_ocr=true&kcal=${kcal}&carbo=${carbo}&sugar=${sugar}&protein=${protein}&fat=${fat}&sfat=${sfat}&tfat=${tfat}&chol=${chol}&sodium=${sodium}`;
+        location.href = `/main?stock_name=${encodeURIComponent(name)}&account_name=${encodeURIComponent(account)}&page=main&is_ocr=true&kcal=${document.getElementById('ocr-kcal').value}&carbo=${document.getElementById('ocr-carbo').value}&sugar=${document.getElementById('ocr-sugar').value}&protein=${document.getElementById('ocr-protein').value}&fat=${document.getElementById('ocr-fat').value}&sfat=${document.getElementById('ocr-sfat').value}&tfat=${document.getElementById('ocr-tfat').value}&chol=${document.getElementById('ocr-chol').value}&sodium=${document.getElementById('ocr-sodium').value}`;
     }
 
     window.onload = () => { switchMainTab('photo'); };
