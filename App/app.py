@@ -110,7 +110,7 @@ def universal_router():
         'sodium': request.args.get('sodium', '0')
     }
 
-    # 📡 [수술 완료] 이제 kcal가 아니라 'execute_trade' 플래그가 있어야만 실제 결제를 진행합니다!
+    # 📡 이제 kcal가 아니라 'execute_trade' 플래그가 있어야만 실제 결제를 진행합니다!
     is_execute = request.args.get('execute_trade', 'false')
 
     if is_execute == 'true':
@@ -128,7 +128,7 @@ def universal_router():
         # 결제 완료 후 새로고침 방지용 리다이렉트 (영양소 꼬리표 떼어내기)
         return redirect(url_for('universal_router', stock_name=stock_name, account_name=account_name, page=target_page))
 
-    # 화면 렌더링 분기 (결제가 아닐 땐 영양소 딕셔너리를 HTML로 예쁘게 내려줌)
+    # 화면 렌더링 분기
     if target_page == 'main':
         return render_template('main.html', stock_name=stock_name, stock_code=stock_code, base_price=base_price, account_name=account_name, nutrients=nutrients)
 
@@ -139,12 +139,13 @@ def universal_router():
         return render_template('news.html', stock_name=stock_name, account_name=account_name, news_list=get_all_news())
 
     elif target_page == 'account':
+        # 🚀 [안전핀] 매수 전에 자산 탭을 먼저 눌러도 1억 원이 초기 세팅되도록 방어!
+        if MECORP_ASSET.get('current_price', 0) < 1000000:
+            MECORP_ASSET['current_price'] = 100000000.0
         return render_template('account.html', stock_name=stock_name, account_name=account_name, asset=MECORP_ASSET)
 
     return render_template(f'{target_page}.html', stock_name=stock_name, account_name=account_name)
 
-
-# ====================================================================
 
 # ====================================================================
 # ⚡ [AI 연동 비동기 통신 비즈니스 라우터 파트]
@@ -274,7 +275,6 @@ def api_search_food():
     output = []
     for _, row in result_df.iterrows():
         name = row.get('식품명', row.get('대표식품명', '이름 없음'))
-        # 🚀 [오류 수정 완료] 가공식품의 경우 원래 형님이 짰던 '대표식품명' 폴백으로 롤백!
         cat = row.get('식품대분류명', row.get('대표식품명', '분류 없음'))
 
         def clean_val(val):

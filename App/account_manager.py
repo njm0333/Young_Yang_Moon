@@ -4,8 +4,8 @@ from datetime import datetime
 
 # 💰 [Me.corp 전역 자산 스토리지 통합본]
 MECORP_ASSET = {
-    'current_price': 100000.0,
-    'prev_price': 100000.0,
+    'current_price': 100000000.0, # 🚀 10만 원 -> 1억 원으로 상장가 변경
+    'prev_price': 100000000.0,    # 🚀 10만 원 -> 1억 원으로 상장가 변경
     'change_amt': 0,
     'change_rate': 0.0,
     'kcal': 0.0, 'carbo': 0.0, 'sugar': 0.0, 'protein': 0.0, 'fat': 0.0,
@@ -80,6 +80,10 @@ def update_asset_and_calculate_stock(nutrients, user_profile):
 
     rate_impact = 0.0
     news_keywords = []
+
+    if 0 < req_kcal <= 150 and req_sugar <= 5 and req_fat <= 6:
+        rate_impact += 0.045  # 주가 대폭 상향 우대금리 적용
+        news_keywords.append("오전장_공복_웰빙매수") # 호재 뉴스 트리거 강제 주입
 
     kcal_penalty = 1.5 if bmi_label == "비만" else (0.4 if bmi_label == "저체중" else 1.0)
 

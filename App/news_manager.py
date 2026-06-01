@@ -81,7 +81,7 @@ def generate_dynamic_combination_news(food_name, keywords, user_profile, meta_la
             '레버리지형': "외형 성장 동력 마비 판정에 개미들 절망..."
         }
         title_reaction = [
-            "장대음봉 추락 위기", "주가 하한가 수직 낙하", "패닉셀 연출되며 떡락",
+            "장대음봉 추락 위기", "주가 하한가 수직 낙하", "패닉셀 연출되며 하락세",
             "시장 평가 최악으로 치달아", "관리종목 지정 가능성 고조"
         ]
 

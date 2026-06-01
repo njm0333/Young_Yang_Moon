@@ -162,16 +162,16 @@
         <button class="btn-domestic">국내잔고</button>
     </div>
 
-    <!-- 해외 총 자산 및 포트폴리오 영역 -->
+    <!-- 🏢 Me.corp 기업 가치 및 포트폴리오 영역 -->
     <div class="asset-summary-section">
 
-        <div class="asset-title">해외 총 자산 <span class="icon-info">i</span></div>
+        <div class="asset-title">Me.corp 가치 조회 <span class="icon-info">i</span></div>
         <div class="asset-main-row">
             <!-- 스크린샷처럼 처음엔 '자산조회'로 가려둠 -->
             <span class="asset-blind-text" id="asset-display-text">자산조회</span>
             <button class="btn-view-asset" id="btn-toggle-asset" onclick="toggleAssetVisibility()">보기</button>
         </div>
-        <div class="asset-search-link">🔍 내 자산 상세보기</div>
+        <div class="asset-search-link">🔍 내 신체 자산 상세보기</div>
 
         <!-- 탭 및 요약 -->
         <div class="sub-tab-bar">
@@ -182,26 +182,26 @@
             <div class="detail-view-link">자세히보기 ∨</div>
         </div>
 
-        <!-- 평가손익 테이블 -->
+        <!-- 🚀 평가손익 테이블 변경: 기업 가치 변동 및 누적 섭취량으로 변경 -->
         <table class="profit-loss-table">
             <tr>
-                <td>평가손익</td>
-                <!-- 백엔드에서 넘겨준 total_eval_profit 기준 색상 렌더링 -->
-                <td class="{% if asset.total_eval_profit > 0 %}text-up{% elif asset.total_eval_profit < 0 %}text-down{% else %}text-flat{% endif %}">
-                    {% if asset.total_eval_profit > 0 %}+{% endif %}{{ "{:,}".format(asset.total_eval_profit) }}원({% if asset.total_eval_rate > 0 %}+{% endif %}{{ "%.2f" | format(asset.total_eval_rate) }}%)
+                <td>기업 가치 변동</td>
+                <!-- 백엔드의 change_amt (1억 기준 등락) 적용 -->
+                <td class="{% if asset.change_amt > 0 %}text-up{% elif asset.change_amt < 0 %}text-down{% else %}text-flat{% endif %}">
+                    {% if asset.change_amt > 0 %}+{% endif %}{{ "{:,}".format(asset.change_amt | int) }}원({% if asset.change_rate > 0 %}+{% endif %}{{ "%.2f" | format(asset.change_rate) }}%)
                 </td>
             </tr>
             <tr>
-                <td>당일 실현손익</td>
-                <td class="{% if asset.today_realized_profit > 0 %}text-up{% elif asset.today_realized_profit < 0 %}text-down{% else %}text-flat{% endif %}">
-                    {% if asset.today_realized_profit > 0 %}+{% endif %}{{ "{:,}".format(asset.today_realized_profit) }}원
+                <td>누적 투자금(섭취량)</td>
+                <td class="text-flat">
+                    {{ "{:,}".format(asset.total_asset | int) }}원
                 </td>
             </tr>
         </table>
 
         <!-- 보유종목 -->
         <div class="holdings-header">
-            <h3 class="holdings-title">보유종목</h3>
+            <h3 class="holdings-title">보유종목 (포트폴리오)</h3>
             <div class="holdings-filters">
                 <div class="currency-toggle">
                     <span class="active">원화</span>
@@ -209,7 +209,7 @@
                 </div>
                 <div class="filter-right">
                     <span><input type="checkbox" style="vertical-align: middle; accent-color: #CCC;"> 환차손익</span>
-                    <span>평가금액 순 ∨</span>
+                    <span>비중 높은 순 ∨</span>
                 </div>
             </div>
         </div>
@@ -220,7 +220,6 @@
             {% for food, data in asset.portfolio.items() %}
             <div class="stock-item">
                 <div class="stock-info-left">
-                    <!-- 스크린샷의 핑크색 원 아이콘 구현 -->
                     <div class="stock-icon" style="background-color: {% if loop.index0 % 2 == 0 %}#F370B0{% else %}#55B2B5{% endif %};">
                         {% if data.quantity > 1 %}
                         {{ data.quantity }}x
@@ -236,15 +235,17 @@
                 </div>
                 <div class="stock-info-right">
                     <span class="stock-eval-amount">{{ "{:,}".format(data.eval_amount) }}원</span>
-                    <span class="stock-profit-rate {% if data.eval_profit > 0 %}text-up{% elif data.eval_profit < 0 %}text-down{% else %}text-flat{% endif %}">
-                            {% if data.eval_profit > 0 %}+{% endif %}{{ "{:,}".format(data.eval_profit) }}({% if data.eval_rate > 0 %}+{% endif %}{{ "%.2f" | format(data.eval_rate) }}%)
-                        </span>
+                    <!-- 🚀 포트폴리오 비중(%) 자동 계산 로직 적용 -->
+                    {% set weight = (data.eval_amount / asset.total_asset * 100) if asset.total_asset > 0 else 0 %}
+                    <span class="stock-profit-rate" style="color: #666666; font-weight: bold;">
+                        비중 {{ "%.1f" | format(weight) }}%
+                    </span>
                 </div>
             </div>
             {% endfor %}
             {% else %}
             <div style="text-align: center; padding: 40px 0; color: #999; font-size: 0.9rem;">
-                보유 중인 종목(음식)이 없습니다.<br>주문 탭에서 영양을 매수해보세요!
+                현재 내 몸에 편입된 종목이 없습니다.<br>주문 탭에서 영양을 매수해보세요!
             </div>
             {% endif %}
         </div>
@@ -274,9 +275,10 @@
 </div>
 
 <script>
-    // 스크린샷의 '자산조회' 가리기/보기 기능 구현
     let isAssetHidden = true;
-    const realTotalAsset = "{{ '{:,}'.format(asset.total_asset) }}원";
+
+    const rawAsset = parseFloat("{{ asset.current_price | default(100000000) }}");
+    const realTotalAsset = rawAsset.toLocaleString('ko-KR') + "원";
 
     function toggleAssetVisibility() {
         const textEl = document.getElementById('asset-display-text');
