@@ -91,4 +91,16 @@ python App/app.py
 - 컴퓨터와 스마트폰이 같은 Wi-Fi 네트워크에 있다면, 핸드폰 브라우저에 내부 IP(예: `192.168.x.x:5000`)를 입력하여 모바일에서도 모든 기능을 사용할 수 있습니다.
 
 
+## Reference
 
+### 📌 README 및 프로젝트 구조 참고
+- Valiant-Searching-Code-Assistant  
+  https://github.com/Sungtae124/Valiant-Searching-Code-Assistant
+
+### 📌 투자 성향 진단 설계 참고
+- 투자 성향 및 위험 성향 유형 정의 참고  
+  https://invest_test.isweb.co.kr/#:~:text=%E2%91%A3%20%EC%A0%81%EA%B7%B9%ED%88%AC...
+
+### 📌 PCA 기반 요인 분석 참고
+- *Machine Learning for Algorithmic Trading*  
+  https://www.amazon.com/Machine-Learning-Algorithmic-Trading-alternative/dp/1839217715
