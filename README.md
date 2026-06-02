@@ -104,6 +104,8 @@ python App/app.py
 |**시작 화면**|**운용목표**|**로딩화면**|
 |---|---|---|
 |<img width="822" height="1322" alt="image" src="https://github.com/user-attachments/assets/ed50981e-7b78-47f7-afcb-d0ed331dc760" />|<img width="822" height="1322" alt="image" src="https://github.com/user-attachments/assets/3a186463-32c3-4eb1-b7ec-0ae9a511f623" />|<img width="822" height="1322" alt="image" src="https://github.com/user-attachments/assets/971fdeab-e792-4c5b-b5ec-2847626090ab" />
+| 인적사항을 기입합니다 | 선택한 투자사항은 나의 신체자산을 계산하는 로직에 서로 다르게 활용됩니다   |로딩중...|
+
 
 ### 2-1. 검색 화면_사진,OCR
 
@@ -111,7 +113,7 @@ python App/app.py
 | **사진 인식** | **사진인식** | **영양 정보 OCR** | **영양정보 OCR** |
 | -------------- | ------------- | -------------- | ------------- |
 | <img width="822" height="1322" alt="image" src="https://github.com/user-attachments/assets/3b468217-c412-4942-b406-b0227a9f066c" />| <img width="822" height="1322" alt="image" src="https://github.com/user-attachments/assets/ce923e58-dac2-4003-abd6-d0a6639c859e" />| <img width="822" height="1322" alt="image" src="https://github.com/user-attachments/assets/88e8a8a8-55c5-48ab-a486-31313bbb6464" />| <img width="822" height="1322" alt="image" src="https://github.com/user-attachments/assets/8b121a75-baaa-40c5-ba93-85963c487cde" />|
-| 사진을 분석해 음식의 종류와 양을 추정하고 | 영양소를 분석합니다 |영양 성분표를 분석해|영양소를 입력합니다|
+| 사진을 분석해 음식의 종류와 양을 추정하고 | 그 비율에 맞게 영양소를 분석합니다 |영양 성분표를 분석해|영양소를 입력합니다|
 
 
 ### 2-2. 검색 화면_직접 검색
@@ -139,7 +141,7 @@ python App/app.py
 | **뉴스** | **자산** | **신체 자산 증식** |
 | -------------- | ------------- | -------------- | 
 | <img width="822" height="1322" alt="image" src="https://github.com/user-attachments/assets/121b7ba7-c256-4fec-b6b5-487381c74224" />| <img width="822" height="1322" alt="image" src="https://github.com/user-attachments/assets/af38ad45-00c5-4dda-9198-89b3325e6ede" />| <img width="822" height="1322" alt="image" src="https://github.com/user-attachments/assets/20eff789-5b60-4a23-8c2a-8683b6e617cf" />| 
-| 먹은 음식이 건강에 좋은지, 안좋은지 간접적으로 뉴스를 통해 알려줍니다  | 내가 먹은 음식은 나의 신체자산의 가치를 떨어뜨릴수도, 올릴수도 있습니다  | 좋은 음식의 비중을 높여 신체자산을 증식하세요 |
+| 먹은 음식이 건강에 좋은지, 안좋은지 간접적으로 뉴스를 통해 알려줍니다  | 내가 먹은 음식은 나의 신체자산의 가치를 떨어뜨릴수도, 올릴수도 있습니다  | 이미 먹은 음식을 매도 할 수는 없습니다. 좋은 음식의 비중을 높여 신체자산을 증식하세요 |
 
 
 ## Reference
