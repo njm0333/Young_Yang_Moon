@@ -36,12 +36,8 @@
 - [설치](#설치)
 - [사용법](#사용법)
 - [전체 기능 및 구현 설명 _ for dev](#전체-기능-및-구현-설명-_-for-dev)
-    - [windows/survey_window.py](#windowssurvey_windowpy)
-    - [windows/pca_window.py](#windowspca_windowpy)
     - [function/PCA_Report.py](#functionpca_reportpy)
-- [추가 개발예정 사항](#추가-개발예정-사항)
 - [Reference](#reference)
-- [License](#license)
 
 
 
