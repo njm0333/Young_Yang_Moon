@@ -95,7 +95,7 @@ python App/app.py
 
 ### 📌 데이터셋 및 Yolo, Resnet 참고
 https://aihub.or.kr/aihubdata/data/view.do?currMenu=115&topMenu=100&aihubDataSe=data&dataSetSn=74
-- [AI Hub - 음식 이미지 및 영양정보 텍스트]()
+- [AI Hub - 음식 이미지 및 영양정보 텍스트]()D
 
 ### 📌 OCR 및 Flask 디자인 참고
 - 투자 성향 및 위험 성향 유형 정의 참고  
