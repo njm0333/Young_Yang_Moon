@@ -50,10 +50,13 @@
 
 Windows 시작 메뉴에서 전용 터미널(**Anaconda Prompt** 또는 **Miniconda Prompt**)을 열고 원하는 저장소로 이동합니다. 바탕화면 등 한글 이름의 폴더는 피하고 영문 경로(예: `C:\Workspace`)를 이용해 주세요.
 
-이후 아래의 명령어를 입력해주세요.
+아래의 명령어에서 기본 경로를 바꿔서 실행해주세요.
 
 
 ```
+cd C:\
+mkdir Y_Y_Moon
+cd Y_Y_Moon
 git clone https://github.com/njm0333/Young_Yang_Moon.git
 cd Young_Yang_Moon
 conda env create -f environment.yaml
