@@ -93,14 +93,11 @@ python App/app.py
 
 ## Reference
 
-### 📌 데이터셋 및 Yolo, Resnet 참고
-https://aihub.or.kr/aihubdata/data/view.do?currMenu=115&topMenu=100&aihubDataSe=data&dataSetSn=74
-- [AI Hub - 음식 이미지 및 영양정보 텍스트]()D
+- [AI Hub - 음식 이미지 및 영양정보 텍스트](https://aihub.or.kr/aihubdata/data/view.do?currMenu=115&topMenu=100&aihubDataSe=data&dataSetSn=74) _ 데이터셋 및 Yolo, Resnet 참고
 
-### 📌 OCR 및 Flask 디자인 참고
-- 투자 성향 및 위험 성향 유형 정의 참고  
-  https://invest_test.isweb.co.kr/#:~:text=%E2%91%A3%20%EC%A0%81%EA%B7%B9%ED%88%AC...
+- [https://github.com/JangMinSeong/Diet101](https://github.com/JangMinSeong/Diet101) _ OCR 및 Flask 디자인 참고
 
-### 📌 PCA 기반 요인 분석 참고
-- *Machine Learning for Algorithmic Trading*  
-  https://www.amazon.com/Machine-Learning-Algorithmic-Trading-alternative/dp/1839217715
+- [키움증권 영웅문S#](https://play.google.com/store/apps/details?id=com.kiwoom.heromts&hl=ko) _ Flask 디자인, 로고 오마주
+
+- [식품의약품안전처 식품영양성분 데이터베이스](https://various.foodsafetykorea.go.kr/nutrient/general/down/historyList.do) _ 음식, 가공식품 DB
+  
