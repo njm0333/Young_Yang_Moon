@@ -93,11 +93,11 @@ python App/app.py
 
 ## Reference
 
-### 📌 README 및 프로젝트 구조 참고
-- Valiant-Searching-Code-Assistant  
-  https://github.com/Sungtae124/Valiant-Searching-Code-Assistant
+### 📌 데이터셋 및 Yolo, Resnet 참고
+https://aihub.or.kr/aihubdata/data/view.do?currMenu=115&topMenu=100&aihubDataSe=data&dataSetSn=74
+- [AI Hub - 음식 이미지 및 영양정보 텍스트]()
 
-### 📌 투자 성향 진단 설계 참고
+### 📌 OCR 및 Flask 디자인 참고
 - 투자 성향 및 위험 성향 유형 정의 참고  
   https://invest_test.isweb.co.kr/#:~:text=%E2%91%A3%20%EC%A0%81%EA%B7%B9%ED%88%AC...
 
