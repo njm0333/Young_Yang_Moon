@@ -97,6 +97,8 @@ python App/app.py
 
 ## 프로그램 소개
 
+https://github.com/user-attachments/assets/312e01b8-6e4f-461c-952e-8558454da2c9
+
 ### 1. 로그인
 
 
